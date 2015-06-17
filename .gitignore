@@ -1,0 +1,12 @@
+# Eclipse specific gitignore
+.project
+.pydevproject
+.metadata
+
+# Python & Django
+*.pyc
+*.pyo
+*.log
+
+# Others
+*.xml

@@ -1,0 +1,35 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0">
+    <title>{{ page_title }}</title>
+    <link rel="shortcut icon" type="{% static 'img/logo.png' %}" href="{% static 'img/favicon.png' %}"/>
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+	<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css"> -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+	<!-- D3 -->
+	<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+	<!-- Custom -->
+	<link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}" />
+</head>
+
+<body>
+    <div class="page-container">
+        <!-- Fixed navbar -->
+        {% include "layout/navbar.html" %}
+    	
+        <!-- Main body -->
+        {% block mainbody %} {% endblock %}
+    	
+        <!-- Footer -->
+        {% include "layout/footer.html" %}
+    </div>
+</body>
+</html>
