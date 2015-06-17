@@ -12,7 +12,7 @@
                         class="icon-bar"></span><span class="icon-bar"></span>
                 </button>
             </div>
-			
+
             <div class="collapse navbar-collapse navbar-1">
                 <ul class="site-navigation nav">
                     <li>
@@ -28,19 +28,7 @@
                         <a href="/contact">Contact</a>
                     </li>
                 </ul>
-                
-                {% if not sign_in %}
-                    <div class="login-component">
-                        <ul class="navbar-form navbar-right">
-                            <button type="submit" class="btn btn-warning">Sign up</button>
-                            <li><p class="navbar-text">Already have an account?</p></li>
-                            <li class="login-dp">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><b>Login</b><spanclass="caret"></span></a>
-                            </li>
-                        </ul>
-                    </div>
-                {% else %}
-                {% endif %}
+                {% include 'partial/login-panel.html' %}
             </div>
         </nav>
     </div>

@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block mainbody %}
+    <!-- bloc-2 -->
+    <div class="bloc  l-bloc" id="bloc-2">
+        <div class="container bloc-lg">
+        	<div class="jumbotron">
+				<h3>Oilfield Water Management Solutions</h3>
+				<p>
+	       			AQUAM provides users with a unique set of tools to optimize different segments of fluids
+	       			management in the shale oil and gas industry. These tools were developed in accordance
+	       			with current industry operations as part of a project jointly funded by the U.S Department
+	       			of Energy and Noble Energy as part of the Research Partnership to Secure Energy for America.
+	       		</p>
+			</div>
+
+			<hr class="featurette-divider">
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <a href="water-use-analyzer"><img src="{% static 'img/placeholder-image.png' %}" class="img-responsive" alt=''/></a>
+                </div>
+                <div class="col-sm-6">
+                	<h3 class="mg-md">
+                        <a href="water-use-analyzer">Water Use Analyzer</a><br/><a href="water-use-analyzer"></a>
+                    </h3>
+                    <p>
+	                    This analyzer is an interactive tool designed to fit the user, in this case,
+						an operator or a water management company to anlayze their statistics of water,
+						current and historical to establish a baseline and a trend to improve their water
+						use scenarios significantly. This tool also provides the user to look at
+						Key Performance Indicators (KPIs) such as average horizontal length drilled,
+						average water used per well and bbls water used per horizontal foot,
+						on an annual comparison basis.
+                    </p>
+                    <p>
+                    	<a class="btn btn-default" href="water-use-analyzer" role="button">Try the demo &raquo;</a>
+         			</p>
+                </div>
+            </div>
+
+            <hr class="featurette-divider">
+
+            <div class="row">
+            	<div class="col-sm-6">
+                	<h3 class="mg-md">
+                        <a href="produced-water-modeler">Produced Water Modeler</a>
+                    </h3>
+                    <p>
+	                    This modeler is an interactive tool designed to model water production trends based on historical data,
+	                    giving the user a temporal edge of analyzing how much water was produced over a specific amount of time,
+	                    and how the user could imperatively plan the amount of water to be handled on a particular day. It has
+	                    been strategically designed to estimate time based production of water based on trends fitted to the well
+	                    known Arp's Equation for modeling produced water.  Not only does it calculate the water to be produced
+	                    on a particular day, it also seamless integrates the numbers to estimate  average water production volumes
+	                    for a particular time frame, as specified by the user.
+                    </p>
+                    <p>
+                    	<a class="btn btn-default" href="produced-water-modeler" role="button">Try the demo &raquo;</a>
+         			</p>
+                </div>
+                <div class="col-sm-6">
+                    <a href="produced-water-modeler"><img src="{% static 'img/placeholder-image.png' %}" class="img-responsive" alt=''/></a>
+                </div>
+            </div>
+
+            <hr class="featurette-divider">
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <a href="water-quality-analyzer"><img src="{% static 'img/placeholder-image.png' %}" class="img-responsive" alt=''/></a>
+                </div>
+                <div class="col-sm-6">
+                	<h3 class="mg-md">
+                        <a href="water-quality-analyzer">Water Quality Analyzer</a>
+                    </h3>
+                    <p>
+                    	Water quality is a paramount part of estimating the pertinent treatment required to reuse the
+                    	produced water to a beneficial reuse condition. This modeler will estimate the quality of the
+                    	water being produced, simultaneously addressing the temporal aspects of the changing water quality.
+                    	In laymen terms, this tool helps estimate the incoming water quality of produced water with respect
+                    	to time, in order to plan effective treatment. It models the water quality based on historical
+                    	averages of water quality for any specific dataset.
+                    </p>
+                    <p>
+                    	<a class="btn btn-default" href="water-quality-analyzer" role="button">Try the demo &raquo;</a>
+         			</p>
+                </div>
+            </div>
+
+            <hr class="featurette-divider">
+
+            <div class="row">
+            	<div class="col-sm-6">
+                    <h3 class="mg-md">
+                        <a href="water-treatment-analyzer">Water Treatment Analyzer</a>
+                    </h3>
+                    <p>
+                    </p>
+                    <p>
+                    	<a class="btn btn-default" href="water-treatment-analyzer" role="button">Try the demo &raquo;</a>
+         			</p>
+                </div>
+                <div class="col-sm-6">
+                    <a href="water-treatment-analyzer"><img src="{% static 'img/placeholder-image.png' %}" class="img-responsive" alt=''/></a>
+                </div>
+            </div>
+
+            <hr class="featurette-divider">
+
+        </div>
+    </div>
+    <!-- bloc-2 END -->
+
+{% endblock %}

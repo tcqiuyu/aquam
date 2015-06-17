@@ -1,0 +1,68 @@
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th>api</th>
+        <th>fracture_date</th>
+        <th>state</th>
+        <th>county</th>
+        <th>well_name</th>
+        <th>latitude</th>
+        <th>longtitude</th>
+        <th>horizontal_length</th>
+        <th>water_use</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for record in records %}
+        <tr>
+            <td>{{ record.api }}</td>
+            <td>{{ record.frac_date }}</td>
+            <td>{{ record.state }}</td>
+            <td>{{ record.county }}</td>
+            <td>{{ record.well_name }}</td>
+            <td>{{ record.latitude }}</td>
+            <td>{{ record.longtitude }}</td>
+            <td>{{ record.horizontal_length }}</td>
+            <td>{{ record.water_use }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% include 'partial/paginator.html' %}
+
+{% block footer %}
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            // next page
+            $("#next").click(function (event) {
+                event.preventDefault();
+                $.ajax({
+                    url: ".",
+                    type: "GET",
+                    data: {
+                        "page": {{ records.number }}+1
+                    },
+                    dataType: "html",
+                    success: function (response) {
+                        $("#table-container").html(response);
+                    }
+                });
+            });
+            $("#previous").click(function (event) {
+                event.preventDefault();
+                $.ajax({
+                    url: ".",
+                    type: "GET",
+                    data: {
+                        "page": {{ records.number }}-1
+                    },
+                    dataType: "html",
+                    success: function (response) {
+                        $("#table-container").html(response);
+                    }
+                });
+            });
+        })
+    </script>
+{% endblock %}

@@ -535,14 +535,49 @@ iframe {
 }
 
 .login-component li {
-    margin-top: 10px;
+    margin-top: 20px;
     float: left;
 }
 
-.login-component .navbar-toggle{
+.login-component {
     font-size: 15px;
 }
+
+.login-component p{
+    font-size: 14px;
+    color: #9C9C9C;
+
+}
 .login-dp {
-    padding: 0 20px 0;
+    padding: 0 30px 0;
 }
 
+#login-dpmenu{
+    min-width: 200px;
+    padding: 14px 14px 0;
+    overflow:hidden;
+    background-color:#3A3A3A;
+}
+#login-dpmenu .help-block{
+    font-size:12px
+}
+#login-dpmenu .bottom{
+    background-color:#343434;
+    border-top:1px solid #ddd;
+    clear:both;
+    padding:14px;
+}
+
+#login-dpmenu .form-group {
+    margin-bottom: 10px;
+}
+@media(max-width:768px){
+    #login-dpmenu{
+        background-color: inherit;
+        color: #fff;
+    }
+    #login-dpmenu .bottom{
+        background-color: inherit;
+        border-top:0 none;
+    }
+}
