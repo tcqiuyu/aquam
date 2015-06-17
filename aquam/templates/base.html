@@ -16,10 +16,13 @@
     {# jquery js has to be imported before bootstrap js #}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
     <!-- D3 -->
     <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
     <!-- Custom -->
     <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}"/>
+    {% block header %} {% endblock %}
 </head>
 
 <body>
