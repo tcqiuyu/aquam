@@ -2,7 +2,6 @@
 {% load staticfiles %}
 
 {% block header %}
-<script src="{% static 'custom/js/default.js' %}"></script>
 {% endblock %}
 
 {% block mainbody %}
@@ -19,7 +18,7 @@
 	</div>
 	<h3>Horizontal Wells</h3>
 	<div id="table-container">
-		{% include 'partial/water-use-table.html'%}
+		{% include 'solutions/partial/water-use-table.html'%}
 	</div>
 
 	<hr>
@@ -92,3 +91,4 @@
 	});
 </script>
 {% endblock %}
+</div>

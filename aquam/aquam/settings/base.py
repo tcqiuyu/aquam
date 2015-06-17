@@ -148,7 +148,6 @@ TEMPLATE_DIRS = (
     normpath(join(SITE_ROOT, 'templates')),
 )
 
-
 # MIDDLEWARE CONFIGURATION
 MIDDLEWARE_CLASSES = (
     # Default Django middleware.

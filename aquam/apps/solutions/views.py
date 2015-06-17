@@ -63,11 +63,12 @@ def water_use_analyzer(request):
     }
 
     if request.is_ajax():
-        target_template = "partial/water-use-table.html"
+        target_template = "solutions/partial/water-use-table.html"
     else:
         target_template = "solutions/water-use-analyzer.html"
 
     return render_to_response(target_template, context, context_instance=RequestContext(request))
+    #     return render(request, "solutions/water-use-analyzer.html", context)
 
 def produced_water_modeler(request):
     # create the table
