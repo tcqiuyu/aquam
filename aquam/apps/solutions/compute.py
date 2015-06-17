@@ -14,7 +14,7 @@ def annual_averge_water_use(frac_date, water_use):
         std_water_use.append(np.std(temp))
     return unique_years, avg_water_use, std_water_use
     
-
+    
 def annual_averge_horizontal_length(frac_date, horizontal_length):
     frac_years = np.array([dt.year for dt in frac_date])
     unique_years = np.unique(frac_years)
