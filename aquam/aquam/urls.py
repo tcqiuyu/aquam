@@ -16,18 +16,19 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin
 
-from . import views
+from . import views as aquam_views
 from apps.solutions import views as solution_views
 
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
-
-    url(r"^$", views.index, name="index"),
-    url(r"^index/$", views.index, name="index"),
-    url(r"^solutions/$", views.solutions, name="solutions"),
-    url(r"^geoanalytics/$", views.geoanalytics, name="geoanalytics"),
-    url(r"^contact/$", views.contact, name="contact"),
+    
+    url(r"^$", aquam_views.index, name="index"),
+    url(r"^index/$", aquam_views.index, name="index"),
+    url(r"^solutions/$", aquam_views.solutions, name="solutions"),
+    url(r"^geoanalytics/$", aquam_views.geoanalytics, name="geoanalytics"),
+    url(r"^contact/$", aquam_views.contact, name="contact"),
+    
     url(r"^solutions/water-use-analyzer/$", solution_views.water_use_analyzer, name="water-use-analyzer"),
 
 ]
