@@ -13,11 +13,13 @@ Including another URLconf
     1. Add an import:  from blog import urls as blog_urls
     2. Add a URL to urlpatterns:  url(r'^blog/', include(blog_urls))
 """
+# Core Django imports
 from django.conf.urls import include, url
 from django.contrib import admin
 
-from . import views as aquam_views
-from apps.solutions import views as solution_views
+# Apps imports
+import views as aquam_views
+import apps.solutions.views as solutions_views
 
 
 urlpatterns = [
@@ -29,6 +31,6 @@ urlpatterns = [
     url(r"^geoanalytics/$", aquam_views.geoanalytics, name="geoanalytics"),
     url(r"^contact/$", aquam_views.contact, name="contact"),
     
-    url(r"^solutions/water-use-analyzer/$", solution_views.water_use_analyzer, name="water-use-analyzer"),
-
+    url(r"^solutions/water-use-analyzer/demo/$", solutions_views.water_use_analyzer_demo, name="water-use-analyzer-demo"),
+    
 ]

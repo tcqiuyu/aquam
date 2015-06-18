@@ -1,15 +1,52 @@
 <div class="pagination">
-  <span class="step-links">
-    {% if records.has_previous %}
+    <span class="step-links">
+        {% if records.has_previous %}
         <a id="previous" href="?page={{ records.previous_page_number }}">previous</a>
-    {% endif %}
-
-      <span class="current">
-      Page {{ records.number }} of {{ records.paginator.num_pages }}.
+        {% endif %}
+        
+        <span class="current">
+        Page {{ records.number }} of {{ records.paginator.num_pages }}.
     </span>
-
-      {% if records.has_next %}
-          <a id="next" href="?page={{ records.next_page_number }}" onclick="nextpage()">next</a>
-      {% endif %}
-  </span>
+        {% if records.has_next %}
+        <a id="next" href="?page={{ records.next_page_number }}" onclick="nextpage()">next</a>
+        {% endif %}
+    </span>
 </div>
+
+{% block footer2 %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            // next page
+            $("#next").click(function (event) {
+                event.preventDefault();
+                $.ajax({
+                    url: ".",
+                    type: "GET",
+                    data: {
+                        "page": {{ records.number }}+1
+                    },
+                    dataType: "html",
+                    success: function (response) {
+                        $("#table-container").html(response);
+                    }
+                });
+            });
+            
+           // previous page
+            $("#previous").click(function (event) {
+                event.preventDefault();
+                $.ajax({
+                    url: ".",
+                    type: "GET",
+                    data: {
+                        "page": {{ records.number }}-1
+                    },
+                    dataType: "html",
+                    success: function (response) {
+                        $("#table-container").html(response);
+                    }
+                });
+            });
+        })
+    </script>
+{% endblock %}

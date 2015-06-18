@@ -1,26 +1,33 @@
-from django.shortcuts import render, render_to_response
-from django.template import RequestContext, Library
-from django.core import paginator, serializers
-from apps.solutions import models, compute
-import numpy as np
-import json, socket
-from django.http import HttpResponse, JsonResponse
-# Create your views here.
+# Std lib imports
+import json
 
-def water_use_analyzer(request):
-    # pagination
-    objs = models.WaterUse.objects.all().order_by("id")
-    my_paginator = paginator.Paginator(objs, 10) # show 10 rows per page
+# Core Django imports
+from django.shortcuts import render_to_response
+from django.template import RequestContext
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+
+# Third-party lib imports
+import numpy as np
+
+# Apps imports
+from apps.solutions.models import WaterUse
+
+
+# Create your views here.
+def water_use_analyzer_demo(request):
+    # Pagination
+    objs = WaterUse.objects.all()
+    paginator = Paginator(objs, 10)  # show 10 rows per page
     page = request.GET.get('page')
     try:
-        records = my_paginator.page(page)
-    except paginator.PageNotAnInteger:
-        records = my_paginator.page(1)
-    except paginator.EmptyPage:
-        records = my_paginator.page(my_paginator.num_pages)
-
+        records = paginator.page(page)
+    except PageNotAnInteger:
+        records = paginator.page(1)
+    except EmptyPage:
+        records = paginator.page(paginator.num_pages)
+    
     # extract & clean data
-    values = models.WaterUse.objects.values_list("frac_date", "water_use", "horizontal_length")
+    values = WaterUse.objects.values_list("frac_date", "water_use", "horizontal_length")
     frac_date = []
     water_use = np.empty(len(values), dtype=float)
     horizontal_length = np.empty(len(values), dtype=float)
@@ -29,7 +36,7 @@ def water_use_analyzer(request):
         water_use[i] = float(values[i][1])
         horizontal_length[i] = float(values[i][2])
     water_use_per_foot = np.divide(water_use, horizontal_length)
-
+    
     # histogram for per well
     water_use_count, water_use_bins = np.histogram(water_use, bins=10)
     water_use_mean = np.mean(water_use)
@@ -40,19 +47,19 @@ def water_use_analyzer(request):
     water_use_per_foot_count, water_use_per_foot_bins = np.histogram(water_use_per_foot, bins=10)
     water_use_per_foot_mean = np.mean(water_use_per_foot)
     water_use_per_foot_std = np.mean(water_use_per_foot)
-
+    
     # histogram for annual average
-    unique_years, avg_water_use, std_water_use = compute.annual_averge_water_use(frac_date, water_use)
-    unique_years, avg_horizontal_length, std_horizontal_length = compute.annual_averge_horizontal_length(frac_date, horizontal_length)
-    unique_years, avg_water_use_per_foot, std_water_use_per_foot = compute.annual_averge_water_use_per_foot(frac_date, water_use_per_foot)
-
+    # unique_years, avg_water_use, std_water_use = compute.annual_averge_water_use(frac_date, water_use)
+    # unique_years, avg_horizontal_length, std_horizontal_length = compute.annual_averge_horizontal_length(frac_date, horizontal_length)
+    # unique_years, avg_water_use_per_foot, std_water_use_per_foot = compute.annual_averge_water_use_per_foot(frac_date, water_use_per_foot)
+    
     # polyfit & evaluation
     p = np.polyfit(horizontal_length, water_use, 1)
     yfit = np.polyval(p, horizontal_length)
-    ss_total = (len(water_use)-1) * np.var(water_use)
+    ss_total = (len(water_use) - 1) * np.var(water_use)
     ss_resid = np.dot(np.subtract(water_use, yfit), np.subtract(water_use, yfit))
-    r2 = 1 - (ss_resid/ss_total)
-
+    r2 = 1 - (ss_resid / ss_total)
+    
     context = {"page_title": "AQUAM | Water Use Analyzer",
                "records": records,
                "frac_date": frac_date,
@@ -61,69 +68,10 @@ def water_use_analyzer(request):
                "water_use_per_foot": water_use_per_foot,
                "r2": r2,
     }
-
+    
     if request.is_ajax():
-        target_template = "partial/water-use-table.html"
+        target_template = "solutions/partial/water-use-table.html"
     else:
-        target_template = "solutions/water-use-analyzer.html"
-
+        target_template = "solutions/demo/water-use-analyzer.html"
+    
     return render_to_response(target_template, context, context_instance=RequestContext(request))
-
-def produced_water_modeler(request):
-    # create the table
-    all_records = models.ProducedWater.objects.all().order_by("id")
-    my_paginator = paginator.Paginator(all_records, 10) # show 25 rows per page
-    page = request.GET.get('page')
-    try:
-        records = my_paginator.page(page)
-    except paginator.PageNotAnInteger:
-        records = my_paginator.page(1)
-    except paginator.EmptyPage:
-        records = my_paginator.page(my_paginator.num_pages)
-
-    # extract & clean data
-    wells_number = 7
-    values = models.ProducedWater.objects.values_list()
-    data = compute.model_parameters(values, wells_number)
-    context = {"page_title": "AQUAM | Produced Water Modeler",
-               "records": records,
-               "data": data,
-    }
-    return render(request, "solutions/produced-water-modeler.html", context)
-
-def water_quality_analyzer(request):
-    # create the table
-    all_records = models.WaterQuality.objects.all().order_by("id")
-    my_paginator = paginator.Paginator(all_records, 10) # show 25 rows per page
-    page = request.GET.get('page')
-    try:
-        records = my_paginator.page(page)
-    except paginator.PageNotAnInteger:
-        records = my_paginator.page(1)
-    except paginator.EmptyPage:
-        records = my_paginator.page(my_paginator.num_pages)
-
-    # extract specific column data
-    context = {"page_title": "AQUAM | Water Quality Analyzer",
-               "records": records,
-    }
-    return render(request, "solutions/water-quality-analyzer.html", context)
-
-
-def water_treatment_analyzer(request):
-    # create the table
-    all_records = models.WaterTreatment.objects.all().order_by("id")
-    my_paginator = paginator.Paginator(all_records, 10) # show 25 rows per page
-    page = request.GET.get('page')
-    try:
-        records = my_paginator.page(page)
-    except paginator.PageNotAnInteger:
-        records = my_paginator.page(1)
-    except paginator.EmptyPage:
-        records = my_paginator.page(my_paginator.num_pages)
-
-    # extract specific column data
-    context = {"page_title": "AQUAM | Water Treatment Analyzer",
-               "records": records,
-    }
-    return render(request, "solutions/water-treatment-analyzer.html", context)

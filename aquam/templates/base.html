@@ -13,31 +13,24 @@
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
-    {# jquery js has to be imported before bootstrap js #}
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
     <!-- FontAwesome -->
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
-    <!-- D3 -->
-    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-    <!-- Custom -->
+    <!-- Custom link -->
     <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}"/>
+    <!-- jquery js has to be imported before bootstrap js -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    
     {% block header %} {% endblock %}
 </head>
 
 <body>
-<div class="page-container">
-    <!-- Fixed navbar -->
+    <div class="page-container">
     {% include "layout/navbar.html" %}
-
-    <!-- Main body -->
     {% block mainbody %} {% endblock %}
-
-    <!-- Footer -->
+    </div>
     {% include "layout/footer.html" %}
-
-</div>
+    {% block footer %} {% endblock %}
 </body>
-
 
 </html>

@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block headscript %}
+<!-- D3 -->
+<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+{% endblock %}
+
+{% block mainbody %}
+<div class="container">
+	<div class="jumbotron">
+		<h2>Water Use Analyzer</h2>
+		<p>This analyzer is an interactive tool designed to fit the user, in this case,
+		an operator or a water management company to anlayze their statistics of water,
+		current and historical to establish a baseline and a trend to improve their water
+		use scenarios significantly. This tool also provides the user to look at
+		Key Performance Indicators (KPIs) such as average horizontal length drilled,
+		average water used per well and bbls water used per horizontal foot,
+		on an annual comparison basis. </p>
+	</div>
+	<h3>Horizontal Wells</h3>
+	<div id="table-container">
+		{% include 'solutions/partial/water-use-table.html'%}
+	</div>
+	
+	<hr>
+
+	<div>
+	{{r2}}
+	</div>
+
+	<hr>
+	<h3>Analytics</h3>
+	<div class="chart-container" style="with:100%; height:500px">
+		<div id="chart1" style="width:100%; height:100%">
+		{{ data }}
+	    </div>
+	<button type="button" id="btn1" class="btn btn-default">Plot Histogram</button>
+
+	<hr/>
+</div>
+{% endblock %}
+
+{% block footscript %}
+<script type="text/javascript">
+	$(document).ready(function() {
+		// histogram
+		$("#btn1").click(function(event) {
+			var water_use = []
+			var req = $.ajax({
+				url: "water-use-json",
+				type: "GET",
+				dataType: "json",
+				success: function(response){
+					water_use = response.water_use;
+				}
+			});
+			$.when(req).done(function(){
+				var w = $("#chart1").width();
+				var h = $("#chart1").height();
+				var margin = {top:10, right:30, bottom:30, left:30};
+				var width = w - margin.left - margin.right;
+				var height = h - margin.top - margin.bottom;
+				var chart = d3.select("#chart1").append("svg")
+					.attr("width", width)
+					.attr("height", height)
+					.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+				var x = d3.scale.linear()
+					.domain(d3.extent(water_use, function(d){ return d;}))
+					.range([0, width]);
+				var histogram = d3.layout.histogram()
+					.bins(x.ticks(15))(water_use);
+				var y = d3.scale.linear()
+					.domain([0, d3.max(histogram.map( function(d){ return d.length; }))])
+					.range([height, 0]);
+				var xAxis = d3.svg.axis()
+					.scale(x)
+					.orient("bottom");
+				var yAxis = d3.svg.axis()
+					.scale(y)
+					.orient("left");
+				var bars = chart.selectAll(".bar")
+					.data(histogram)
+					.enter().append("g")
+					.attr("class", "bar");
+				bars.append("rect")
+					.attr("x", function(d){ return x(d.x); })
+					.attr("y", function(d){ return y(d.y); })
+			    	.attr("width", function(d){ return x(d.dx); })
+			    	.attr("height", function(d){ return height - y(d.y); });
+			});
+		});
+	});
+</script>
+{% endblock %}

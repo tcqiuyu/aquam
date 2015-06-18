@@ -1,15 +1,15 @@
 <table class="table table-striped">
     <thead>
     <tr>
-        <th>api</th>
-        <th>fracture_date</th>
-        <th>state</th>
-        <th>county</th>
-        <th>well_name</th>
-        <th>latitude</th>
-        <th>longtitude</th>
-        <th>horizontal_length</th>
-        <th>water_use</th>
+        <th>API</th>
+        <th>Fracture Date</th>
+        <th>State</th>
+        <th>County</th>
+        <th>Well Name</th>
+        <th>Latitude</th>
+        <th>Longitude</th>
+        <th>Horizontal Length</th>
+        <th>Water Use</th>
     </tr>
     </thead>
     <tbody>
@@ -28,41 +28,4 @@
     {% endfor %}
     </tbody>
 </table>
-{% include 'partial/paginator.html' %}
-
-{% block footer %}
-    <script type="text/javascript">
-
-        $(document).ready(function () {
-            // next page
-            $("#next").click(function (event) {
-                event.preventDefault();
-                $.ajax({
-                    url: ".",
-                    type: "GET",
-                    data: {
-                        "page": {{ records.number }}+1
-                    },
-                    dataType: "html",
-                    success: function (response) {
-                        $("#table-container").html(response);
-                    }
-                });
-            });
-            $("#previous").click(function (event) {
-                event.preventDefault();
-                $.ajax({
-                    url: ".",
-                    type: "GET",
-                    data: {
-                        "page": {{ records.number }}-1
-                    },
-                    dataType: "html",
-                    success: function (response) {
-                        $("#table-container").html(response);
-                    }
-                });
-            });
-        })
-    </script>
-{% endblock %}
+{% include 'solutions/partial/paginator.html' %}

@@ -19,12 +19,10 @@
 			
             <div class="row">
                 <div class="col-sm-6">
-                    <a href="water-use-analyzer"><img src="{% static 'img/placeholder-image.png' %}" class="img-responsive" alt=''/></a>
+                    <img src="{% static 'img/placeholder-image.png' %}" class="img-responsive" alt=''/>
                 </div>
                 <div class="col-sm-6">
-                	<h3 class="mg-md">
-                        <a href="water-use-analyzer">Water Use Analyzer</a><br/><a href="water-use-analyzer"></a>
-                    </h3>
+                	<h3 class="mg-md">Water Use Analyzer</h3>
                     <p>
 	                    This analyzer is an interactive tool designed to fit the user, in this case,
 						an operator or a water management company to anlayze their statistics of water,
@@ -35,13 +33,14 @@
 						on an annual comparison basis.
                     </p>
                     <p>
-                    	<a class="btn btn-default" href="water-use-analyzer" role="button">Try the demo &raquo;</a>
+                    	<a class="btn btn-default" href="{% url 'water-use-analyzer-demo'%}" role="button">Try the Demo &raquo;</a>
+                    	<a class="btn btn-default" href="water-use-analyzer" role="button">Use the Tool &raquo;</a>
          			</p>
                 </div>
             </div>
-
+			
             <hr class="featurette-divider">
-
+			
             <div class="row">
             	<div class="col-sm-6">
                 	<h3 class="mg-md">

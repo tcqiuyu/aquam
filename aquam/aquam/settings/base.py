@@ -80,7 +80,7 @@ MEDIA_URL = '/media/'
 
 # STATIC FILE CONFIGURATION
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
-#STATIC_ROOT = normpath(join(SITE_ROOT, 'assets'))
+# STATIC_ROOT = normpath(join(SITE_ROOT, 'assets'))
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (
@@ -131,7 +131,7 @@ TEMPLATE_LOADERS = (
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [join(DJANGO_ROOT, 'templates'),],
+        'DIRS': [join(DJANGO_ROOT, 'templates'), ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -145,7 +145,7 @@ TEMPLATES = [
 ]
 
 TEMPLATE_DIRS = (
-    normpath(join(SITE_ROOT, 'templates')),
+    join(SITE_ROOT, 'templates/'),
 )
 
 
