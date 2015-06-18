@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load staticfiles %}
 
-{% block headscript %}
+{% block header %}
 <!-- D3 -->
 <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 {% endblock %}
@@ -41,7 +41,7 @@
 </div>
 {% endblock %}
 
-{% block footscript %}
+{% block footer %}
 <script type="text/javascript">
 	$(document).ready(function() {
 		// histogram
@@ -93,3 +93,4 @@
 	});
 </script>
 {% endblock %}
+</div>

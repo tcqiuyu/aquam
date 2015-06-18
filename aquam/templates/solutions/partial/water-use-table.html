@@ -28,4 +28,42 @@
     {% endfor %}
     </tbody>
 </table>
+
 {% include 'solutions/partial/paginator.html' %}
+
+{% block footer %}
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            // next page
+            $("#next").click(function (event) {
+                event.preventDefault();
+                $.ajax({
+                    url: ".",
+                    type: "GET",
+                    data: {
+                        "page": {{ records.number }}+1
+                    },
+                    dataType: "html",
+                    success: function (response) {
+                        $("#table-container").html(response);
+                    }
+                });
+            });
+            $("#previous").click(function (event) {
+                event.preventDefault();
+                $.ajax({
+                    url: ".",
+                    type: "GET",
+                    data: {
+                        "page": {{ records.number }}-1
+                    },
+                    dataType: "html",
+                    success: function (response) {
+                        $("#table-container").html(response);
+                    }
+                });
+            });
+        })
+    </script>
+{% endblock %}
