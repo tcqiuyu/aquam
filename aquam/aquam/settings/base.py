@@ -186,7 +186,12 @@ LOCAL_APPS = (
     'apps.warehouse',
 )
 
-INSTALLED_APPS = DJANGO_APPS + LOCAL_APPS
+# Other open source apps
+OTHER_APPS = (
+    'bootstrap_toolkit',
+)
+
+INSTALLED_APPS = DJANGO_APPS + LOCAL_APPS + OTHER_APPS
 
 
 # LOGGING CONFIGURATION

@@ -148,10 +148,10 @@ h1, h2, h3, h4, h5, h6, p, label, .btn, a {
 /* Custom bloc styling */
 
 #nav-bloc, #bloc-10 {
-    background-color: rgba(51, 119, 189, 0.89);
+    background-color: #2D69A7;
 }
 
-#nav-bloc, #bloc-10 a{
+#nav-bloc, #bloc-10 a {
     color: #FFFFFF;
 }
 
@@ -166,7 +166,7 @@ h1, h2, h3, h4, h5, h6, p, label, .btn, a {
 /* Bloc image backgrounds */
 
 .bg-lines-dl2-bg {
-    background-image: url("img/lines-dl2-bg.png");
+    /*background-image: url("img/lines-dl2-bg.png");*/
 }
 
 /* = NavBar
@@ -558,7 +558,7 @@ iframe {
 
 .login-component p {
     font-size: 14px;
-    color: #EEEEEE;
+    color: #CCCCCC;
 }
 
 .login-dp {
@@ -591,9 +591,15 @@ iframe {
     margin-bottom: 10px;
 }
 
-#login-dpmenu a{
+#login-dpmenu a {
     color: rgba(65, 65, 65, 0.89)
 }
+
+#login-dpmenu .error-message {
+    color: #CE5B56;
+    font-weight: bold;
+}
+
 @media (max-width: 768px) {
     #login-dpmenu {
         background-color: inherit;
