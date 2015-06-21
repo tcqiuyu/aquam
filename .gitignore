@@ -11,6 +11,7 @@
 # folder
 data_input/
 .idea/
+aquam/templates/test/
 
 # Others
 *.xml
