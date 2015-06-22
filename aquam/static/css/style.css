@@ -571,7 +571,7 @@ iframe {
 
 #login-dpmenu {
     min-width: 200px;
-    padding: 0px 14px 0;
+    padding: 0 14px 0;
     overflow: hidden;
     background-color: rgba(218, 218, 218, 0.89);
 }
@@ -611,3 +611,15 @@ iframe {
         border-top: 0 none;
     }
 }
+
+.connection-wrap {
+   cursor: default;
+}
+
+.link:hover .marker-vertices,
+.link:hover .marker-arrowheads,
+.link:hover .link-tools {
+   opacity: 0;
+   cursor: default;
+}
+

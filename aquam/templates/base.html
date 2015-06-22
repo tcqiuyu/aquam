@@ -16,21 +16,22 @@
     <!-- FontAwesome -->
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
     <!-- Custom link -->
-    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}"/>
     <!-- jquery js has to be imported before bootstrap js -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-    
+
     {% block header %} {% endblock %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}"/>
+
 </head>
 
 <body>
-    <div class="page-container">
+<div class="page-container">
     {% include "layout/navbar.html" %}
     {% block mainbody %} {% endblock %}
-    </div>
-    {% include "layout/footer.html" %}
-    {% block footer %} {% endblock %}
+</div>
+{% include "layout/footer.html" %}
+{% block footer %} {% endblock %}
 </body>
 
 </html>

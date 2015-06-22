@@ -2,87 +2,96 @@
 {% load staticfiles %}
 
 {% block header %}
-    <!--- Import j3 --->
-    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-    <style type="text/css">
-{#    #draw{margin:0 auto;width:600px;height:800px;}#}
-    svg{border: solid;}
-    </style>
+    <!--- Import jointjs --->
+    {#    <script src="https://cdnjs.cloudflare.com/ajax/libs/jointjs/0.9.0/joint.min.js" charset="utf-8"></script>#}
+    <script src="{% static 'js/joint.js' %}"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jointjs/0.9.0/joint.min.css">
+
 {% endblock %}
 
 {% block mainbody %}
-    <div id="draw"></div>
+    <div id="demo"></div>
 {% endblock %}
 
 {% block footer %}
     <script id="text/javascript">
-        var dataset = [
-            {source: "html1", target: "html2", id: "1"},
-            {source: "html2", target: "html3", id: "2"},
-            {source: "html3", target: "html5", id: "3"},
-            {source: "html5", target: "css2", id: "4"},
-            {source: "css2", target: "css3", id: "5"},
-            {source: "css3", target: "javascript", id: "6"}
-        ];
-        var w = 400;
-        var h = 800;
-        var rang_y = 50;//y(0~50)
-        var rang_x = 200;//x(0~200)
-        var tolerance = 100;//diff_y
-        var r = 20;//radius
-        var count = dataset.length;
-        var offset = [];
-        for (var i = 0; i < count; i++) {
-            offset.push({x: Math.round(Math.random() * rang_x), y: Math.round(Math.random() * rang_y)});
-        }
-        var svg = d3.select("#draw")
-                .append("svg")
-                .attr("width", w)
-                .attr("height", h);
-        svg.append('svg:defs').append('svg:marker')
-                .attr('id', 'end-arrow')
-                .attr('viewBox', '0 -5 10 10')
-                .attr('refX', 10)
-                .attr('markerWidth', 6)//Arrow attr
-                .attr('markerHeight', 10)
-                .attr('orient', 'auto')
-                .append('svg:path')
-                .attr('d', 'M0,-5L10,0L0,5')//Arrow shape
-                .attr('fill', 'blue');
-        var elemEnter = svg.selectAll("g")
-                .data(dataset)
-                .enter()
-                .append("g")
-                .attr("transform", function (d, i) {
-                    return "translate(" + (w / 2 - rang_x / 2 + offset[i].x) + "," + (tolerance * i + 25 + offset[i].y) + ")";
-                })
-                .on("click", function () {
-                    alert(this.childNodes[1].firstChild.nodeValue);
-                });
-        elemEnter.append("circle")
-                .attr("r", r)
-                .attr("stroke", "#339933")
-                .attr("fill", "#339933")
-                .attr("id", function (d) {
-                    return d.id;
-                });
-        elemEnter.append("text")
-                .attr("text-anchor", "middle")
-                .attr("dy", "0.34em")
-                .text(function (d) {
-                    return d.source
-                });
-        elemEnter.append("path")
-                .attr("d", function (d, i) {
-                    if (i < count - 1) {
-                        return 'M0 20 L' + (offset[i + 1].x - offset[i].x) + ' ' + (offset[i + 1].y - offset[i].y + tolerance - r);
-                    }
-                })
-                .attr("marker-end", "url(#end-arrow)")
-                .style({
-                    fill: 'none',
-                    stroke: 'blue',
-                    'stroke-width': 2
-                });
+        var graph = new joint.dia.Graph;
+
+        var paper = new joint.dia.Paper({
+            el: $('#demo'),
+            width: 1920,
+            height: 600,
+            model: graph,
+            gridSize: 1,
+            interactive: false
+        });
+
+        joint.shapes.custom = {};
+
+        joint.shapes.custom.ElementLink = joint.shapes.basic.Rect.extend({
+            markup: '<a><g class="rotatable"><g class="scalable"><rect/></g><text/></g></a>',
+            defaults: joint.util.deepSupplement({
+                type: 'custom.ElementLink'
+            }, joint.shapes.basic.Rect.prototype.defaults)
+        });
+
+        joint.shapes.custom.ElementLabelLink = joint.shapes.basic.Rect.extend({
+            // Note the `<a>` SVG element surrounding the rest of the markup.
+            markup: '<g class="rotatable"><g class="scalable"><rect/></g><a><text/></a></g>',
+            defaults: joint.util.deepSupplement({
+                type: 'custom.ElementLabelLink'
+            }, joint.shapes.basic.Rect.prototype.defaults)
+        });
+
+        var rect_1 = new joint.shapes.custom.ElementLink({
+            position: {x: 380, y: 100},
+            size: {width: 160, height: 80},
+            attrs: {
+                rect: {fill: '#2D69A6'},
+                a: {'xlink:href': 'water-use-analyzer/demo/', 'xlink:show': 'new', cursor: 'pointer'},
+                text: {text: 'Fresh Water\n   Source', fill: 'white', 'font-size': 22}
+            }
+        });
+
+        var rect_2 = rect_1.clone();
+        rect_2.translate(240, 160);
+        rect_2.attr({
+            text: {text: '  Drilling/\nFracturing'}
+        });
+
+        var rect_3 = rect_1.clone();
+        rect_3.translate(0, 320);
+        rect_3.attr({
+            text: {text: ' Alternative\nSurface Use'}
+        });
+
+        var rect_4 = rect_2.clone();
+        rect_4.translate(340);
+        rect_4.attr({
+            text: {text: '   Produced\nWater Storage'}
+        });
+
+        var rect_5 = rect_3.clone();
+        rect_5.translate(420);
+        rect_5.attr({
+            text: {text: 'Treatment'}
+        });
+
+        var rect_6 = rect_4.clone();
+        rect_6.translate(400);
+        rect_6.attr({
+            text: {text: 'Disposal'}
+        });
+
+        var link = new joint.dia.Link({
+            source: {id: rect_1.id},
+            target: {id: rect_2.id},
+            mouseover: function(){
+                alert('hello');
+            }
+
+        });
+
+        graph.addCells([rect_1, rect_2, rect_3, rect_4, rect_5, rect_6, link]);
     </script>
 {% endblock %}
