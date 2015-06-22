@@ -10,7 +10,9 @@
 {% endblock %}
 
 {% block mainbody %}
-    <div id="demo"></div>
+    <div id="chart-container">
+        <div id="flowchart"></div>
+    </div>
 {% endblock %}
 
 {% block footer %}
@@ -18,8 +20,8 @@
         var graph = new joint.dia.Graph;
 
         var paper = new joint.dia.Paper({
-            el: $('#demo'),
-            width: 1920,
+            el: $('#flowchart'),
+            width: 1150,
             height: 600,
             model: graph,
             gridSize: 1,
@@ -35,16 +37,8 @@
             }, joint.shapes.basic.Rect.prototype.defaults)
         });
 
-        joint.shapes.custom.ElementLabelLink = joint.shapes.basic.Rect.extend({
-            // Note the `<a>` SVG element surrounding the rest of the markup.
-            markup: '<g class="rotatable"><g class="scalable"><rect/></g><a><text/></a></g>',
-            defaults: joint.util.deepSupplement({
-                type: 'custom.ElementLabelLink'
-            }, joint.shapes.basic.Rect.prototype.defaults)
-        });
-
         var rect_1 = new joint.shapes.custom.ElementLink({
-            position: {x: 380, y: 100},
+            position: {x: 0, y: 100},
             size: {width: 160, height: 80},
             attrs: {
                 rect: {fill: '#2D69A6'},
@@ -68,7 +62,7 @@
         var rect_4 = rect_2.clone();
         rect_4.translate(340);
         rect_4.attr({
-            text: {text: '   Produced\nWater Storage'}
+            text: {text: '    Produced\nWater Storage'}
         });
 
         var rect_5 = rect_3.clone();
@@ -82,16 +76,84 @@
         rect_6.attr({
             text: {text: 'Disposal'}
         });
+<<<<<<< HEAD
         
         var link = new joint.dia.Link({
             source: {id: rect_1.id},
             target: {id: rect_2.id},
             mouseover: function(){
                 alert('hello');
+=======
+
+        var link_1_2 = new joint.dia.Link({
+            source: {x: 80, y: 180},
+            target: {x: 240, y: 300},
+            vertices: [{x: 80, y: 300}],
+            attrs: {
+                '.marker-target': {d: 'M 10 0 L 0 5 L 10 10 z'}
+            }
+        });
+
+        var link_2_4 = new joint.dia.Link({
+            source: {x: 400, y: 300},
+            target: {x: 580, y: 300},
+            attrs: {
+                '.marker-target': {d: 'M 10 0 L 0 5 L 10 10 z'}
+            },
+            labels: [
+                {
+                    position: .5,
+                    attrs: {
+                        text: {text: 'V<sub>produce</sub>', fill: 'black'}
+                    }
+                }
+            ]
+        });
+
+        var link_4_5 = new joint.dia.Link({
+            source: {x: 660, y: 340},
+            target: {x: 580, y: 460},
+            vertices: [{x: 660, y: 460}],
+            attrs: {
+                '.marker-target': {d: 'M 10 0 L 0 5 L 10 10 z'}
             }
 
         });
 
-        graph.addCells([rect_1, rect_2, rect_3, rect_4, rect_5, rect_6, link]);
+        var link_4_6 = new joint.dia.Link({
+            source: {x: 740, y: 300},
+            target: {x: 980, y: 300},
+            attrs: {
+                '.marker-target': {d: 'M 10 0 L 0 5 L 10 10 z'}
+>>>>>>> 36380e205ba76f1bfe16b55b739650f458b4f1b4
+            }
+        });
+
+        var link_5_3 = new joint.dia.Link({
+            source: {x: 420, y: 460},
+            target: {x: 160, y: 460},
+            attrs: {
+                '.marker-target': {d: 'M 10 0 L 0 5 L 10 10 z'}
+            }
+        });
+
+        var link_5_2 = new joint.dia.Link({
+            source: {x: 420, y: 460},
+            target: {x: 240, y: 300},
+            vertices: [{x: 380, y: 460}, {x: 380, y: 400}, {x: 80, y: 400}, {x: 80, y: 300}],
+            attrs: {
+                '.marker-target': {d: 'M 10 0 L 0 5 L 10 10 z'}
+            }
+        });
+
+        graph.addCells([rect_1, rect_2, rect_3, rect_4, rect_5, rect_6, link_1_2, link_2_4, link_4_5, link_4_6,
+            link_5_3, link_5_2]);
+
+        $('.label').each(function () {
+            var $this = $(this);
+            var t = $this.text();
+            alert(t);
+            $this.html(t.replaceWith('produce', 'a'));
+        });
     </script>
 {% endblock %}
