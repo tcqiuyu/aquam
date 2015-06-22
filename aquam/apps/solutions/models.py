@@ -1,5 +1,6 @@
 from django.db import models
 
+
 # Create your models here.
 
 class WaterUse(models.Model):
@@ -17,3 +18,5 @@ class WaterUse(models.Model):
     class Meta:
         db_table = "wateruse_demo"
         ordering = ["api"]
+    
+    

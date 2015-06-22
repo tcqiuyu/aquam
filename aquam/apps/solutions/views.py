@@ -1,17 +1,15 @@
-# Std lib imports
-import json
-
 # Core Django imports
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from django.http import JsonResponse
 
 # Third-party lib imports
 import numpy as np
 
 # Apps imports
 from apps.solutions.models import WaterUse
-
+import service as solutions_service
 
 # Create your views here.
 def water_use_analyzer_demo(request):
@@ -75,3 +73,10 @@ def water_use_analyzer_demo(request):
         target_template = "solutions/demo/water-use-analyzer.html"
     
     return render_to_response(target_template, context, context_instance=RequestContext(request))
+
+
+def water_use_json(request):
+    water_use = solutions_service.histogram_water_use()
+    print water_use
+    context = {"water_use": water_use}
+    return JsonResponse(context)
