@@ -53,7 +53,7 @@ var node_1 = new joint.shapes.custom.ElementLink({
     attrs: {
         rect: {fill: '#2D69A6'},
         a: {'xlink:href': 'water-use-analyzer/demo/', 'xlink:show': 'new', cursor: 'pointer'},
-        text: {text: 'Fresh Water\n   Source', fill: 'white', 'font-size': 21}
+        text: {text: 'Fresh Water\n    Source', fill: 'white', 'font-size': 21}
     }
 });
 
@@ -66,13 +66,13 @@ node_2.attr({
 var node_3 = node_1.clone();
 node_3.translate(0, 320);
 node_3.attr({
-    text: {text: ' Alternative\nSurface Use'}
+    text: {text: '  Alternative\nSurface  Use'}
 });
 
 var node_4 = node_2.clone();
 node_4.translate(340);
 node_4.attr({
-    text: {text: '    Produced\nWater Storage'}
+    text: {text: '   Produced\nWater Storage'}
 });
 
 var node_5 = node_3.clone();
