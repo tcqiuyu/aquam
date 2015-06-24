@@ -76,7 +76,6 @@ def water_use_analyzer_demo(request):
 
 
 def water_use_json(request):
-    water_use = solutions_service.histogram_water_use()
-    print water_use
+    water_use = solutions_service.list_water_use()
     context = {"water_use": water_use}
     return JsonResponse(context)

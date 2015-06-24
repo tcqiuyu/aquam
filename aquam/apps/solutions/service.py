@@ -4,21 +4,20 @@ from scipy import optimize
 from models import WaterUse
 
 # json service for Water Use Analyzer
-def histogram_water_use(bin_num=10):
-    values_list = WaterUse.objects.values_list("water_use")
-    water_use = np.empty(len(values_list), dtype=float)
-    for i in range(len(values_list)):
-        water_use[i] = float(values_list[i][0])
-    counts, bins = np.histogram(water_use, bin_num)
-    print bins.shape
+def list_water_use():
+    values = WaterUse.objects.values_list("water_use")
     water_use = []
-    for x, y in zip(bins, counts):
-        point = {}
-        point["x"] = x
-        point["y"] = y
-        water_use.append(point)
-    print water_use
+    for value in values:
+        water_use.append(round(float(value[0]), 4))
     return water_use
+
+
+def list_horizontal_length():
+    values = WaterUse.objects.values_list("horizontal_length")
+    horizontal_length = []
+    for value in values:
+        horizontal_length.append(round(float(value[0]), 4))
+    return horizontal_length
 
 
 def annual_averge_water_use(frac_date, water_use):
