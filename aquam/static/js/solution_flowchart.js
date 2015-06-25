@@ -286,15 +286,15 @@ $(".label tspan").each(function () {
     var t = $this.html();
     //correctly present subscript text
     $this.html(t.replace("&lt;sub&gt;", "<tspan baseline-shift=\"sub\" dy=\"-0.1em\">")
-        .replace("&lt;/sub&gt;", "</tspan>"));
-    //tweek the position of multi-line text, so that they won't overlap each other
-    $this.attr("dy", function (i, origValue) {
-        if (origValue != "0em") {
-            return "2em";
-        } else {
-            return "-1em";
-        }
-    })
+        .replace("&lt;/sub&gt;", "</tspan>"))
+        //tweek the position of multi-line text, so that they won't overlap each other
+        .attr("dy", function (i, origValue) {
+            if (origValue != "0em") {
+                return "2em";
+            } else {
+                return "-1em";
+            }
+        })
 });
 
 $(".label > rect").each(function () {
@@ -303,12 +303,29 @@ $(".label > rect").each(function () {
     //tweek the background of link text
     $this.attr("width", function (i, origValue) {//
         return origValue - offset;
-    });
-    $this.attr("height", 90);
-    $this.attr("x", function (i, origValue) {
-        return parseInt(origValue) + 1 / 2 * offset;
-    });
-    $this.attr("y", function (i, origValue) {
-        return parseInt(origValue) - 1 / 4 * offset;
-    });
+    })
+        .attr("height", 90)
+        .attr("x", function (i, origValue) {
+            return parseInt(origValue) + 1 / 2 * offset;
+        })
+        .attr("y", function (i, origValue) {
+            return parseInt(origValue) - 1 / 4 * offset;
+        })
 });
+
+$("#v-33").data('powertipjq',$([
+    '<p><b>Water Use Analyze</b></p>',
+    '<p><a href="solutions/water-use-analyzer/demo/">Try it</a></p>',
+    '<p>This analyzer is an interactive tool designed to fit the user, in this case,</p>',
+    '<p>an operator or a water management company to anlayze their statistics of water,</p>',
+    '<p>current and historical to establish a baseline and a trend to improve their water</p>',
+    '<p>use scenarios significantly. This tool also provides the user to look at</p>',
+    '<p>Key Performance Indicators (KPIs) such as average horizontal length drilled,</p>',
+    '<p>average water used per well and bbls water used per horizontal foot,</p>',
+    '<p>on an annual comparison basis.</p>'
+    ].join('\n')))
+    .powerTip({
+    placement: 'e',
+    mouseOnToPopup: true
+});
+
