@@ -3,10 +3,16 @@ from scipy import optimize
 
 from models import WaterUse
 
+
 # json service for Water Use Analyzer
+class WaterUseSerializer():
+    a = 1;
+
 def list_water_use():
     values = WaterUse.objects.values_list("water_use")
-    water_use = []
+    water_use = np.empty(len(values))
+    for i in range(len(values)):
+        pass
     for value in values:
         water_use.append(round(float(value[0]), 4))
     return water_use
@@ -18,6 +24,18 @@ def list_horizontal_length():
     for value in values:
         horizontal_length.append(round(float(value[0]), 4))
     return horizontal_length
+
+
+def list_water_use_per_horizontal_foot():
+    values = WaterUse.objects.values_list("water_use", "horizontal_length")
+    water_use_per_horizontal_foot = []
+    for value in values:
+        water_use = value[0]
+        horizontal_length = value[1]
+        if horizontal_length:
+            val = round(water_use / horizontal_length, 4)
+            water_use_per_horizontal_foot.append(val)
+    return water_use_per_horizontal_foot
 
 
 def annual_averge_water_use(frac_date, water_use):

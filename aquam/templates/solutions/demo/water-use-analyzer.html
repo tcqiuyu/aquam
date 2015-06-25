@@ -2,9 +2,9 @@
 {% load staticfiles %}
 
 {% block header %}
-<link rel="stylesheet" type="text/css" href="{% static 'css/chart.css' %}"/>
-<!-- D3 -->
-<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/chart.css' %}"/>
+    <!-- D3 -->
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 {% endblock %}
 
 {% block mainbody %}
@@ -34,13 +34,10 @@
     
     <hr>
     <h3>Analytics</h3>
-    <div class="chart-container" style="with:100%">
-        <div id="chart1" class="chart" style="width:100%; height:500px">
-        </div>
-        <div id="chart2" class="chart" style="width:100%; height:500px">
-        </div>
-        <div id="chart3" class="chart" style="width:100%; height:500px">
-        </div>
+    <div class="chart" style="with:100%">
+        <div id="chart1" style="width:100%; height:500px"></div>
+        <div id="chart2" style="width:100%; height:500px"></div>
+        <div id="chart3" style="width:100%; height:500px"></div>
         <hr/>
     </div>
 {% endblock %}
@@ -49,6 +46,10 @@
 <script type="text/javascript">
     // histogram
 	$(document).ready(function() {
+	    d3.json("{% url 'horizontal-length-json'%}", function(error, data) {
+	        values = data["horizontal_length"];
+	        console.log(values);
+	    });
 		d3.json("{% url 'water-use-json'%}", function(error, data) {
 		    // data
 		    values = data["water_use"];

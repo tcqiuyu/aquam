@@ -31,5 +31,6 @@ urlpatterns = [
     url(r"^contact/$", aquam_views.contact, name="contact"),
     
     url(r"^solutions/water-use-analyzer/demo/$", solutions_views.water_use_analyzer_demo, name="water-use-analyzer-demo"),
-    url(r"^solutions/water-use-analyzer/demo/water-use-json/$", solutions_views.water_use_json, name="water-use-json")
+    url(r"^solutions/water-use-analyzer/demo/water-use-json/$", solutions_views.water_use_json, name="water-use-json"),
+    url(r"^solutions/water-use-analyzer/demo/horizontal-length-json/$", solutions_views.horizontal_length_json, name="horizontal-length-json")
 ]
