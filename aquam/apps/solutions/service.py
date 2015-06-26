@@ -1,41 +1,42 @@
-import numpy as np
+# Third-party lib imports
+from rest_framework import serializers
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 from scipy import optimize
+import numpy as np
 
+# Apps imports
 from models import WaterUse
 
 
 # json service for Water Use Analyzer
-class WaterUseSerializer():
-    a = 1;
+@api_view(["GET"])
+class WaterUseSerializer(serializers.ModelSerializer):
+    water_use_per_horizontal_foot = serializers.SerializerMethodField("get_water_use_per_horizontal_foot")
+    
+    class Meta:
+        model = WaterUse
+        fields = ("water_use", "horizontal_length", "water_use_per_horizontal_foot")
+    
+    def get_water_use_per_horizontal_foot(self, obj):
+        return obj.water_use / obj.horizontal_length
+    
 
-def list_water_use():
-    values = WaterUse.objects.values_list("water_use")
-    water_use = np.empty(len(values))
-    for i in range(len(values)):
+class AnnualWaterUseSerializer():
+    annual_average_water_use = serializers.SerializerMethodField("get_annual_water_use")
+    
+    class Meta:
+        model = WaterUse
+        fields = ("annual_average_water_use")
+    
+    def get_annual_water_use(self, obj):
         pass
-    for value in values:
-        water_use.append(round(float(value[0]), 4))
-    return water_use
-
-
-def list_horizontal_length():
-    values = WaterUse.objects.values_list("horizontal_length")
-    horizontal_length = []
-    for value in values:
-        horizontal_length.append(round(float(value[0]), 4))
-    return horizontal_length
-
-
-def list_water_use_per_horizontal_foot():
-    values = WaterUse.objects.values_list("water_use", "horizontal_length")
-    water_use_per_horizontal_foot = []
-    for value in values:
-        water_use = value[0]
-        horizontal_length = value[1]
-        if horizontal_length:
-            val = round(water_use / horizontal_length, 4)
-            water_use_per_horizontal_foot.append(val)
-    return water_use_per_horizontal_foot
+    
+    def get_annual_average_horizontal_feet(self, obj):
+        pass
+    
+    def get_annual_bbls_ft_metric(self, obj):
+        pass
 
 
 def annual_averge_water_use(frac_date, water_use):

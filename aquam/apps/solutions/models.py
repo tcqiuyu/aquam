@@ -16,7 +16,4 @@ class WaterUse(models.Model):
     water_use = models.DecimalField(max_digits=20, decimal_places=3)
     
     class Meta:
-        db_table = "wateruse_demo"
         ordering = ["api"]
-    
-    
