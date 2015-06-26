@@ -273,19 +273,38 @@ graph.addCells([background_frame_1, background_frame_2, background_frame_3, subt
     node_3, node_4, node_5, node_6, link_5_2, link_1_2, link_2_4, link_4_5, link_4_6, link_5_3, note_1, note_2, note_3,
     note_4, note_5, note_6]);
 
+/*
+ *  Finish drawing flowchart, do tweeking
+ */
+var isOpera = !!(window.opera && window.opera.version);  // Opera 8.0+
+var isFirefox = typeof InstallTrigger !== 'undefined';   // Firefox 1.0+
+var isSafari = Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0;
+// At least Safari 3+: "[object HTMLElementConstructor]"
+var isChrome = !!window.chrome && !isOpera;
+
+alert(isFirefox);
+
+var sub_dy;
+if (isChrome) {
+    sub_dy = "<tspan baseline-shift=\"sub\" dy=\"-0.1em\">"
+}
+else if (isFirefox) {
+    sub_dy = "<tspan baseline-shift=\"sub\" dy=\"0.5em\">"
+}
+
 $("text").each(function () {
     var $this = $(this);
     var t = $this.html();
     //correctly present subscript text
-    $this.html(t.replace("&lt;sub&gt;", "<tspan baseline-shift=\"sub\" dy=\"-0.1em\">")
+    $this.html(t.replace("&lt;sub&gt;", sub_dy)
         .replace("&lt;/sub&gt;", "</tspan>"));
 });
 
 $(".label tspan").each(function () {
     var $this = $(this);
-    var t = $this.html();
+    var t = $(this).html();
     //correctly present subscript text
-    $this.html(t.replace("&lt;sub&gt;", "<tspan baseline-shift=\"sub\" dy=\"-0.1em\">")
+    $this.html(t.replace("&lt;sub&gt;", sub_dy)
         .replace("&lt;/sub&gt;", "</tspan>"))
         //tweek the position of multi-line text, so that they won't overlap each other
         .attr("dy", function (i, origValue) {
@@ -313,7 +332,7 @@ $(".label > rect").each(function () {
         })
 });
 
-$("#v-33").data('powertipjq',$([
+$("#v-33").data('powertipjq', $([
     '<p><b>Water Use Analyze</b></p>',
     '<p><a href="solutions/water-use-analyzer/demo/">Try it</a></p>',
     '<p>This analyzer is an interactive tool designed to fit the user, in this case,</p>',
@@ -323,9 +342,9 @@ $("#v-33").data('powertipjq',$([
     '<p>Key Performance Indicators (KPIs) such as average horizontal length drilled,</p>',
     '<p>average water used per well and bbls water used per horizontal foot,</p>',
     '<p>on an annual comparison basis.</p>'
-    ].join('\n')))
+].join('\n')))
     .powerTip({
-    placement: 'e',
-    mouseOnToPopup: true
-});
+        placement: 'e',
+        mouseOnToPopup: true
+    });
 
