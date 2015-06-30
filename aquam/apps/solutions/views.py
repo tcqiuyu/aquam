@@ -11,12 +11,11 @@ from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 import numpy as np
 
 # Apps imports
-from apps.solutions.models import WaterUse
+from apps.solutions.models import WaterUse, ProducedWater
 from apps.solutions.service import WaterUseAnalyzer
 
-# Create your views here.
-def water_use_analyzer_demo(request):
-    # Pagination
+# Water Use Analyzer VIEWS & JSON APIs
+def water_use_analyzer(request):
     objs = WaterUse.objects.all()
     paginator = Paginator(objs, 10)  # show 10 rows per page
     page = request.GET.get('page')
@@ -26,16 +25,12 @@ def water_use_analyzer_demo(request):
         records = paginator.page(1)
     except EmptyPage:
         records = paginator.page(paginator.num_pages)
-    
     context = {"page_title": "AQUAM | Water Use Analyzer", "records": records,}
-    
     if request.is_ajax():
         target_template = "solutions/partial/water-use-table.html"
     else:
-        target_template = "solutions/demo/water-use-analyzer.html"
-    
+        target_template = "solutions/water-use-analyzer.html"
     return render_to_response(target_template, context, context_instance=RequestContext(request))
-
 
 def get_water_use(request):
     analyzer = WaterUseAnalyzer(WaterUse)
@@ -81,3 +76,21 @@ def get_cubic_fitting(request):
     analyzer = WaterUseAnalyzer(WaterUse)
     result = analyzer.get_linear_fitting()
     return JsonResponse(result)
+
+# Produced Water Modeler Views & JSON APIs
+def produced_water_modeler(request):
+    objs = ProducedWater.objects.all()
+    paginator = Paginator(objs, 10)  # show 10 rows per page
+    page = request.GET.get('page')
+    try:
+        records = paginator.page(page)
+    except PageNotAnInteger:
+        records = paginator.page(1)
+    except EmptyPage:
+        records = paginator.page(paginator.num_pages)
+    context = {"page_title": "AQUAM | Produced Water Analyzer", "records": records,}
+    if request.is_ajax():
+        target_template = "solutions/partial/produced-water-table.html"
+    else:
+        target_template = "solutions/produced-water-modeler.html"
+    return render_to_response(target_template, context, context_instance=RequestContext(request))

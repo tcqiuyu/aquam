@@ -1,31 +1,29 @@
 <table class="table table-striped">
     <thead>
         <tr>
-            <th>API</th>
-            <th>Fracture Date</th>
-            <th>State</th>
-            <th>County</th>
-            <th>Well Name</th>
-            <th>Latitude</th>
-            <th>Longitude</th>
-            <th>Horizontal Length</th>
-            <th>Water Use</th>
+            <th>Days</th>
+            <th>Well 1</th>
+            <th>Well 2</th>
+            <th>Well 3</th>
+            <th>Well 4</th>
+            <th>Well 5</th>
+            <th>Well 6</th>
+            <th>Well 7</th>
         </tr>
     </thead>
     <tbody>
-    {% for record in records %}
+        {% for record in records %}
         <tr>
-            <td>{{ record.api }}</td>
-            <td>{{ record.frac_date }}</td>
-            <td>{{ record.state }}</td>
-            <td>{{ record.county }}</td>
-            <td>{{ record.well_name }}</td>
-            <td>{{ record.latitude }}</td>
-            <td>{{ record.longtitude }}</td>
-            <td>{{ record.horizontal_length }}</td>
-            <td>{{ record.water_use }}</td>
+            <td>{{record.days}}</td>
+            <td>{{record.well_1}}</td>
+            <td>{{record.well_2}}</td>
+            <td>{{record.well_3}}</td>
+            <td>{{record.well_4}}</td>
+            <td>{{record.well_5}}</td>
+            <td>{{record.well_6}}</td>
+            <td>{{record.well_7}}</td>
         </tr>
-    {% endfor %}
+        {% endfor %}
     </tbody>
 </table>
 
@@ -33,7 +31,6 @@
 
 {% block footer %}
     <script type="text/javascript">
-
         $(document).ready(function () {
             // next page
             $("#next").click(function (event) {
