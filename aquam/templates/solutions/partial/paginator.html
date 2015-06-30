@@ -8,12 +8,12 @@
         Page {{ records.number }} of {{ records.paginator.num_pages }}.
     </span>
         {% if records.has_next %}
-        <a id="next" href="?page={{ records.next_page_number }}" onclick="nextpage()">next</a>
+        <a id="next" href="?page={{ records.next_page_number }}">next</a>
         {% endif %}
     </span>
 </div>
 
-{% block footer2 %}
+{% block footer %}
     <script type="text/javascript">
         $(document).ready(function () {
             // next page
