@@ -1,15 +1,18 @@
+# Stdlib imports
+import json
+
 # Core Django imports
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+from django.http import HttpResponse, JsonResponse
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from django.http import JsonResponse
 
 # Third-party lib imports
 import numpy as np
 
 # Apps imports
 from apps.solutions.models import WaterUse
-import service as solutions_service
+from apps.solutions.service import WaterUseAnalyzer
 
 # Create your views here.
 def water_use_analyzer_demo(request):
@@ -24,32 +27,7 @@ def water_use_analyzer_demo(request):
     except EmptyPage:
         records = paginator.page(paginator.num_pages)
     
-    # extract & clean data
-    values = WaterUse.objects.values_list("frac_date", "water_use", "horizontal_length")
-    frac_date = []
-    water_use = np.empty(len(values), dtype=float)
-    horizontal_length = np.empty(len(values), dtype=float)
-    for i in range(len(values)):
-        frac_date.append(values[i][0])
-        water_use[i] = float(values[i][1])
-        horizontal_length[i] = float(values[i][2])
-    water_use_per_foot = np.divide(water_use, horizontal_length)
-    
-    # polyfit & evaluation
-    p = np.polyfit(horizontal_length, water_use, 1)
-    yfit = np.polyval(p, horizontal_length)
-    ss_total = (len(water_use) - 1) * np.var(water_use)
-    ss_resid = np.dot(np.subtract(water_use, yfit), np.subtract(water_use, yfit))
-    r2 = 1 - (ss_resid / ss_total)
-    
-    context = {"page_title": "AQUAM | Water Use Analyzer",
-               "records": records,
-               "frac_date": frac_date,
-               "water_use": water_use,
-               "horizontal_length": horizontal_length,
-               "water_use_per_foot": water_use_per_foot,
-               "r2": r2,
-    }
+    context = {"page_title": "AQUAM | Water Use Analyzer", "records": records,}
     
     if request.is_ajax():
         target_template = "solutions/partial/water-use-table.html"
@@ -59,12 +37,47 @@ def water_use_analyzer_demo(request):
     return render_to_response(target_template, context, context_instance=RequestContext(request))
 
 
-def water_use_json(request):
-    water_use = solutions_service.list_water_use()
-    context = {"water_use": water_use}
-    return JsonResponse(context)
+def get_water_use(request):
+    analyzer = WaterUseAnalyzer(WaterUse)
+    result = analyzer.get_water_use()
+    return JsonResponse(result)
 
-def horizontal_length_json(request):
-    horizontal_length = solutions_service.list_horizontal_length()
-    context = {"horizontal_length": horizontal_length}
-    return JsonResponse(context)
+def get_horizontal_length(request):
+    analyzer = WaterUseAnalyzer(WaterUse)
+    result = analyzer.get_horizontal_length()
+    return JsonResponse(result)
+
+def get_water_use_per_horizontal_foot(request):
+    analyzer = WaterUseAnalyzer(WaterUse)
+    result = analyzer.get_water_use_per_horizontal_foot()
+    return JsonResponse(result)
+
+def get_annual_water_use(request):
+    analyzer = WaterUseAnalyzer(WaterUse)
+    result = analyzer.get_annual_water_use()
+    return HttpResponse(json.dumps(result), content_type="application/json")
+
+def get_annual_horizontal_feet_drilled(request):
+    analyzer = WaterUseAnalyzer(WaterUse)
+    result = analyzer.get_annual_horizontal_feet_drilled()
+    return HttpResponse(json.dumps(result), content_type="application/json")
+
+def get_annual_bbls_ft_metric(request):
+    analyzer = WaterUseAnalyzer(WaterUse)
+    result = analyzer.get_annual_bbls_ft_metric()
+    return HttpResponse(json.dumps(result), content_type="application/json")
+
+def get_linear_fitting(request):
+    analyzer = WaterUseAnalyzer(WaterUse)
+    result = analyzer.get_quadratic_fitting()
+    return JsonResponse(result)
+
+def get_quadratic_fitting(request):
+    analyzer = WaterUseAnalyzer(WaterUse)
+    result = analyzer.get_cubic_fitting()
+    return JsonResponse(result)
+
+def get_cubic_fitting(request):
+    analyzer = WaterUseAnalyzer(WaterUse)
+    result = analyzer.get_linear_fitting()
+    return JsonResponse(result)

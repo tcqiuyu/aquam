@@ -46,13 +46,12 @@
 <script type="text/javascript">
     // histogram
 	$(document).ready(function() {
-	    d3.json("{% url 'horizontal-length-json'%}", function(error, data) {
-	        values = data["horizontal_length"];
-	        console.log(values);
+	    d3.json("{% url 'get-cubic-fitting'%}", function(error, data) {
+	       console.log(data)
 	    });
-		d3.json("{% url 'water-use-json'%}", function(error, data) {
+		d3.json("{% url 'get-water-use'%}", function(error, data) {
 		    // data
-		    values = data["water_use"];
+		    values = data["water_use"]
 		    //chart
 		    var margin = {top:10, right:30, bottom:40, left:50},
 		        width = $("#chart1").width() - margin.left - margin.right,
@@ -61,7 +60,7 @@
 		        .domain(d3.extent(values, function(d){ return d; }))
 		        .range([0, width]);
 		    var data = d3.layout.histogram()
-                .bins(xRange.ticks(15))(values);
+                .bins(10)(values);//xRange.ticks(15)
 		    var yRange = d3.scale.linear()
 		        .domain([0, d3.max(data, function(d){ return d.y; })])
 		        .range([height, 0]);
@@ -83,7 +82,7 @@
                 .append("g")
                 .attr("class", "bar")
                 .attr("transform", function(d){ return "translate(" + xRange(d.x) + "," + yRange(d.y) + ")";});
-            bar.append("rect")
+		    bar.append("rect")
                 .attr("x", 1)
                 .attr("width", xRange(data[0].dx) - 1)
                 .attr("height", function(d){ return height - yRange(d.y); })

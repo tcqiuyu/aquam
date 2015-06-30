@@ -188,7 +188,6 @@ LOCAL_APPS = (
 
 # Other open source apps
 OTHER_APPS = (
-    "rest_framework",
     #'bootstrap_toolkit',
 )
 
