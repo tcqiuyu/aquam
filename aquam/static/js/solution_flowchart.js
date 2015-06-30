@@ -282,8 +282,6 @@ var isSafari = Object.prototype.toString.call(window.HTMLElement).indexOf('Const
 // At least Safari 3+: "[object HTMLElementConstructor]"
 var isChrome = !!window.chrome && !isOpera;
 
-alert(isFirefox);
-
 var sub_dy;
 if (isChrome) {
     sub_dy = "<tspan baseline-shift=\"sub\" dy=\"-0.1em\">"
