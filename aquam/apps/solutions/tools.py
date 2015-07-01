@@ -9,7 +9,7 @@ import numpy as np
 
 class WaterUseAnalyzer():
     """
-    Used to providing computed result based on Water Use Model
+    Used for providing the results computed on the base of Water Use Model
     """
     def __init__(self, model):
         self.model = model
@@ -170,7 +170,7 @@ class WaterUseAnalyzer():
 
 class ProducedWaterModeler():
     """
-    Used to providing ARP modeling result based on Produecd Water Model
+    Used for providing the ARP modeling results computed on the base of Produecd Water Model
     """
     def __init__(self, model):
         self.model = model
@@ -254,3 +254,9 @@ class ProducedWaterModeler():
         total_volume = np.sum(day_volume)
         result = {"total_volume": round(total_volume, 3)}
         return result
+
+
+class WaterQualityAnalyzer():
+    """
+    Used for providing the water quality results computed based on
+    """
