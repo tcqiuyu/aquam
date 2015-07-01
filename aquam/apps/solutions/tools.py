@@ -118,15 +118,11 @@ class WaterUseAnalyzer():
         ss_total = (len(water_use) - 1) * np.var(water_use)
         ss_resid = np.dot(np.subtract(water_use, yfit), np.subtract(water_use, yfit))
         r2 = 1 - (ss_resid / ss_total)
-        real = []
-        for x, y in zip(horizontal_length, water_use):
-            obj = {"horizontal_length": x, "water_use": y}
-            real.append(obj)
-        fitting = []
-        for x, y in zip(horizontal_length, yfit):
-            obj = {"horizontal_length": x, "fitted_water_use": y}
-            fitting.append(obj)
-        result = {"real": real, "fitting": fitting, "r2": round(r2, 4)}
+        data = []
+        for x, y, z in zip(horizontal_length, water_use, yfit):
+            obj = {"horizontal_length": x, "water_use": y, "fitted_water_use": z}
+            data.append(obj)
+        result = {"data": data, "r2": round(r2, 4)}
         return result
     
     def get_quadratic_fitting(self):
@@ -141,15 +137,11 @@ class WaterUseAnalyzer():
         ss_total = (len(water_use) - 1) * np.var(water_use)
         ss_resid = np.dot(np.subtract(water_use, yfit), np.subtract(water_use, yfit))
         r2 = 1 - (ss_resid / ss_total)
-        real = []
-        for x, y in zip(horizontal_length, water_use):
-            obj = {"horizontal_length": x, "water_use": y}
-            real.append(obj)
-        fitting = []
-        for x, y in zip(horizontal_length, yfit):
-            obj = {"horizontal_length": x, "fitted_water_use": y}
-            fitting.append(obj)
-        result = {"real": real, "fitting": fitting, "r2": round(r2, 4)}
+        data = []
+        for x, y, z in zip(horizontal_length, water_use, yfit):
+            obj = {"horizontal_length": x, "water_use": y, "fitted_water_use": z}
+            data.append(obj)
+        result = {"data": data, "r2": round(r2, 4)}
         return result
     
     def get_cubic_fitting(self):
@@ -164,57 +156,49 @@ class WaterUseAnalyzer():
         ss_total = (len(water_use) - 1) * np.var(water_use)
         ss_resid = np.dot(np.subtract(water_use, yfit), np.subtract(water_use, yfit))
         r2 = 1 - (ss_resid / ss_total)
-        real = []
-        for x, y in zip(horizontal_length, water_use):
-            obj = {"horizontal_length": x, "water_use": y}
-            real.append(obj)
-        fitting = []
-        for x, y in zip(horizontal_length, yfit):
-            obj = {"horizontal_length": x, "fitted_water_use": y}
-            fitting.append(obj)
-        result = {"real": real, "fitting": fitting, "r2": round(r2, 4)}
+        data = []
+        for x, y, z in zip(horizontal_length, water_use, yfit):
+            obj = {"horizontal_length": x, "water_use": y, "fitted_water_use": z}
+            data.append(obj)
+        result = {"data": data, "r2": round(r2, 4)}
         return result
 
 
-# class ProducedWaterModeler():
-#     """
-#     Used to providing ARP modeling result based on Produecd Water Model
-#     """
-#     def __init__(self, model):
-#         self.model = model
-#     
-#     def get_arp_model(self):
-#         record_date = []
-#         raw_produced_water = np.zeros([wells_number, len(values)])
-#         for i in range(len(values)):
-#             record_date.append(values[i][1])
-#             for j in range(wells_number):
-#                 if values[i][j + 2] is not None:
-#                     raw_produced_water[j][i] = float(values[i][j + 2])
-#         produced_water = np.zeros([wells_number, len(values)])
-#         for j in range(wells_number):
-#             loc = 0
-#             for i in range(len(values)):
-#                 if raw_produced_water[j][i] != 0:
-#                     loc = i;
-#                     break;
-#             for i in range(len(values) - loc):
-#                 produced_water[j][i] = raw_produced_water[j][i + loc]
-#         
-#         # build the Arp model
-#         avg_produced_water = np.zeros(len(values))
-#         for i in range(len(values)):
-#             produced_water_transpose = np.transpose(produced_water)
-#             temp_list = [x for x in produced_water_transpose[i] if x != 0]
-#             if temp_list:
-#                 avg_produced_water[i] = np.mean(temp_list)
-#             else:
-#                 avg_produced_water[i] = 0
-#         Q0 = avg_produced_water[0]
-#         def arp(x, D, b):
-#             return Q0 / (1 + D * x) ** (1 / b)
-#         days = np.array([x for x in range(1, len(values) + 1)])
-#         params = optimize.curve_fit(arp, days, avg_produced_water)
-#         D, b = params[0]
-#         yfit = arp(days, D, b)
-#         return days, avg_produced_water, D, b, yfit
+class ProducedWaterModeler():
+    """
+    Used to providing ARP modeling result based on Produecd Water Model
+    """
+    def __init__(self, model):
+        self.model = model
+     
+    def get_arp_model(self):
+        # arp model
+        def arp(x, D, b):
+            return Q0 / (1 + D * x) ** (1 / b)
+        
+        # fitting
+        values_list = self.model.objects.values_list("days", "well_1", "well_2", "well_3", "well_4", "well_5", "well_6", "well_7")
+        days = []
+        produced_water = np.zeros(len(values_list))
+        for i in range(len(values_list)):
+            days.append(values_list[i][0])
+            values = [float(x) for x in values_list[i][1:] if x > 0]
+            if values:
+                produced_water[i] = np.mean(values)
+            else:
+                produced_water[i] = produced_water[i-1]
+        Q0 = produced_water[0]
+        params = optimize.curve_fit(arp, days, produced_water)
+        D, b = params[0]
+        yfit = [arp(x, D, b) for x in days ]
+        
+        # results
+        data = []
+        for x, y, z in zip(days, produced_water, yfit):
+            obj = {"day": x, "produced_water": y, "fitted_produced_water": z}
+            data.append(obj)
+        result = {"data": data, "Q0": Q0, "D": D, "b": b}
+        return result
+    
+    def get_arp_prediction(self, start_date, end_date, wells_num_per_month):
+        pass

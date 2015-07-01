@@ -39,7 +39,8 @@ urlpatterns = [
     url(r"^solutions/water-use-analyzer/get-annual-bbls-ft-metric/$", solutions_views.get_annual_bbls_ft_metric, name="get-annual-bbls-ft-metric"),
     url(r"^solutions/water-use-analyzer/get_linear_fitting", solutions_views.get_linear_fitting, name="get-linear-fitting"),
     url(r"^solutions/water-use-analyzer/get_quadratic_fitting", solutions_views.get_quadratic_fitting, name="get-quadratic-fitting"),
-    url(r"^solutions/water-use-analyzer/get_cubic_fitting", solutions_views.get_cubic_fitting, name="get-cubic-fitting"),
+    url(r"^solutions/water-use-analyzer/get-cubic-fitting", solutions_views.get_cubic_fitting, name="get-cubic-fitting"),
     
     url(r"^solutions/produced-water-modeler/$", solutions_views.produced_water_modeler, name="produced-water-modeler"),
+    url(r"^solutions/produced-water-modeler/get-arp-model$", solutions_views.get_arp_model, name="get-arp-model"),
 ]

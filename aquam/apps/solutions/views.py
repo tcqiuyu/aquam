@@ -12,7 +12,7 @@ import numpy as np
 
 # Apps imports
 from apps.solutions.models import WaterUse, ProducedWater
-from apps.solutions.service import WaterUseAnalyzer
+from apps.solutions.tools import WaterUseAnalyzer, ProducedWaterModeler
 
 # Water Use Analyzer VIEWS & JSON APIs
 def water_use_analyzer(request):
@@ -94,3 +94,8 @@ def produced_water_modeler(request):
     else:
         target_template = "solutions/produced-water-modeler.html"
     return render_to_response(target_template, context, context_instance=RequestContext(request))
+
+def get_arp_model(request):
+    modeler = ProducedWaterModeler(ProducedWater)
+    result = modeler.get_arp_model()
+    return JsonResponse(result)
