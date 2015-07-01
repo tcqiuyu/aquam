@@ -44,9 +44,13 @@
 
 {% block footer %}
 <script type="text/javascript">
-    // histogram
     $(document).ready(function() {
         d3.json("{% url 'get-arp-model'%}", function(error, data) {
+           console.log(data)
+        });
+    });
+    $(document).ready(function() {
+        d3.json("{% url 'get-arp-prediction'%}", function(error, data) {
            console.log(data)
         });
     });

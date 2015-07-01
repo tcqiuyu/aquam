@@ -42,5 +42,6 @@ urlpatterns = [
     url(r"^solutions/water-use-analyzer/get-cubic-fitting", solutions_views.get_cubic_fitting, name="get-cubic-fitting"),
     
     url(r"^solutions/produced-water-modeler/$", solutions_views.produced_water_modeler, name="produced-water-modeler"),
-    url(r"^solutions/produced-water-modeler/get-arp-model$", solutions_views.get_arp_model, name="get-arp-model"),
+    url(r"^solutions/produced-water-modeler/get-arp-model/$", solutions_views.get_arp_model, name="get-arp-model"),
+    url(r"^solutions/produced-water-modeler/get-arp-prediction/$", solutions_views.get_arp_prediction, name="get-arp-prediction"),
 ]

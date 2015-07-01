@@ -1,5 +1,6 @@
 # Stdlib imports
 import json
+import datetime
 
 # Core Django imports
 from django.shortcuts import render_to_response
@@ -98,4 +99,14 @@ def produced_water_modeler(request):
 def get_arp_model(request):
     modeler = ProducedWaterModeler(ProducedWater)
     result = modeler.get_arp_model()
+    return JsonResponse(result)
+
+def get_arp_prediction(request):
+    modeler = ProducedWaterModeler(ProducedWater)
+    # get the parameters from request later
+    start_date = datetime.date(2014,3, 1)
+    end_date = datetime.date(2014, 6, 1)
+    wells_num_per_month = 5
+    arp_model = {"Q0": 549.7142, "b": 0.9380, "D": 0.1299}
+    result = modeler.get_arp_prediction(arp_model, start_date, end_date, wells_num_per_month)
     return JsonResponse(result)
