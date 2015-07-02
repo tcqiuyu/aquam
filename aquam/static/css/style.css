@@ -624,9 +624,70 @@ iframe {
     cursor: default;
 }
 
-#chart-container{
+#chart-container {
     text-align: center;
 }
+
 #flowchart {
     margin: 0 auto;
+}
+
+/*Style in solutions pages*/
+label.solution-radio {
+    background-color: #dcdfd4;
+    display: inline-block;
+    font-size: 15px;
+    font-weight: bold;
+    padding: 10px 20px 10px 30px;
+    /*margin-left: 8%;*/
+    /*margin-right: 8%;*/
+    margin-bottom: 10px;
+}
+
+.chart-heading {
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.radio-group {
+    text-align: center;
+    overflow: auto;
+}
+
+.chart-footer {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.chart-footer .label-primary {
+    display: inline-block;
+    margin-right: 30%;
+}
+
+.chart-footer .info{
+    color: #CE5B56;
+}
+
+.additional-info {
+    background-color: #dcdfd4;
+    display: inline-block;
+    text-align: left;
+    font-weight: bolder;
+    padding: 5px 10px 5px 10px;
+
+}
+
+.label-form {
+    font-size: 100%;
+}
+
+label.solution-radio.checked {
+    background-color: #266c8e;
+    color: #FFFFFF;
+}
+
+.cal-button {
+    background-color: #266c8e;
+    color: #FFFFFF;
+    margin-top: 5px;
 }

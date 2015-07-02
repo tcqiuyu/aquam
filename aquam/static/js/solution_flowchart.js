@@ -52,7 +52,7 @@ var node_1 = new joint.shapes.custom.ElementLink({
     size: {width: 160, height: 80},
     attrs: {
         rect: {fill: '#2D69A6'},
-        a: {'xlink:href': 'water-use-analyzer/demo/', 'xlink:show': 'new', cursor: 'pointer'},
+        a: {'xlink:href': 'water-use-analyzer/', 'xlink:show': 'new', cursor: 'pointer'},
         text: {text: 'Fresh Water\n    Source', fill: 'white', 'font-size': 21}
     }
 });
