@@ -274,19 +274,19 @@
 
         // histogram
         $("#inlineRadio1").click(function () {
-            d3.json("{% url 'get-water-use'%}", function (error, data) {
-                console.log(data);
+            d3.json("{% url 'get-horizontal-length'%}", function (error, data) {
                 var margin = {top: 10, right: 30, bottom: 40, left: 50},
                         width = $("#chart1").width() - margin.left - margin.right,
                         height = $("#chart1").height() - margin.top - margin.bottom;
                 // data
-                values = data["water_use"];
+                values = data["horizontal_length"];
                 //chart
                 var xRange = d3.scale.linear()
                         .domain(d3.extent(values, function (d) { return d; }))
                         .range([0, width]);
                 var data = d3.layout.histogram()
                         .bins(xRange.ticks(15))(values);
+                console.log(data)
                 var yRange = d3.scale.linear()
                         .domain([0, d3.max(data, function (d) { return d.y; })])
                         .range([height, 0]);
@@ -303,7 +303,7 @@
                         .call(xAxis);
                 svg.selectAll(".y.axis").transition()
                         .call(yAxis);
-
+                
                 // set up the bars and text
                 var bar = chart.selectAll(".bar")
                         .data(data)
@@ -315,7 +315,7 @@
                         .attr("x", 1)
                         .attr("y", height)
                         .attr("fill", "steelblue")
-                        .attr("width", xRange(data[0].dx) - 1)
+                        .attr("width", xRange(data[1].x)-xRange(data[0].x) - 1)
                         .attr("height", 0);
                 // transition effect
                 bar.selectAll("rect")
@@ -328,7 +328,7 @@
                 bar.append("text")
                         .attr("dy", "0.75em")
                         .attr("y", function (d) {return yRange(d.y) + 2;})
-                        .attr("x", xRange(data[0].dx / 2))
+                        .attr("x", xRange(data[1].x)/2-xRange(data[0].x)/2)
                         .attr("text-anchor", "middle")
                         .text(function (d) { return d.y; });
             });

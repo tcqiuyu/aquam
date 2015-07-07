@@ -117,5 +117,5 @@ def water_quality_analyzer(request):
     context = {"page_title": "AQUAM | Water Quality Analyzer"}
     analyzer = WaterQualityAnalyzer(WaterQuality)
     location = "Greeley Crescent"
-    analyzer.set_fitted_constituent_values(location)
+    analyzer.get_arp_model_values(location)
     return render_to_response("solutions/water-quality-analyzer.html", context, context_instance=RequestContext(request))
