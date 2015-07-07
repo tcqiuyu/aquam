@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block header %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/chart.css' %}"/>
+    <!-- D3 -->
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+{% endblock %}
+
+{% block mainbody %}
+<div class="container">
+    <div class="jumbotron">
+        <h2>Water Quality Analyzer</h2>
+        <p>Water quality is a paramount part of estimating the pertinent treatment required to reuse 
+            the produced water to a beneficial reuse condition. This modeler will estimate the quality 
+            of the water being produced, simultaneously addressing the temporal aspects of the changing 
+            water quality. In laymen terms, this tool helps estimate the incoming water quality of produced 
+            water with respect to time, in order to plan effective treatment. It models the water quality 
+            based on historical averages of water quality for any specific dataset.
+        </p>
+    </div>
+    
+    <h3>Constituents</h3>
+    
+    <div id="table-container">
+        
+    </div>
+    
+    <hr>
+    
+    <div>
+        {{ data }}
+    </div>
+    
+    <hr>
+    <h3>Water Quality</h3>
+    <div class="chart" style="with:100%">
+        <div id="chart1" style="width:100%; height:500px"></div>
+        <hr/>
+    </div>
+{% endblock %}
+
+{% block footer %}
+<script type="text/javascript">
+    $(document).ready(function() {
+        
+    });
+</script>
+{% endblock %}

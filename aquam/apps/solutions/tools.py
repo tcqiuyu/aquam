@@ -1,6 +1,7 @@
 # Stdlib imports
 import datetime
 import calendar
+import math
 
 # Third-party lib imports
 from scipy import optimize
@@ -258,5 +259,125 @@ class ProducedWaterModeler():
 
 class WaterQualityAnalyzer():
     """
-    Used for providing the water quality results computed based on
+    Used for providing the water quality results computed based on Water Quality Model
     """
+    def __init__(self, model):
+        self.model = model
+    
+    def get_constituents(self):
+        constituents = ["TDS", "Sodium", "Chloride", "Calcium", "Iron"]
+        return constituents
+    
+    def get_locations(self):
+        locations = ['Undifined', 'Core', 'Mustang', 'Greeley Crescent', 'East Pony', 'West Pony', 'Wells Ranch', 'Commins']
+        return locations
+    
+    def get_fit_equation_coefficients(self):
+        coefficients = {"Undifined": {"TDS": "", "Sodium": "", "Chloride": "", "Calcium": "", "Iron": ""}, 
+            "Core": {"TDS": (2982.1, 4312.1), "Sodium": (927.91, 1804.4), "Chloride": (1971.8, 1177.2), "Calcium": (61.173, -22.745), "Iron": (0, 53.46)}, 
+            "Mustang": {"TDS": (2282.5, 10691), "Sodium": (1601.8, -262.57), "Chloride": (2293, 10729), "Calcium": (52.016, 0.5952), "Iron": (0, 29.75)}, 
+            "Greeley Crescent": {"TDS": (2322.1, 6992.7), "Sodium": (787.65, 2556.2), "Chloride": (1512.6, 3583.6), "Calcium": (68.964, -20.551), "Iron": (0, 66.40)}, 
+            "East Pony": {"TDS": (4636.6, 1614.5), "Sodium": (2062.2, -928.59), "Chloride": (3000, -361.24), "Calcium": (30.791, -2.6108), "Iron": (0, 32.55)}, 
+            "West Pony": {"TDS": (6129.5, 1551.8), "Sodium": (2344.5, 105.16), "Chloride": (4007.2, -961.57), "Calcium": (56.77, -9.5692), "Iron": (0, 76.68)}, 
+            "Wells Ranch": {"TDS": (4028.5, 4924.5), "Sodium": (1292.2, 2649), "Chloride": (2084.4, 3499.4), "Calcium": (51.705, 63.865), "Iron": (0, 106.11)}, 
+            "Commins": {"TDS": (3244, 16778), "Sodium": (1161.8, 6270.1), "Chloride": (2033.8, 9192), "Calcium": (22.732, 340.34), "Iron": (0, 71.45)}
+        }
+        return coefficients
+    
+    def get_arp_model_parameters(self):
+        parameters = {"Undifined": {"Fracturing Flowback": {"Q0":0.0, "D":0.0, "b":0.0}, "Transition": {"Q0":0.0, "D":0.0, "b":0.0}, "Produced Water": {"Q0":0.0, "D":0.0, "b":0.0}},
+            "Core": {"Fracturing Flowback": {"Q0":1043.04, "D":0.721, "b":0.0}, "Transition": {"Q0":90, "D":0.0529, "b":1.3}, "Produced Water": {"Q0":19.4084, "D":0.00715, "b":1.7}},
+            "Mustang": {"Fracturing Flowback": {"Q0":1157.61, "D":0.725, "b":0.0}, "Transition": {"Q0":98.49, "D":0.0693, "b":1.533742331}, "Produced Water": {"Q0":22.99, "D":0.00119, "b":1.46627566}},
+            "Greeley Crescent": {"Fracturing Flowback": {"Q0":1406.48, "D":0.863, "b":0.0}, "Transition": {"Q0":74.65, "D":0.011, "b":0.480076812}, "Produced Water": {"Q0":12.93, "D":0.0039, "b":1.6}},
+            "East Pony": {"Fracturing Flowback": {"Q0":1590, "D":0.2492, "b":0.947867299}, "Transition": {"Q0":165.92, "D":0.057, "b":1.346982759}, "Produced Water": {"Q0":33.62, "D":0.00837, "b":1.200480192}},
+            "West Pony": {"Fracturing Flowback": {"Q0":0.0, "D":0.0, "b":0.0}, "Transition": {"Q0":0.0, "D":0.0, "b":0.0}, "Produced Water": {"Q0":0.0, "D":0.0, "b":0.0}},
+            "Wells Ranch": {"Fracturing Flowback": {"Q0":1516, "D":0.0614, "b":0.478011472}, "Transition": {"Q0":176.33, "D":0.0347, "b":1.006}, "Produced Water": {"Q0":29.39, "D":0.0034, "b":0.899280576}},
+            "Commins": {"Fracturing Flowback": {"Q0":0.0, "D":0.0, "b":0.0}, "Transition": {"Q0":0.0, "D":0.0, "b":0.0}, "Produced Water": {"Q0":0.0, "D":0.0, "b":0.0}}
+        }
+        return parameters
+    
+    def set_fitted_constituent_values(self, location):
+        
+        def fit_equation(x, alpha, beta):
+            return alpha * math.log(x) + beta
+        
+        values_list = self.model.objects.values_list("date")
+        start_date = values_list[0][0]
+        coefficients = self.get_fit_equation_coefficients()
+        constituents = self.get_constituents()
+        objs = self.model.objects.all()
+        for obj in objs:
+            day = (obj.date - start_date).days + 1
+            for constituent in constituents:
+                coeff = coefficients[location][constituent]
+                alpha = coeff[0]
+                beta = coeff[1]
+                if constituent == "TDS":
+                    val = fit_equation(day, alpha, beta)
+                    if val < 0:
+                        obj.tds = abs(val)
+                    else:
+                        obj.tds = val
+                elif constituent == "Sodium":
+                    val = fit_equation(day, alpha, beta)
+                    if val < 0:
+                        obj.sodium = abs(val)
+                    else:
+                        obj.sodium = val
+                elif constituent == "Chloride":
+                    val = fit_equation(day, alpha, beta)
+                    if val < 0:
+                        obj.chloride = abs(val)
+                    else:
+                        obj.chloride = val
+                elif constituent == "Calcium":
+                    val = fit_equation(day, alpha, beta)
+                    if val < 0:
+                        obj.calcium = abs(val)
+                    else:
+                        obj.calcium = val
+                elif constituent == "Iron":
+                    obj.iron = fit_equation(day, alpha, beta)
+            obj.save()
+    
+    def get_arp_model_values(self, location):
+        
+        def arp_model(x, Q0, D, b):
+            if b > 0.0:
+                return Q0 / ((1 + D * x)**(1/b))
+            elif b == 0.0:
+                k = D
+                return Q0 * (x**k)
+            else:
+                return 0.0
+        
+        values_list = self.model.objects.values_list("date")
+        start_date = values_list[0][0]
+        end_date = values_list[len(values_list)-1][0]
+        ndays = (end_date - start_date).days + 1
+        param = self.get_arp_model_parameters()[location]
+        constituents = self.get_constituents()
+        result = {}
+        for constituent in constituents:
+            values = []
+            for day in range(1, ndays+1):
+                if 0 < day <= 30:
+                    Q0 = param["Fracturing Flowback"]["Q0"]
+                    D = param["Fracturing Flowback"]["D"]
+                    b = param["Fracturing Flowback"]["b"]
+                    values.append(arp_model(day, Q0, D, b))
+                elif 30 < day <= 150:
+                    Q0 = param["Transition"]["Q0"]
+                    D = param["Transition"]["D"]
+                    b = param["Transition"]["b"]
+                    values.append(arp_model(day-30, Q0, D, b))
+                elif day > 150:
+                    Q0 = param["Produced Water"]["Q0"]
+                    D = param["Produced Water"]["D"]
+                    b = param["Produced Water"]["b"]
+                    values.append(arp_model(day-150, Q0, D, b))
+                else:
+                    return 0.0
+            result[constituent] = values
+        return result
+        

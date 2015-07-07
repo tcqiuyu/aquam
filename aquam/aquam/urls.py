@@ -30,6 +30,7 @@ urlpatterns = [
     url(r"^geoanalytics/$", aquam_views.geoanalytics, name="geoanalytics"),
     url(r"^contact/$", aquam_views.contact, name="contact"),
     
+    # Water Use Analyzer
     url(r"^solutions/water-use-analyzer/$", solutions_views.water_use_analyzer, name="water-use-analyzer"),
     url(r"^solutions/water-use-analyzer/get-water-use/$", solutions_views.get_water_use, name="get-water-use"),
     url(r"^solutions/water-use-analyzer/get-horizontal-length/$", solutions_views.get_horizontal_length, name="get-horizontal-length"),
@@ -41,7 +42,11 @@ urlpatterns = [
     url(r"^solutions/water-use-analyzer/get_quadratic_fitting", solutions_views.get_quadratic_fitting, name="get-quadratic-fitting"),
     url(r"^solutions/water-use-analyzer/get-cubic-fitting", solutions_views.get_cubic_fitting, name="get-cubic-fitting"),
     
+    # Produced Water Modeler
     url(r"^solutions/produced-water-modeler/$", solutions_views.produced_water_modeler, name="produced-water-modeler"),
     url(r"^solutions/produced-water-modeler/get-arp-model/$", solutions_views.get_arp_model, name="get-arp-model"),
     url(r"^solutions/produced-water-modeler/get-arp-prediction/$", solutions_views.get_arp_prediction, name="get-arp-prediction"),
+    
+    # Water Quality Analyzer
+    url(r"^solutions/water-quality-analyzer/$", solutions_views.water_quality_analyzer, name="produced-water-modeler"),
 ]
