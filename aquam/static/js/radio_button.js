@@ -11,9 +11,9 @@ $(document).ready(function () {
 
 	//Show additional info when relavent radio button checked
 	$('input[type=radio]').click(function () {
-		$(this).closest('.panel-body').find('.additional-info').addClass('hide');
+		$(this).closest('.chart-panel').find('.additional-info').addClass('hide');
 		if($(this).closest('.additional-info-button').length>0) {
-			$(this).closest('.panel-body').find('.additional-info').removeClass('hide');
+			$(this).closest('.chart-panel').find('.additional-info').removeClass('hide');
 		}
 	})
 });

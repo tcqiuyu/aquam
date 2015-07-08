@@ -34,7 +34,7 @@
         </div>
 
         <div class="chart-container" style="with:100%">
-            <div class="panel panel-primary chart-panel">
+            <div class="panel panel-primary chart-panel" id="water-use-analytics">
                 <div class="panel-heading chart-heading">
                     Analytics
                 </div>
@@ -42,61 +42,71 @@
                     <form class="radio-group">
                         <div class="col-md-3">
                             <label class="radio-inline solution-radio additional-info-button">
-                                <input type="radio" name="inlineRadioOptions" id="inlineRadio1"
+                                <input type="radio" name="inlineRadioOptions" id="water-use-analytics-radio-1"
                                        value="Water used per well">
                                 Water used per well
                             </label>
                         </div>
                         <div class="col-md-5">
                             <label class="radio-inline solution-radio">
-                                <input type="radio" name="inlineRadioOptions" id="inlineRadio2"
+                                <input type="radio" name="inlineRadioOptions" id="water-use-analytics-radio-2"
                                        value="Horizontal Length per Well">
                                 Horizontal Length per Well
                             </label>
                         </div>
                         <div class="col-md-4">
                             <label class="radio-inline solution-radio">
-                                <input type="radio" name="inlineRadioOptions" id="inlineRadio3"
+                                <input type="radio" name="inlineRadioOptions" id="water-use-analytics-radio-3"
                                        value="Water Used per horizontal Foot">
                                 Water Used per horizontal Foot
                             </label>
                         </div>
                     </form>
 
-                    <form class="form-inline additional-info hide">
-                            <span class="label label-primary label-form">
-                                Water Used per Well Mean (bbls): {{ Mean }}
-                            </span>
-                        &nbsp;&nbsp;X&nbsp;
-                        <input type="text" id="Well_number" name="Well_number"
-                               placeholder="Well Number"
-                               class="form-control">
-                        <button type="button" class="btn cal-button btn-md">
-                            <span class="glyphicon glyphicon-arrow-right" aria-hidden="false"></span>
-                        </button>
-                    </form>
-
 
                     <div id="chart1" class="chart" style="width:100%; height:500px">
                     </div>
+
 
                 </div>
                 <div class="panel-footer chart-footer">
                     Statistics & Estimation:
                     <div>
-                        <div class="label label-primary ">
-                            Mean (bbls): {{ Mean }}
+                        <div class="col-md-1 label label-primary ">
+                            Mean (bbls):
                         </div>
-                        <div class="label label-primary">
-                            Standard Deviation: {{ Std }}
+                        <div class="col-md-1 output output-mean">
+                        </div>
+                        <div class="col-md-3"></div>
+                        <div class="col-md-2 label label-primary">
+                            Standard Deviation:
+                        </div>
+                        <div class="col-md-4 output output-std">
                         </div>
                     </div>
+                    <br>
 
+                    <form class="form-inline additional-info hide">
+                            <span class="label label-primary label-form">
+                                Water Used per Well Mean (bbls):
+                            </span>
+                        <span class="output output-mean">
+                        </span>
+                        &nbsp;X&nbsp;
+                        <input type="text" id="Well_number" name="Well_number"
+                               placeholder="Well Number"
+                               class="form-control">
+                        <button type="button" class="btn cal-button btn-sm">
+                            <span class="glyphicon glyphicon-arrow-right" aria-hidden="false"></span>
+                        </button>
+                        <span class="output output-result">
+                        </span>
+                    </form>
                 </div>
 
             </div>
 
-            <div class="panel panel-primary chart-panel">
+            <div class="panel panel-primary chart-panel" id="water-use-kpis">
                 <div class="panel-heading chart-heading">
                     KPIs
                 </div>
@@ -132,7 +142,7 @@
 
             </div>
 
-            <div class="panel panel-primary chart-panel">
+            <div class="panel panel-primary chart-panel" id="water-use-relationships">
                 <div class="panel-heading chart-heading">
                     Relationships
                 </div>
@@ -272,66 +282,135 @@
 
         });
 
-        // histogram
-        $("#inlineRadio1").click(function () {
+        function draw_histogram(data, data_name) {
+            var margin = {top: 10, right: 30, bottom: 40, left: 50},
+                    width = $("#chart1").width() - margin.left - margin.right,
+                    height = $("#chart1").height() - margin.top - margin.bottom;
+            // data
+            values = data[data_name];
+            //chart
+            var xRange = d3.scale.linear()
+                    .domain(d3.extent(values, function (d) { return d; }))
+                    .range([0, width]);
+            var data = d3.layout.histogram()
+                    .bins(xRange.ticks(15))(values);
+            var yRange = d3.scale.linear()
+                    .domain([0, d3.max(data, function (d) { return d.y; })])
+                    .range([height, 0]);
+            var xAxis = d3.svg.axis()
+                    .scale(xRange)
+                    .orient("bottom");
+            var yAxis = d3.svg.axis()
+                    .scale(yRange)
+                    .orient("left");
+
+            var svg = d3.select("#chart1").select("svg");
+            var chart = svg.select("g");
+            svg.selectAll(".x.axis").transition()
+                    .call(xAxis);
+            svg.selectAll(".y.axis").transition()
+                    .call(yAxis);
+
+            chart.selectAll(".bar")
+                    .remove();
+            // set up the bars and text
+            var bar = chart.selectAll(".bar")
+                    .data(data)
+                    .enter()
+                    .append("g")
+                    .attr("class", "bar")
+                    .attr("transform", function (d) { return "translate(" + xRange(d.x) + "," + 0 + ")";});
+            bar.append("rect")
+                    .attr("x", 1)
+                    .attr("y", height)
+                    .attr("fill", "steelblue")
+                    .attr("width", xRange(data[1].x) - xRange(data[0].x) - 1)
+                    .attr("height", 0);
+            // transition effect
+            bar.selectAll("rect")
+                    .transition()
+                    .duration(500)
+                    .attr("y", function (d) {return yRange(d.y);})
+                    .attr("height", function (d) { return height - yRange(d.y); });
+
+            bar.selectAll("rect")
+                    .on("mouseover", function () { d3.select(this).attr("fill", "green"); })
+                    .on("mouseout", function () { d3.select(this).attr("fill", "steelblue"); });
+            bar.append("text")
+                    .attr("dy", "0.75em")
+                    .attr("y", height - 10)
+                    .attr("x", xRange(data[1].x) / 2 - xRange(data[0].x) / 2 - 1)
+                    .attr("text-anchor", "middle")
+                    .text(function (d) { return d.y; });
+            bar.selectAll("text")
+                    .transition()
+                    .duration(500)
+                    .attr("y", function (d) {return yRange(d.y) - 10;})
+        }
+
+        function update_chart1_footer(data, mean_str, std_str) {
+            mean = data[mean_str];
+            std = data[std_str];
+            $(".output-mean").text(mean);
+            $(".output-std").text(std);
+        }
+
+        // histogram-1
+        $("#water-use-analytics-radio-1").click(function () {
+            // if the button is already in clicked status, do nothing
+            if ($(this).parent().hasClass("checked")) {
+                return;
+            }
+            // else redraw the diagram
             d3.json("{% url 'get-water-use'%}", function (error, data) {
-                console.log(data);
-                var margin = {top: 10, right: 30, bottom: 40, left: 50},
-                        width = $("#chart1").width() - margin.left - margin.right,
-                        height = $("#chart1").height() - margin.top - margin.bottom;
-                // data
-                values = data["water_use"];
-                //chart
-                var xRange = d3.scale.linear()
-                        .domain(d3.extent(values, function (d) { return d; }))
-                        .range([0, width]);
-                var data = d3.layout.histogram()
-                        .bins(xRange.ticks(15))(values);
-                var yRange = d3.scale.linear()
-                        .domain([0, d3.max(data, function (d) { return d.y; })])
-                        .range([height, 0]);
-                var xAxis = d3.svg.axis()
-                        .scale(xRange)
-                        .orient("bottom");
-                var yAxis = d3.svg.axis()
-                        .scale(yRange)
-                        .orient("left");
-
-                var svg = d3.select("#chart1").select("svg");
-                var chart = svg.select("g");
-                svg.selectAll(".x.axis").transition()
-                        .call(xAxis);
-                svg.selectAll(".y.axis").transition()
-                        .call(yAxis);
-
-                // set up the bars and text
-                var bar = chart.selectAll(".bar")
-                        .data(data)
-                        .enter()
-                        .append("g")
-                        .attr("class", "bar")
-                        .attr("transform", function (d) { return "translate(" + xRange(d.x) + "," + 0 + ")";});
-                bar.append("rect")
-                        .attr("x", 1)
-                        .attr("y", height)
-                        .attr("fill", "steelblue")
-                        .attr("width", xRange(data[0].dx) - 1)
-                        .attr("height", 0);
-                // transition effect
-                bar.selectAll("rect")
-                        .transition()
-                        .attr("y", function (d) {return yRange(d.y);})
-                        .attr("height", function (d) { return height - yRange(d.y); });
-                bar.selectAll("rect")
-                        .on("mouseover", function () { d3.select(this).attr("fill", "green"); })
-                        .on("mouseout", function () { d3.select(this).attr("fill", "steelblue"); });
-                bar.append("text")
-                        .attr("dy", "0.75em")
-                        .attr("y", function (d) {return yRange(d.y) + 2;})
-                        .attr("x", xRange(data[0].dx / 2))
-                        .attr("text-anchor", "middle")
-                        .text(function (d) { return d.y; });
+                draw_histogram(data, "water_use");
+                update_chart1_footer(data, "water_use_mean", "water_use_std");
             });
+
+        });
+
+        // histogram-2
+        $("#water-use-analytics-radio-2").click(function () {
+            // if the button is already in clicked status, do nothing
+            if ($(this).parent().hasClass("checked")) {
+                return;
+            }
+            // else redraw the diagram
+            d3.json("{% url 'get-horizontal-length'%}", function (error, data) {
+                draw_histogram(data, "horizontal_length");
+                update_chart1_footer(data, "horizontal_length_mean", "horizontal_length_std");
+            });
+        });
+
+        // histogram-3
+        $("#water-use-analytics-radio-3").click(function () {
+            // if the button is already in clicked status, do nothing
+            if ($(this).parent().hasClass("checked")) {
+                return;
+            }
+            // else redraw the diagram
+            d3.json("{% url 'get-water-use-per-horizontal-foot'%}", function (error, data) {
+                draw_histogram(data, "water_use_per_horizontal_foot");
+                update_chart1_footer(data, "water_use_per_horizontal_foot_mean", "water_use_per_horizontal_foot_std");
+            });
+        });
+
+        $("#Well_number").formValidation({
+            framework: 'bootstrap',
+            icon: {
+                valid: 'glyphicon glyphicon-ok',
+                invalid: 'glyphicon glyphicon-remove',
+                validating: 'glyphicon glyphicon-refresh'
+            },
+            fields:{
+                number: {
+                    validators: {
+                        integer: {
+                            message: 'The value is not an integer'
+                        }
+                    }
+                }
+            }
         });
 
         $(window).on("resize", function () {
@@ -341,7 +420,7 @@
             })
         });
 
-{#        $(".chart-footer.info").addClass('hide');#}
+        {#        $(".chart-footer.info").addClass('hide');#}
     </script>
     <script src="{% static 'js/radio_button.js' %}"></script>
 
