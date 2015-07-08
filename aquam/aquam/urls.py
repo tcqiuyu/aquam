@@ -49,4 +49,5 @@ urlpatterns = [
     
     # Water Quality Analyzer
     url(r"^solutions/water-quality-analyzer/$", solutions_views.water_quality_analyzer, name="produced-water-modeler"),
+    url(r"^solutions/water-quality-analyzer/get-water-quality-values/$", solutions_views.get_water_quality_values, name="get-water-quality-values")
 ]

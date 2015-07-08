@@ -42,6 +42,7 @@ class WaterQuality(models.Model):
     sodium = models.DecimalField(max_digits=20, decimal_places=3, null=True)
     calcium = models.DecimalField(max_digits=20, decimal_places=3, null=True)
     iron = models.DecimalField(max_digits=20, decimal_places=3, null=True)
+    volume = models.DecimalField(max_digits=20, decimal_places=3, null=True)
     
     class Meta:
         ordering = ["date"]

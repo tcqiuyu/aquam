@@ -340,27 +340,7 @@ class WaterQualityAnalyzer():
                        }
             }
     
-    def get_constituent_quality(self, location):
-        
-        def fit_equation(x, alpha, beta):
-            return alpha * math.log(x) + beta
-        
-        values_list = self.model.objects.values_list("date")
-        start_date = values_list[0][0]
-        end_date = values_list[len(values_list)-1][0]
-        ndays = (end_date - start_date).days + 1
-        result = {}
-        for constituent in self.constituents:
-            coeff = self.coefficients[location][constituent]
-            alpha = coeff[0]
-            beta = coeff[1]
-            values = []
-            for day in range(1, ndays+1):
-                values.append(fit_equation(day, alpha, beta))
-            result[constituent] = values
-        return result
-    
-    def get_constituent_quantity(self, location):
+    def __calc_produced_water_volume(self, location):
         
         def arp_model(x, Q0, D, b):
             if b > 0.0:
@@ -371,55 +351,117 @@ class WaterQualityAnalyzer():
             else:
                 return 0.0
         
-        def get_data_matrix():
-            values_list = self.model.objects.values_list("date", "wells_number").order_by("date")
-            wells_increase = {}
-            pre_wells_number = 0
-            for value in values_list:
-                cur_date, cur_wells_number = value
-                if cur_wells_number > pre_wells_number:
-                    wells_increase[cur_date] = cur_wells_number - pre_wells_number
-                    pre_wells_number = cur_wells_number
-            wells_matrix = np.zeros([len(wells_increase), len(values_list)], dtype=int)
-            days_matrix = np.zeros([len(wells_increase), len(values_list)], dtype=int)
-            for j in range(len(wells_increase)):
-                jdate = sorted(wells_increase)[j]
-                wells_increase_number = wells_increase[jdate]
-                for i in range(len(values_list)):
-                    idate = values_list[i][0]
-                    if idate >= jdate:
-                        wells_matrix[j][i] = wells_increase_number
-                        days_matrix[j][i] = (idate - jdate).days + 1
-            return wells_matrix, days_matrix
+        values_list = self.model.objects.values_list("date", "wells_number").order_by("date")
+        wells_increase = {}
+        pre_wells_number = 0
+        for value in values_list:
+            cur_date, cur_wells_number = value
+            if cur_wells_number > pre_wells_number:
+                wells_increase[cur_date] = cur_wells_number - pre_wells_number
+                pre_wells_number = cur_wells_number
+        wells_matrix = np.zeros([len(wells_increase), len(values_list)], dtype=int)
+        days_matrix = np.zeros([len(wells_increase), len(values_list)], dtype=int)
+        for j in range(len(wells_increase)):
+            jdate = sorted(wells_increase)[j]
+            wells_increase_number = wells_increase[jdate]
+            for i in range(len(values_list)):
+                idate = values_list[i][0]
+                if idate >= jdate:
+                    wells_matrix[j][i] = wells_increase_number
+                    days_matrix[j][i] = (idate - jdate).days + 1
+        param = self.parameters[location]
+        volume_matrix = np.zeros([len(wells_increase), len(values_list)], dtype=float)
+        for j in range(len(wells_increase)):
+            for i in range(len(values_list)):
+                day = days_matrix[j][i]
+                wells_number = wells_matrix[j][i]
+                if 0 < day <= 30:
+                    Q0 = param["Fracturing Flowback"]["Q0"]
+                    D = param["Fracturing Flowback"]["D"]
+                    b = param["Fracturing Flowback"]["b"]
+                    volume_matrix[j][i] = arp_model(day, Q0, D, b) * wells_number * 158.987
+                elif 30 < day <= 150:
+                    Q0 = param["Transition"]["Q0"]
+                    D = param["Transition"]["D"]
+                    b = param["Transition"]["b"]
+                    volume_matrix[j][i] = arp_model(day-30, Q0, D, b) * wells_number * 158.987
+                elif day > 150:
+                    Q0 = param["Produced Water"]["Q0"]
+                    D = param["Produced Water"]["D"]
+                    b = param["Produced Water"]["b"]
+                    volume_matrix[j][i] = arp_model(day-150, Q0, D, b) * wells_number * 158.987
+                else:
+                    volume_matrix[j][i] = 0.0
+        return volume_matrix, days_matrix
+    
+    def __calc_constituent_quality(self, location):
         
-        def get_quantity_matrix(location):
-            param = self.parameters()[location]
-            wells_matrix, days_matrix = get_data_matrix()
-            cols, days = days_matrix.shape
-            quantity_matrix = np.zeros([cols, days], dtype=float)
+        def water_quality_equation(x, alpha, beta):
+            return alpha * math.log(x) + beta
+        
+        # produced water volume
+        volume_matrix, days_matrix = self.__get_produced_water_volume(location)
+        cols, rows = volume_matrix.shape
+        volume_array = np.zeros(rows, dtype=float)
+        volume_matrix2 = volume_matrix.transpose()
+        for i in range(rows):
+            volume_array[i] = np.sum(volume_matrix2[i])
+        quality_dict = {}
+        for constituent in self.constituents:
+            # constituent quantity
+            coeff = self.coefficients[location][constituent]
+            alpha = coeff[0]
+            beta = coeff[1]
+            quantity_matrix = np.zeros([cols, rows], dtype=float)
             for j in range(cols):
-                for i in range(days):
+                for i in range(rows):
                     day = days_matrix[j][i]
-                    wells_number = wells_matrix[j][i]
-                    if 0 < day <= 30:
-                        Q0 = param["Fracturing Flowback"]["Q0"]
-                        D = param["Fracturing Flowback"]["D"]
-                        b = param["Fracturing Flowback"]["b"]
-                        quantity_matrix[j][i] = arp_model(day, Q0, D, b) * wells_number * 158.987
-                    elif 30 < day <= 150:
-                        Q0 = param["Transition"]["Q0"]
-                        D = param["Transition"]["D"]
-                        b = param["Transition"]["b"]
-                        quantity_matrix[j][i] = arp_model(day-30, Q0, D, b) * wells_number * 158.987
-                    elif day > 150:
-                        Q0 = param["Produced Water"]["Q0"]
-                        D = param["Produced Water"]["D"]
-                        b = param["Produced Water"]["b"]
-                        quantity_matrix[j][i] = arp_model(day-150, Q0, D, b) * wells_number * 158.987
+                    if day > 0:
+                        volume = volume_matrix[j][i]
+                        quantity_matrix[j][i] = water_quality_equation(day, alpha, beta) * volume
                     else:
-                        return 0.0
-            return quantity_matrix
-        
-        result = {}
+                        quantity_matrix[j][i]
+            quantity_array = np.zeros(rows, dtype=float)
+            quantity_matrix = quantity_matrix.transpose()
+            for i in range(rows):
+                quantity_array[i] = np.sum(quantity_matrix[i])
+            # constituent quality
+            quality_array = np.divide(quantity_array, volume_array)
+            quality_dict[constituent] = quality_array.tolist()
+        return quality_dict, volume_array
+    
+    def set_database(self, location):
+        quality_dict, volume_array = self.__calc_constituent_quality(location)
+        objs = self.model.objects.all().order_by("date")
+        for i in range(len(objs)):
+            obj = objs[i]
+            for constituent in self.constituents:
+                if constituent == "TDS":
+                    obj.tds = abs(quality_dict[constituent][i])
+                if constituent == "Chloride":
+                    obj.chloride = abs(quality_dict[constituent][i])
+                if constituent == "Sodium":
+                    obj.sodium = abs(quality_dict[constituent][i])
+                if constituent == "Calcium":
+                    obj.calcium = abs(quality_dict[constituent][i])
+                if constituent == "Iron":
+                    obj.iron = abs(quality_dict[constituent][i])
+            obj.volume = volume_array[i]
+            obj.save()
+    
+    def get_water_quality_values(self):
+        objs = self.model.objects.all()
+        result = []
+        for obj in objs:
+            value = {"date": str(obj.date),
+                     "wells_number": float(obj.wells_number),
+                     "TDS": float(obj.tds),
+                     "Chloride": float(obj.chloride),
+                     "Sodium": float(obj.sodium),
+                     "Calcium": float(obj.calcium),
+                     "Iron": float(obj.iron),
+                     "volume": float(obj.volume)
+                }
+            result.append(value)
         return result
-        
+    

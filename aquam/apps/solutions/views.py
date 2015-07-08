@@ -8,9 +8,6 @@ from django.template import RequestContext
 from django.http import HttpResponse, JsonResponse
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
-# Third-party lib imports
-import numpy as np
-
 # Apps imports
 from apps.solutions.models import WaterUse, ProducedWater, WaterQuality
 from apps.solutions.tools import WaterUseAnalyzer, ProducedWaterModeler, WaterQualityAnalyzer
@@ -20,7 +17,7 @@ from apps.solutions.tools import WaterUseAnalyzer, ProducedWaterModeler, WaterQu
 def water_use_analyzer(request):
     objs = WaterUse.objects.all()
     paginator = Paginator(objs, 10)  # show 10 rows per page
-    page = request.GET.get('page')
+    page = request.GET.get("page")
     try:
         records = paginator.page(page)
     except PageNotAnInteger:
@@ -83,7 +80,7 @@ def get_cubic_fitting(request):
 def produced_water_modeler(request):
     objs = ProducedWater.objects.all()
     paginator = Paginator(objs, 10)  # show 10 rows per page
-    page = request.GET.get('page')
+    page = request.GET.get("page")
     try:
         records = paginator.page(page)
     except PageNotAnInteger:
@@ -114,8 +111,13 @@ def get_arp_prediction(request):
     
 # Water Quality Analyzer Views & JSON APIs
 def water_quality_analyzer(request):
-    context = {"page_title": "AQUAM | Water Quality Analyzer"}
     analyzer = WaterQualityAnalyzer(WaterQuality)
     location = "Greeley Crescent"
-    analyzer.get_arp_model_values(location)
+    #analyzer.set_database(location)
+    context = {"page_title": "AQUAM | Water Quality Analyzer"}
     return render_to_response("solutions/water-quality-analyzer.html", context, context_instance=RequestContext(request))
+
+def get_water_quality_values(request):
+    analyzer = WaterQualityAnalyzer(WaterQuality)
+    result = analyzer.get_water_quality_values()
+    return HttpResponse(json.dumps(result), content_type="application/json")
