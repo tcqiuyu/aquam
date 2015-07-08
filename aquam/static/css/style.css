@@ -55,7 +55,7 @@ h1, h2, h3, h4, h5, h6, p, label, .btn, a {
 /* Sizes */
 
 .bloc-lg {
-    padding: 100px 50px;
+    padding: 30px 50px;
 }
 
 .bloc-md {
@@ -541,6 +541,47 @@ iframe {
     margin: 50px 0; /* Space out the Bootstrap <hr> more */
 }
 
+/* Footer
+------------------------- */
+.bloc-footer {
+    padding-top: 15px;
+}
+
+/* Contact page
+------------------------- */
+.title {
+    font-size: xx-large;
+    font-weight: 500;
+    color: #266c8e;
+}
+
+.staff {
+    padding: 25px 0 25px;
+}
+
+.staff-desc {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.staff-desc .staff-name {
+    font-size: x-large;
+    font-weight: 500;
+    color: #266c8e;
+}
+
+.staff-desc .staff-title {
+    font-style: italic;
+}
+
+.staff-desc .staff-detail {
+    font-size: medium;
+    margin-top: 3%;
+}
+
+#location-map {
+    align-items: center;
+}
+
 /* Log-in component
 -------------------------- */
 .login-component ul {
@@ -679,11 +720,11 @@ label.solution-radio {
     font-weight: bold;
     padding: 10px 10px 10px 10px;
     margin-top: 10px;
-    font-size:100%;
+    font-size: 100%;
 }
 
-.additional-info .output, .label-form{
-    font-size:100%;
+.additional-info .output, .label-form {
+    font-size: 100%;
 }
 
 label.solution-radio.checked {
@@ -697,6 +738,6 @@ label.solution-radio.checked {
     margin-top: 5px;
 }
 
-.bar text{
+.bar text {
     fill: black;
 }
