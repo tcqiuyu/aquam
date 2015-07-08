@@ -2,7 +2,6 @@ from django.db import models
 
 
 # Create your models here.
-
 class WaterUse(models.Model):
     id = models.AutoField(primary_key=True)
     api = models.CharField(max_length=20, null=False)
@@ -32,3 +31,18 @@ class ProducedWater(models.Model):
     
     class Meta:
         ordering = ["days"]
+    
+    
+class WaterQuality(models.Model):
+    id = models.AutoField(primary_key = True)
+    date = models.DateField(auto_now=False, auto_now_add=False, null=False)
+    wells_number = models.PositiveIntegerField(null=False)
+    tds = models.DecimalField(max_digits=20, decimal_places=3, null=True)
+    chloride = models.DecimalField(max_digits=20, decimal_places=3, null=True)
+    sodium = models.DecimalField(max_digits=20, decimal_places=3, null=True)
+    calcium = models.DecimalField(max_digits=20, decimal_places=3, null=True)
+    iron = models.DecimalField(max_digits=20, decimal_places=3, null=True)
+    volume = models.DecimalField(max_digits=20, decimal_places=3, null=True)
+    
+    class Meta:
+        ordering = ["date"]

@@ -10,7 +10,7 @@
 {% block mainbody %}
     <div class="container">
         <div class="jumbotron">
-            <h2>Water Use Analyzer - Demo</h2>
+            <h2>Water Use Analyzer</h2>
 
             <p>This analyzer is an interactive tool designed to fit the user, in this case,
                 an operator or a water management company to anlayze their statistics of water,
@@ -393,24 +393,6 @@
                 draw_histogram(data, "water_use_per_horizontal_foot");
                 update_chart1_footer(data, "water_use_per_horizontal_foot_mean", "water_use_per_horizontal_foot_std");
             });
-        });
-
-        $("#Well_number").formValidation({
-            framework: 'bootstrap',
-            icon: {
-                valid: 'glyphicon glyphicon-ok',
-                invalid: 'glyphicon glyphicon-remove',
-                validating: 'glyphicon glyphicon-refresh'
-            },
-            fields:{
-                number: {
-                    validators: {
-                        integer: {
-                            message: 'The value is not an integer'
-                        }
-                    }
-                }
-            }
         });
 
         $(window).on("resize", function () {
