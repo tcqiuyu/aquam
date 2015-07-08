@@ -35,6 +35,7 @@ class ProducedWater(models.Model):
     
 class WaterQuality(models.Model):
     id = models.AutoField(primary_key = True)
+    location = models.CharField(max_length=50, null=False)
     date = models.DateField(auto_now=False, auto_now_add=False, null=False)
     wells_number = models.PositiveIntegerField(null=False)
     tds = models.DecimalField(max_digits=20, decimal_places=3, null=True)
@@ -45,4 +46,26 @@ class WaterQuality(models.Model):
     volume = models.DecimalField(max_digits=20, decimal_places=3, null=True)
     
     class Meta:
-        ordering = ["date"]
+        ordering = ["id"]
+    
+
+class WaterTreatment(models.Model):
+    id = models.AutoField(primary_key = True)
+    location = models.CharField(max_length=50, null=False)
+    days = models.PositiveIntegerField(null=False)
+    stages = models.PositiveIntegerField(null=False)
+    constituent = models.CharField(max_length=20, null=False)
+    quality = models.DecimalField(max_digits=20, decimal_places=3, null=True)
+    vfrac = models.DecimalField(max_digits=20, decimal_places=3, null=True)
+    wqfrac_cf = models.DecimalField(max_digits=20, decimal_places=3, null=True)
+    wqfrac_sc = models.DecimalField(max_digits=20, decimal_places=3, null=True)
+    wqfrac_ro = models.DecimalField(max_digits=20, decimal_places=3, null=True)
+    vfresh_cf = models.DecimalField(max_digits=20, decimal_places=3, null=True)
+    vfresh_sc = models.DecimalField(max_digits=20, decimal_places=3, null=True)
+    vfresh_ro = models.DecimalField(max_digits=20, decimal_places=3, null=True)
+    vfresh_vrec_cf = models.DecimalField(max_digits=20, decimal_places=3, null=True)
+    vfresh_vrec_sc = models.DecimalField(max_digits=20, decimal_places=3, null=True)
+    vfresh_vrec_ro = models.DecimalField(max_digits=20, decimal_places=3, null=True)
+    
+    class Meta:
+        ordering = ["id"]
