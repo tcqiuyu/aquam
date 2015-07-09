@@ -507,6 +507,9 @@
 
         function draw_chart3(data, option) {
             var vals = data["data"];
+            vals.sort(function (a, b) {
+                return a.horizontal_length - b.horizontal_length;
+            });
             console.log(vals);
             var margin = {top: 20, right: 30, bottom: 40, left: 70},
                     width = $("#chart3").width() - margin.left - margin.right,
@@ -562,7 +565,7 @@
                 var line_func = d3.svg.line()
                         .x(function (d) {return xRange(d.horizontal_length);})
                         .y(function (d) {return yRange(d.fitted_water_use);})
-                        .interpolate("cardinal-closed ");
+                        .interpolate("linear");
                 var color;
                 if (option == "quadratic") {
                     color = "#9956B0"
