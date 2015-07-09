@@ -5,7 +5,6 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/chart.css' %}"/>
     <!-- D3 -->
     <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-    <script src="http://cdn.jsdelivr.net/jquery.validation/1.14.0/jquery.validate.min.js"></script>
 {% endblock %}
 
 {% block mainbody %}
@@ -200,7 +199,7 @@
 
         // draw the base graph first, then load data when needed
         $(document).ready(function () {
-            var margin = {top: 20, right: 30, bottom: 40, left: 50},
+            var margin = {top: 20, right: 30, bottom: 40, left: 70},
                     width = $(".chart").width() - margin.left - margin.right,
                     height = $(".chart").height() - margin.top - margin.bottom;
             var init_xRange = d3.scale.linear()
@@ -239,7 +238,7 @@
             chart1.append("text")
                     .attr("class", "ylabel")
                     .attr("x", 0 - (height / 2))
-                    .attr("y", 0 - margin.left)
+                    .attr("y", 0 - margin.left + 20)
                     .attr("dy", "1em")
                     .attr("transform", "rotate(-90)")
                     .attr("text-anchor", "middle")
@@ -419,15 +418,15 @@
             }
         });
 
-        function draw_chart2(data) {
+        function draw_chart2(data, ylabel) {
             var margin = {top: 20, right: 30, bottom: 40, left: 50},
                     width = $("#chart2").width() - margin.left - margin.right,
                     height = $("#chart2").height() - margin.top - margin.bottom;
             var xRange = d3.scale.ordinal()
                     .domain(data.map(function (d) {return d.year;}))
-                    .rangeRoundBands([0, width], .4);
+                    .rangeRoundBands([0, width], .5);
             var yRange = d3.scale.linear()
-                    .domain([0, d3.max(data, function (d) {return d.mean;})])
+                    .domain([0, 1.2 * d3.max(data, function (d) {return d.mean;})])
                     .range([height, 0]);
             var xAxis = d3.svg.axis()
                     .scale(xRange)
@@ -442,7 +441,8 @@
             svg.selectAll(".y.axis").transition().duration(500)
                     .call(yAxis);
 
-            {#                chart.select('.ylabel').text("Annual Average Water Use per Well");#}
+            chart.select('.ylabel').text(ylabel).attr("fill", "white");
+            chart.select('.ylabel').transition().duration(500).attr("fill", "black");
             chart.selectAll(".bar")
                     .remove();
 
@@ -483,7 +483,7 @@
                 return;
             }
             d3.json("{% url 'get-annual-water' %}", function (error, data) {
-                draw_chart2(data);
+                draw_chart2(data, "Annual Average Water User per Well");
             });
         });
 
@@ -491,8 +491,8 @@
             if ($(this).parent().hasClass("checked")) {
                 return;
             }
-            d3.json("{% url 'get-annual-horizontal-feet-dilled' %}", function (error, data) {
-                draw_chart2(data);
+            d3.json("{% url 'get-annual-horizontal-feet-drilled' %}", function (error, data) {
+                draw_chart2(data, "Annual Average Horizontal Feet Drilled");
             });
         });
 
@@ -501,12 +501,104 @@
                 return;
             }
             d3.json("{% url 'get-annual-bbls-ft-metric' %}", function (error, data) {
-                draw_chart2(data);
+                draw_chart2(data, "Annual bbls/ft Metric");
             });
         });
 
+        function draw_chart3(data, option) {
+            var vals = data["data"];
+            console.log(vals);
+            var margin = {top: 20, right: 30, bottom: 40, left: 70},
+                    width = $("#chart3").width() - margin.left - margin.right,
+                    height = $("#chart3").height() - margin.top - margin.bottom;
+            var xRange = d3.scale.linear()
+                    .domain([0, d3.max(vals, function (d) { return d.horizontal_length;})])
+                    .range([0, width]);
+            var yRange = d3.scale.linear()
+                    .domain([0, d3.max(vals, function (d) { return d.water_use;})])
+                    .range([height, 0]);
+            var xAxis = d3.svg.axis()
+                    .scale(xRange)
+                    .orient("bottom");
+            var yAxis = d3.svg.axis()
+                    .scale(yRange)
+                    .orient("left");
+            var svg = d3.select("#chart3").select("svg");
+            var chart = svg.select("g");
+            svg.selectAll(".x.axis").transition().duration(500)
+                    .call(xAxis);
+            svg.selectAll(".y.axis").transition().duration(500)
+                    .call(yAxis);
 
-        {#        $(".chart-footer.info").addClass('hide');#}
+            chart.selectAll(".plot")
+                    .remove();
+            chart.selectAll("line")
+                    .remove();
+            chart.select(".line")
+                    .remove();
+
+            var dot = chart.append("g").attr("class", "plot")
+                    .selectAll(".dot")
+                    .data(vals)
+                    .enter().append("circle")
+                    .attr("class", "dot")
+                    .attr("r", 2)
+                    .attr("cx", function (d) {return xRange(d.horizontal_length);})
+                    .attr("cy", function (d) {return yRange(d.water_use);})
+                    .style("fill", "white");
+            dot.transition().duration(500).style("fill", "steelblue");
+
+            if (option == "linear") {
+                var line = chart.append("line")
+                        .style("stroke", "#CE5B56")
+                        .style("stroke-width", "2.5")
+                        .style("opacity", "0")
+                        .attr("x1", xRange(d3.min(vals, function (d) {return d.horizontal_length;})))
+                        .attr("y1", yRange(d3.min(vals, function (d) {return d.fitted_water_use;})))
+                        .attr("x2", xRange(d3.max(vals, function (d) {return d.horizontal_length;})))
+                        .attr("y2", yRange(d3.max(vals, function (d) {return d.fitted_water_use;})));
+                line.transition().duration(500).delay(300).style("opacity", "1");
+            } else {
+                var line_func = d3.svg.line()
+                        .x(function (d) {return xRange(d.horizontal_length);})
+                        .y(function (d) {return yRange(d.fitted_water_use);})
+                        .interpolate("cardinal-closed ");
+                var color;
+                if (option == "quadratic") {
+                    color = "#9956B0"
+                } else if (option == "cubic") {
+                    color = "#23B05C"
+                }
+                var line2 = chart.append("path")
+                        .style("fill", color)
+                        .style("opacity", 0)
+                        .attr("class", "line")
+                        .attr("d", line_func(vals));
+                line2.transition().duration(500).delay(300).style("opacity", 1);
+
+            }
+
+        }
+
+        $("#water-use-relationships-radio1").click(function () {
+            d3.json("{% url 'get-linear-fitting' %}", function (error, data) {
+                draw_chart3(data, "linear")
+            });
+        });
+
+        $("#water-use-relationships-radio2").click(function () {
+            d3.json("{% url 'get-quadratic-fitting' %}", function (error, data) {
+                draw_chart3(data, "quadratic")
+            });
+        });
+
+        $("#water-use-relationships-radio3").click(function () {
+            d3.json("{% url 'get-quadratic-fitting' %}", function (error, data) {
+                draw_chart3(data, "cubic")
+            });
+        });
+
+        $(".chart-footer.info").addClass('hide');
     </script>
     <script src="{% static 'js/radio_button.js' %}"></script>
 
