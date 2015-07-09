@@ -400,7 +400,7 @@ class WaterQualityAnalyzer():
             return alpha * math.log(x) + beta
         
         # produced water volume
-        volume_matrix, days_matrix = self.__get_produced_water_volume(location)
+        volume_matrix, days_matrix = self.__calc_produced_water_volume(location)
         cols, rows = volume_matrix.shape
         volume_array = np.zeros(rows, dtype=float)
         volume_matrix2 = volume_matrix.transpose()
@@ -420,7 +420,7 @@ class WaterQualityAnalyzer():
                         volume = volume_matrix[j][i]
                         quantity_matrix[j][i] = water_quality_equation(day, alpha, beta) * volume
                     else:
-                        quantity_matrix[j][i]
+                        quantity_matrix[j][i] = 0.0
             quantity_array = np.zeros(rows, dtype=float)
             quantity_matrix = quantity_matrix.transpose()
             for i in range(rows):
@@ -471,14 +471,63 @@ class WaterTreatmentAnalyzer():
     """
     def __init__(self, model):
         self.model = model
-        self.methods = {
-            "Coagulation/Filtration": {"TDS":0, "Sodium":0, "Chloride":0, "Calcium":0, "Iron": 0.8},
-            "Softening/Clarification": {"TDS":0, "Sodium":0, "Chloride":0, "Calcium":0.97, "Iron": 0.986},
-            "Reverse Osmosis": {"TDS":0.955, "Sodium":0.9694, "Chloride":0.9685, "Calcium":0.9982, "Iron": 0.9744}
+        self.qfrac = 3571.428571
+        self.unit = 158.987
+        self.coefficients = {
+            "Core": {"TDS": (2982.1, 4312.1), 
+                      "Sodium": (927.91, 1804.4), 
+                      "Chloride": (1971.8, 1177.2), 
+                      "Calcium": (61.173, -22.745), 
+                      "Iron": (0, 53.46)
+            }, 
+            "Mustang": {"TDS": (2282.5, 10691), 
+                         "Sodium": (1601.8, -262.57), 
+                         "Chloride": (2293, 10729), 
+                         "Calcium": (52.016, 0.5952), 
+                         "Iron": (0, 29.75)
+            }, 
+            "Greeley Crescent": {"TDS": (2322.1, 6992.7), 
+                                  "Sodium": (787.65, 2556.2), 
+                                  "Chloride": (1512.6, 3583.6), 
+                                  "Calcium": (68.964, -20.551), 
+                                  "Iron": (0, 66.40)
+            }, 
+            "East Pony": {"TDS": (4636.6, 1614.5), 
+                           "Sodium": (2062.2, -928.59), 
+                           "Chloride": (3000, -361.24), 
+                           "Calcium": (30.791, -2.6108), 
+                           "Iron": (0, 32.55)
+            }, 
+            "West Pony": {"TDS": (6129.5, 1551.8), 
+                           "Sodium": (2344.5, 105.16), 
+                           "Chloride": (4007.2, -961.57), 
+                           "Calcium": (56.77, -9.5692), 
+                           "Iron": (0, 76.68)
+            }, 
+             "Wells Ranch": {"TDS": (4028.5, 4924.5), 
+                             "Sodium": (1292.2, 2649), 
+                             "Chloride": (2084.4, 3499.4), 
+                             "Calcium": (51.705, 63.865), 
+                             "Iron": (0, 106.11)
+            }, 
+            "Commins": {"TDS": (3244, 16778), 
+                         "Sodium": (1161.8, 6270.1), 
+                         "Chloride": (2033.8, 9192), 
+                         "Calcium": (22.732, 340.34), 
+                         "Iron": (0, 71.45)
+            }
         }
-        self.constants = {
-            "Critical Fracturing Fluids Quality": {"TDS":9000, "Sodium":9000, "Chloride":9000, "Calcium":600, "Iron": 75},
-            "Fresh Water Quality": {"TDS":430, "Sodium":3.56, "Chloride":19.2, "Calcium":14.4, "Iron": 0.1}
+        self.methods = {"TDS": {"Coagulation/Filtration":0, "Softening/Clarification":0, "Reverse Osmosis":0.955},
+                        "Sodium": {"Coagulation/Filtration":0, "Softening/Clarification":0, "Reverse Osmosis":0.9694},
+                        "Chloride": {"Coagulation/Filtration":0, "Softening/Clarification":0, "Reverse Osmosis":0.9685},
+                        "Calcium": {"Coagulation/Filtration":0, "Softening/Clarification":0.97, "Reverse Osmosis":0.9982},
+                        "Iron": {"Coagulation/Filtration":0.8, "Softening/Clarification":0.986, "Reverse Osmosis":0.9744},
+        }
+        self.constants = {"TDS": {"Critical Fracturing Fluids Quality":9000, "Fresh Water Quality":430},
+                        "Sodium": {"Critical Fracturing Fluids Quality":9000, "Fresh Water Quality":3.56},
+                        "Chloride": {"Critical Fracturing Fluids Quality":9000, "Fresh Water Quality":19.2},
+                        "Calcium": {"Critical Fracturing Fluids Quality":600, "Fresh Water Quality":14.4},
+                        "Iron": {"Critical Fracturing Fluids Quality":75, "Fresh Water Quality":0.1},
         }
         self.parameters = {
             "Core": {"Fracturing Flowback": {"Q0":1043.04, "D":0.721, "b":0.0}, 
@@ -511,7 +560,7 @@ class WaterTreatmentAnalyzer():
             }
         }
     
-    def __calc_flowback_volume(self, end_day, parameter):
+    def __calc_flowback_volume(self, end_day, parameter, percent):
         
         def arp_model(x, Q0, D, b):
             if b > 0.0:
@@ -522,23 +571,76 @@ class WaterTreatmentAnalyzer():
             else:
                 return 0.0
         
-        flowback_volume = []
-        for i in range(1, end_day+1):
-            day = i
+        flowback_volume = np.zeros(end_day, dtype=float)
+        for i in range(end_day):
+            day = i + 1
             if 0 < day <= 30:
                 Q0 = parameter["Fracturing Flowback"]["Q0"]
                 D = parameter["Fracturing Flowback"]["D"]
                 b = parameter["Fracturing Flowback"]["b"]
-                flowback_volume[i] = arp_model(day, Q0, D, b)  * 158.987
+                flowback_volume[i] = arp_model(day, Q0, D, b)
             elif 30 < day <= 150:
                 Q0 = parameter["Transition"]["Q0"]
                 D = parameter["Transition"]["D"]
                 b = parameter["Transition"]["b"]
-                flowback_volume[i] = arp_model(day-30, Q0, D, b)  * 158.987
+                flowback_volume[i] = arp_model(day-30, Q0, D, b)
             elif day > 150:
                 Q0 = parameter["Produced Water"]["Q0"]
                 D = parameter["Produced Water"]["D"]
                 b = parameter["Produced Water"]["b"]
-                flowback_volume[i] = arp_model(day-150, Q0, D, b) * 158.987
+                flowback_volume[i] = arp_model(day-150, Q0, D, b)
             else:
                 flowback_volume[i] = 0.0
+            flowback_volume = flowback_volume * percent
+        return flowback_volume
+    
+    def __calc_water_quality(self, end_day, coefficient):
+        
+        def water_quality_equation(x, alpha, beta):
+            return alpha * math.log(x) + beta
+        
+        alpha = coefficient[0]
+        beta = coefficient[1]
+        water_quality = np.zeros(end_day, dtype=float)
+        for i in range(end_day):
+            day = i + 1
+            water_quality[i] = water_quality_equation(day, alpha, beta)
+        return water_quality
+    
+    def __calc_water_treatment(self, end_day, coefficient, method, constant, parameter, stages):
+        # water quality fitting
+        water_quality = self.__calc_water_quality(end_day, coefficient)
+        # constant values
+        wqcritical = parameter["Critical Fracturing Fluids Quality"]
+        wqfresh = parameter["Fresh Water Quality"]
+        flowback_volume = self.__calc_flowback_volume(end_day, parameter)
+        # calculate treatment
+        result_matrix = np.zeros([10, end_day], dtype=float)
+        for i in range(end_day):
+            # calculate Vrec(mg/L)
+            vrec = 0.0
+            water_quantity = 0.0
+            for k in range(i):
+                vrec = vrec + flowback_volume[k]
+                water_quantity = water_quantity + water_quality[k] * flowback_volume[k] * self.unit
+            # calculate Vfrac (mg/L)
+            vfrac = self.qfrac * stages * self.unit
+            result_matrix[0][i] = self.qfrac * stages
+            # calculate Vfresh (mg/L)
+            vfresh = vfrac - vrec
+            # claculate WQtreat (mg/L)
+            wqtreat = water_quantity / vrec;
+            for idx, val in enumerate(["Coagulation/Filtration", "Softening/Clarification", "Reverse Osmosis"]):
+                wqtreat = wqtreat * (1 - method[val])
+                wqfrac = (vfresh * wqfresh + vrec * wqtreat) / vfrac
+                if wqfrac <= wqcritical:
+                    result_matrix[3*idx+1][i] = wqfrac
+                else:
+                    result_matrix[3*idx+1][i] = float("nan")
+                vfresh_quality = (vfrac * wqcritical - vrec * wqtreat) / wqfresh
+                if vfresh <= vfresh_quality & vfresh > 0:
+                    result_matrix[3*idx+2][i] = vfresh / self.unit
+                    result_matrix[3*idx+3][i] = vfresh / vrec
+                else:
+                    result_matrix[3*idx+2][i] = float("nan")
+                    result_matrix[3*idx+3][i] = float("nan")
