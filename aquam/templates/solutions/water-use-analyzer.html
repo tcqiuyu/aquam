@@ -507,9 +507,9 @@
 
         function draw_chart3(data, option) {
             var vals = data["data"];
-            vals.sort(function (a, b) {
-                return a.horizontal_length - b.horizontal_length;
-            });
+{#            vals.sort(function (a, b) {#}
+{#                return a.horizontal_length - b.horizontal_length;#}
+{#            });#}
             console.log(vals);
             var margin = {top: 20, right: 30, bottom: 40, left: 70},
                     width = $("#chart3").width() - margin.left - margin.right,
