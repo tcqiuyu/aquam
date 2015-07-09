@@ -263,6 +263,7 @@ class WaterQualityAnalyzer():
     """
     def __init__(self, model):
         self.model = model
+        self.unit = 158.987
         self.constituents = ["TDS", "Sodium", "Chloride", "Calcium", "Iron"]
         self.locations = ['Core', 'Mustang', 'Greeley Crescent', 'East Pony', 'West Pony', 'Wells Ranch', 'Commins']
         self.coefficients = {
@@ -340,7 +341,7 @@ class WaterQualityAnalyzer():
             }
         }
     
-    def __calc_produced_water_volume(self, location):
+    def __calc_flowback_volume(self, parameter):
         
         def arp_model(x, Q0, D, b):
             if b > 0.0:
@@ -369,38 +370,38 @@ class WaterQualityAnalyzer():
                 if idate >= jdate:
                     wells_matrix[j][i] = wells_increase_number
                     days_matrix[j][i] = (idate - jdate).days + 1
-        param = self.parameters[location]
         volume_matrix = np.zeros([len(wells_increase), len(values_list)], dtype=float)
         for j in range(len(wells_increase)):
             for i in range(len(values_list)):
                 day = days_matrix[j][i]
                 wells_number = wells_matrix[j][i]
                 if 0 < day <= 30:
-                    Q0 = param["Fracturing Flowback"]["Q0"]
-                    D = param["Fracturing Flowback"]["D"]
-                    b = param["Fracturing Flowback"]["b"]
-                    volume_matrix[j][i] = arp_model(day, Q0, D, b) * wells_number * 158.987
+                    Q0 = parameter["Fracturing Flowback"]["Q0"]
+                    D = parameter["Fracturing Flowback"]["D"]
+                    b = parameter["Fracturing Flowback"]["b"]
+                    volume_matrix[j][i] = arp_model(day, Q0, D, b) * wells_number
                 elif 30 < day <= 150:
-                    Q0 = param["Transition"]["Q0"]
-                    D = param["Transition"]["D"]
-                    b = param["Transition"]["b"]
-                    volume_matrix[j][i] = arp_model(day-30, Q0, D, b) * wells_number * 158.987
+                    Q0 = parameter["Transition"]["Q0"]
+                    D = parameter["Transition"]["D"]
+                    b = parameter["Transition"]["b"]
+                    volume_matrix[j][i] = arp_model(day-30, Q0, D, b) * wells_number
                 elif day > 150:
-                    Q0 = param["Produced Water"]["Q0"]
-                    D = param["Produced Water"]["D"]
-                    b = param["Produced Water"]["b"]
-                    volume_matrix[j][i] = arp_model(day-150, Q0, D, b) * wells_number * 158.987
+                    Q0 = parameter["Produced Water"]["Q0"]
+                    D = parameter["Produced Water"]["D"]
+                    b = parameter["Produced Water"]["b"]
+                    volume_matrix[j][i] = arp_model(day-150, Q0, D, b) * wells_number
                 else:
                     volume_matrix[j][i] = 0.0
+        volume_matrix = volume_matrix * self.unit
         return volume_matrix, days_matrix
     
-    def __calc_constituent_quality(self, location):
+    def __calc_water_quality(self,parameter, coefficient):
         
         def water_quality_equation(x, alpha, beta):
             return alpha * math.log(x) + beta
         
         # produced water volume
-        volume_matrix, days_matrix = self.__calc_produced_water_volume(location)
+        volume_matrix, days_matrix = self.__calc_flowback_volume(parameter)
         cols, rows = volume_matrix.shape
         volume_array = np.zeros(rows, dtype=float)
         volume_matrix2 = volume_matrix.transpose()
@@ -409,9 +410,8 @@ class WaterQualityAnalyzer():
         quality_dict = {}
         for constituent in self.constituents:
             # constituent quantity
-            coeff = self.coefficients[location][constituent]
-            alpha = coeff[0]
-            beta = coeff[1]
+            alpha = coefficient[constituent][0]
+            beta = coefficient[constituent][1]
             quantity_matrix = np.zeros([cols, rows], dtype=float)
             for j in range(cols):
                 for i in range(rows):
@@ -430,9 +430,9 @@ class WaterQualityAnalyzer():
             quality_dict[constituent] = quality_array.tolist()
         return quality_dict, volume_array
     
-    def set_database(self, location):
-        quality_dict, volume_array = self.__calc_constituent_quality(location)
-        objs = self.model.objects.all().order_by("date")
+    def set_database(self, location_name):
+        quality_dict, volume_array = self.__calc_water_quality(location_name)
+        objs = self.model.objects.filter(location=location_name).order_by("date")
         for i in range(len(objs)):
             obj = objs[i]
             for constituent in self.constituents:
@@ -464,6 +464,7 @@ class WaterQualityAnalyzer():
                 }
             result.append(value)
         return result
+
 
 class WaterTreatmentAnalyzer():
     """
@@ -623,7 +624,6 @@ class WaterTreatmentAnalyzer():
             for k in range(i+1):
                 vrec = vrec + flowback_volume[k]
                 water_quantity = water_quantity + water_quality[k] * flowback_volume[k] * self.unit
-            print vrec
             # calculate Vfrac (mg/L)
             vfrac = self.qfrac * stages * self.unit
             result_matrix[0][i] = self.qfrac * stages
@@ -647,7 +647,7 @@ class WaterTreatmentAnalyzer():
                     result_matrix[3*idx+3][i] = float("nan")
         return result_matrix
     
-    def set_database_result(self, end_day, coefficients, methods, constants, parameters, stages, location_name, constituent_name, percent):
+    def set_result_to_database(self, end_day, coefficients, methods, constants, parameters, stages, location_name, constituent_name, percent):
         coefficient = coefficients[location_name][constituent_name]
         method = methods[constituent_name]
         constant = constants[constituent_name]
@@ -671,3 +671,29 @@ class WaterTreatmentAnalyzer():
             obj.vfresh_iter_3 = result[8]
             obj.ratio_iter_3 = result[9]
             obj.save()
+    
+    def get_treatment_iteration_result(self, end_day, coefficients, methods, constants, parameters, stages, location_name, constituent_name, percent):
+        coefficient = coefficients[location_name][constituent_name]
+        method = methods[constituent_name]
+        constant = constants[constituent_name]
+        parameter = parameters[location_name]
+        result_matrix = self.__calc_water_treatment(end_day, coefficient, method, constant, parameter, stages, percent)
+        water_quality = self.__calc_water_quality(end_day, coefficient)
+        result = []
+        f = lambda x: "null" if math.isnan(x) else x
+        for i in range(end_day):
+            obj = {"day": i + 1,
+                   "quality": water_quality[i],
+                   "vfrac": f(result_matrix[0][i]),
+                   "wqfrac_iter_1": f(result_matrix[1][i]),
+                   "vfresh_iter_1": f(result_matrix[2][i]),
+                   "ratio_iter_1": f(result_matrix[3][i]),
+                   "wqfrac_iter_2": f(result_matrix[4][i]),
+                   "vfresh_iter_2": f(result_matrix[5][i]),
+                   "ratio_iter_2": f(result_matrix[6][i]),
+                   "wqfrac_iter_3": f(result_matrix[7][i]),
+                   "vfresh_iter_3": f(result_matrix[8][i]),
+                   "ratio_iter_3": f(result_matrix[9][i])
+            }
+            result.append(obj)
+        return result

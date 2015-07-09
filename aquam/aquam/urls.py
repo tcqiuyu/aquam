@@ -52,5 +52,6 @@ urlpatterns = [
     url(r"^solutions/water-quality-analyzer/get-water-quality-values/$", solutions_views.get_water_quality_values, name="get-water-quality-values"),
     
     # Water Treatment Analyzer
-    url(r"^solutions/water-treatment-analyzer/$", solutions_views.water_treatment_analyzer, name="water-treatment-analyzer")
+    url(r"^solutions/water-treatment-analyzer/$", solutions_views.water_treatment_analyzer, name="water-treatment-analyzer"),
+    url(r"^solutions/water-treatment-analyzer/water-treatment-iteration-result/$", solutions_views.get_treatment_iteration_result, name="water-treatment-iteration-result")
 ]
