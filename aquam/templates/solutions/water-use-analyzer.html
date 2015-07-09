@@ -235,8 +235,7 @@
                     .attr("text-anchor", "middle")
                     .attr("x", width / 2)
                     .attr("y", height + margin.bottom - 5)
-                    .attr("font-size", 12)
-                    .text("Water Used per Well");
+                    .attr("font-size", 12);
             chart1.append("text")
                     .attr("class", "ylabel")
                     .attr("x", 0 - (height / 2))
@@ -261,8 +260,7 @@
                     .attr("dy", "1em")
                     .attr("transform", "rotate(-90)")
                     .attr("text-anchor", "middle")
-                    .attr("font-size", 12)
-                    .text("Annual Average Water Use Per Well (bbls)");
+                    .attr("font-size", 12);
             var chart3 = d3.select("#chart3").select("g");
             chart3.append("text")
                     .attr("class", "xlabel")
@@ -283,7 +281,7 @@
 
         });
 
-        function draw_histogram(data, data_name) {
+        function draw_histogram(data, data_name, xlabel) {
             var margin = {top: 20, right: 30, bottom: 40, left: 50},
                     width = $("#chart1").width() - margin.left - margin.right,
                     height = $("#chart1").height() - margin.top - margin.bottom;
@@ -312,6 +310,7 @@
             svg.selectAll(".y.axis").transition()
                     .call(yAxis);
 
+            chart.select('.xlabel').text(xlabel);
             chart.selectAll(".bar")
                     .remove();
             // set up the bars and text
@@ -364,7 +363,7 @@
             }
             // else redraw the diagram
             d3.json("{% url 'get-water-use'%}", function (error, data) {
-                draw_histogram(data, "water_use");
+                draw_histogram(data, "water_use", "Water Used per Well");
                 update_chart1_footer(data, "water_use_mean", "water_use_std");
             });
 
@@ -378,7 +377,7 @@
             }
             // else redraw the diagram
             d3.json("{% url 'get-horizontal-length'%}", function (error, data) {
-                draw_histogram(data, "horizontal_length");
+                draw_histogram(data, "horizontal_length", "Horizontal Length per Well");
                 update_chart1_footer(data, "horizontal_length_mean", "horizontal_length_std");
             });
         });
@@ -391,7 +390,7 @@
             }
             // else redraw the diagram
             d3.json("{% url 'get-water-use-per-horizontal-foot'%}", function (error, data) {
-                draw_histogram(data, "water_use_per_horizontal_foot");
+                draw_histogram(data, "water_use_per_horizontal_foot", "Water Used per Horizontal Foot");
                 update_chart1_footer(data, "water_use_per_horizontal_foot_mean", "water_use_per_horizontal_foot_std");
             });
         });
@@ -403,14 +402,6 @@
             })
         });
 
-        {#        $("#chart1-form").validate({#}
-        {#            rules: {#}
-        {#                Well_number: {#}
-        {#                    required: true,#}
-        {#                    digits: true#}
-        {#                }#}
-        {#            }#}
-        {#        });#}
 
         function is_Int(value) {
             return !!((parseFloat(value) == parseInt(value)) && !isNaN(value));
