@@ -69,7 +69,7 @@ class WaterUseAnalyzer():
         return result
     
     def get_annual_horizontal_feet_drilled(self):
-        values_list = self.model.objects.values_list("frac_date", "water_use")
+        values_list = self.model.objects.values_list("frac_date", "horizontal_length")
         frac_years = np.empty(len(values_list), dtype=int)
         horizontal_length = np.empty(len(values_list), dtype=float)
         for i in range(len(values_list)):
