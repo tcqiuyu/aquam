@@ -48,6 +48,9 @@ urlpatterns = [
     url(r"^solutions/produced-water-modeler/get-arp-prediction/$", solutions_views.get_arp_prediction, name="get-arp-prediction"),
     
     # Water Quality Analyzer
-    url(r"^solutions/water-quality-analyzer/$", solutions_views.water_quality_analyzer, name="produced-water-modeler"),
-    url(r"^solutions/water-quality-analyzer/get-water-quality-values/$", solutions_views.get_water_quality_values, name="get-water-quality-values")
+    url(r"^solutions/water-quality-analyzer/$", solutions_views.water_quality_analyzer, name="water-quality-analyzer"),
+    url(r"^solutions/water-quality-analyzer/get-water-quality-values/$", solutions_views.get_water_quality_values, name="get-water-quality-values"),
+    
+    # Water Treatment Analyzer
+    url(r"^solutions/water-treatment-analyzer/$", solutions_views.water_treatment_analyzer, name="water-treatment-analyzer")
 ]

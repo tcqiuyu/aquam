@@ -9,8 +9,8 @@ from django.http import HttpResponse, JsonResponse
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
 # Apps imports
-from apps.solutions.models import WaterUse, ProducedWater, WaterQuality
-from apps.solutions.tools import WaterUseAnalyzer, ProducedWaterModeler, WaterQualityAnalyzer
+from apps.solutions.models import WaterUse, ProducedWater, WaterQuality, WaterTreatment
+from apps.solutions.tools import WaterUseAnalyzer, ProducedWaterModeler, WaterQualityAnalyzer, WaterTreatmentAnalyzer
 
 
 # Water Use Analyzer VIEWS & JSON APIs
@@ -121,3 +121,18 @@ def get_water_quality_values(request):
     analyzer = WaterQualityAnalyzer(WaterQuality)
     result = analyzer.get_water_quality_values()
     return HttpResponse(json.dumps(result), content_type="application/json")
+
+def water_treatment_analyzer(request):
+    analyzer = WaterTreatmentAnalyzer(WaterTreatment)
+    location_name = "Core"
+    constituent_name = "TDS"
+    end_day = 1000
+    stages = 20
+    coefficients = analyzer.coefficients
+    methods = analyzer.methods
+    constants = analyzer.constants
+    parameters = analyzer.parameters
+    percent = 1.0
+    analyzer.set_database_result(end_day, coefficients, methods, constants, parameters, stages, location_name, constituent_name, percent)
+    context = {"page_title": "AQUAM | Water Treatment Analyzer"}
+    return render_to_response("solutions/water-treatment-analyzer.html", context, context_instance=RequestContext(request))

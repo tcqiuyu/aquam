@@ -607,22 +607,23 @@ class WaterTreatmentAnalyzer():
             water_quality[i] = water_quality_equation(day, alpha, beta)
         return water_quality
     
-    def __calc_water_treatment(self, end_day, coefficient, method, constant, parameter, stages):
+    def __calc_water_treatment(self, end_day, coefficient, method, constant, parameter, stages, percent):
         # water quality fitting
         water_quality = self.__calc_water_quality(end_day, coefficient)
         # constant values
-        wqcritical = parameter["Critical Fracturing Fluids Quality"]
-        wqfresh = parameter["Fresh Water Quality"]
-        flowback_volume = self.__calc_flowback_volume(end_day, parameter)
+        wqcritical = constant["Critical Fracturing Fluids Quality"]
+        wqfresh = constant["Fresh Water Quality"]
+        flowback_volume = self.__calc_flowback_volume(end_day, parameter, percent)
         # calculate treatment
         result_matrix = np.zeros([10, end_day], dtype=float)
         for i in range(end_day):
             # calculate Vrec(mg/L)
             vrec = 0.0
             water_quantity = 0.0
-            for k in range(i):
+            for k in range(i+1):
                 vrec = vrec + flowback_volume[k]
                 water_quantity = water_quantity + water_quality[k] * flowback_volume[k] * self.unit
+            print vrec
             # calculate Vfrac (mg/L)
             vfrac = self.qfrac * stages * self.unit
             result_matrix[0][i] = self.qfrac * stages
@@ -638,9 +639,35 @@ class WaterTreatmentAnalyzer():
                 else:
                     result_matrix[3*idx+1][i] = float("nan")
                 vfresh_quality = (vfrac * wqcritical - vrec * wqtreat) / wqfresh
-                if vfresh <= vfresh_quality & vfresh > 0:
+                if vfresh <= vfresh_quality and vfresh > 0:
                     result_matrix[3*idx+2][i] = vfresh / self.unit
                     result_matrix[3*idx+3][i] = vfresh / vrec
                 else:
                     result_matrix[3*idx+2][i] = float("nan")
                     result_matrix[3*idx+3][i] = float("nan")
+        return result_matrix
+    
+    def set_database_result(self, end_day, coefficients, methods, constants, parameters, stages, location_name, constituent_name, percent):
+        coefficient = coefficients[location_name][constituent_name]
+        method = methods[constituent_name]
+        constant = constants[constituent_name]
+        parameter = parameters[location_name]
+        result_matrix = self.__calc_water_treatment(end_day, coefficient, method, constant, parameter, stages, percent)
+        result_matrix = result_matrix.transpose()
+        water_quality = self.__calc_water_quality(end_day, coefficient)
+        objs = self.model.objects.filter(location=location_name, constituent=constituent_name, days__lte=end_day).order_by("days")
+        for i in range(len(objs)):
+            obj = objs[i]
+            result = result_matrix[i]
+            obj.quality = water_quality[i]
+            obj.vfrac = result[0]
+            obj.wqfrac_iter_1 = result[1]
+            obj.vfresh_iter_1 = result[2]
+            obj.ratio_iter_1 = result[3]
+            obj.wqfrac_iter_2 = result[4]
+            obj.vfresh_iter_2 = result[5]
+            obj.ratio_iter_2 = result[6]
+            obj.wqfrac_iter_3 = result[7]
+            obj.vfresh_iter_3 = result[8]
+            obj.ratio_iter_3 = result[9]
+            obj.save()
