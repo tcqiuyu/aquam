@@ -5,6 +5,7 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/chart.css' %}"/>
     <!-- D3 -->
     <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <script src="http://cdn.jsdelivr.net/jquery.validation/1.14.0/jquery.validate.min.js"></script>
 {% endblock %}
 
 {% block mainbody %}
@@ -33,7 +34,7 @@
             {{ data }}
         </div>
 
-        <div class="chart-container" style="with:100%">
+        <div class="chart-container" style="width:100%">
             <div class="panel panel-primary chart-panel" id="water-use-analytics">
                 <div class="panel-heading chart-heading">
                     Analytics
@@ -86,7 +87,7 @@
                     </div>
                     <br>
 
-                    <form class="form-inline additional-info hide">
+                    <form class="form-inline additional-info hide" id="chart1-form">
                             <span class="label label-primary label-form">
                                 Water Used per Well Mean (bbls):
                             </span>
@@ -96,7 +97,7 @@
                         <input type="text" id="Well_number" name="Well_number"
                                placeholder="Well Number"
                                class="form-control">
-                        <button type="button" class="btn cal-button btn-sm">
+                        <button type="button" class="btn cal-button btn-sm" id="chart1-cal-button">
                             <span class="glyphicon glyphicon-arrow-right" aria-hidden="false"></span>
                         </button>
                         <span class="output output-result">
@@ -199,7 +200,7 @@
 
         // draw the base graph first, then load data when needed
         $(document).ready(function () {
-            var margin = {top: 10, right: 30, bottom: 40, left: 50},
+            var margin = {top: 20, right: 30, bottom: 40, left: 50},
                     width = $(".chart").width() - margin.left - margin.right,
                     height = $(".chart").height() - margin.top - margin.bottom;
             var init_xRange = d3.scale.linear()
@@ -283,7 +284,7 @@
         });
 
         function draw_histogram(data, data_name) {
-            var margin = {top: 10, right: 30, bottom: 40, left: 50},
+            var margin = {top: 20, right: 30, bottom: 40, left: 50},
                     width = $("#chart1").width() - margin.left - margin.right,
                     height = $("#chart1").height() - margin.top - margin.bottom;
             // data
@@ -400,6 +401,32 @@
                 var width = $(this).parent().width();
                 $(this).attr("width", width);
             })
+        });
+
+        {#        $("#chart1-form").validate({#}
+        {#            rules: {#}
+        {#                Well_number: {#}
+        {#                    required: true,#}
+        {#                    digits: true#}
+        {#                }#}
+        {#            }#}
+        {#        });#}
+
+        function is_Int(value) {
+            return !!((parseFloat(value) == parseInt(value)) && !isNaN(value));
+        }
+
+        $("#chart1-cal-button").click(function () {
+            var input = $(this).closest('.additional-info').find('#Well_number').val();
+            var mean = $(this).closest('.additional-info').find('.output-mean').text();
+            var result = $(this).closest('.additional-info').find('.output-result')
+            if (is_Int(input)) {
+                result.removeClass('output-error');
+                result.text((mean*input).toFixed(2));
+            } else {
+                result.addClass('output-error');
+                result.text('Please input an integer number')
+            }
         });
 
         {#        $(".chart-footer.info").addClass('hide');#}

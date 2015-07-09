@@ -709,6 +709,10 @@ label.solution-radio {
     color: #34495E;
 }
 
+.additional-info .output-error{
+    color: #CE5B56;
+}
+
 .chart-footer .info {
     color: #CE5B56;
 }
@@ -718,14 +722,13 @@ label.solution-radio {
     display: inline;
     text-align: left;
     font-weight: bold;
-    padding: 10px 10px 10px 10px;
-    margin-top: 10px;
-    font-size: 100%;
+    padding: 10px 10px 12px 10px;
 }
 
 .additional-info .output, .label-form {
-    font-size: 100%;
+    font-size: 95%;
 }
+
 
 label.solution-radio.checked {
     background-color: #266c8e;
