@@ -115,21 +115,21 @@
                     <form class="radio-group">
                         <div class="col-md-4">
                             <label class="radio-inline solution-radio additional-info-button">
-                                <input type="radio" name="inlineRadioOptions" id="inlineRadio1"
+                                <input type="radio" name="inlineRadioOptions" id="water-use-kpis-radio1"
                                        value="Water used per well">
                                 Annual Average Water Use per Well
                             </label>
                         </div>
                         <div class="col-md-5">
                             <label class="radio-inline solution-radio">
-                                <input type="radio" name="inlineRadioOptions" id="inlineRadio2"
+                                <input type="radio" name="inlineRadioOptions" id="water-use-kpis-radio2"
                                        value="Horizontal Length per Well">
                                 Annual Average Horizontal Feet Drilled
                             </label>
                         </div>
                         <div class="col-md-3">
                             <label class="radio-inline solution-radio">
-                                <input type="radio" name="inlineRadioOptions" id="inlineRadio3"
+                                <input type="radio" name="inlineRadioOptions" id="water-use-kpis-radio3"
                                        value="Water Used per horizontal Foot">
                                 Annual bbls/ft Metric
                             </label>
@@ -151,21 +151,21 @@
                     <form class="radio-group">
                         <div class="col-md-4">
                             <label class="radio-inline solution-radio additional-info-button">
-                                <input type="radio" name="inlineRadioOptions" id="inlineRadio1"
+                                <input type="radio" name="inlineRadioOptions" id="water-use-relationships-radio1"
                                        value="Water used per well">
                                 Linear
                             </label>
                         </div>
                         <div class="col-md-4">
                             <label class="radio-inline solution-radio">
-                                <input type="radio" name="inlineRadioOptions" id="inlineRadio2"
+                                <input type="radio" name="inlineRadioOptions" id="water-use-relationships-radio2"
                                        value="Horizontal Length per Well">
                                 Quadratic
                             </label>
                         </div>
                         <div class="col-md-4">
                             <label class="radio-inline solution-radio">
-                                <input type="radio" name="inlineRadioOptions" id="inlineRadio3"
+                                <input type="radio" name="inlineRadioOptions" id="water-use-relationships-radio3"
                                        value="Water Used per horizontal Foot">
                                 Qubic
                             </label>
@@ -281,7 +281,7 @@
 
         });
 
-        function draw_histogram(data, data_name, xlabel) {
+        function draw_chart1(data, data_name, xlabel) {
             var margin = {top: 20, right: 30, bottom: 40, left: 50},
                     width = $("#chart1").width() - margin.left - margin.right,
                     height = $("#chart1").height() - margin.top - margin.bottom;
@@ -305,9 +305,9 @@
 
             var svg = d3.select("#chart1").select("svg");
             var chart = svg.select("g");
-            svg.selectAll(".x.axis").transition()
+            svg.selectAll(".x.axis").transition().duration(500)
                     .call(xAxis);
-            svg.selectAll(".y.axis").transition()
+            svg.selectAll(".y.axis").transition().duration(500)
                     .call(yAxis);
 
             chart.select('.xlabel').text(xlabel);
@@ -349,8 +349,8 @@
         }
 
         function update_chart1_footer(data, mean_str, std_str) {
-            mean = data[mean_str];
-            std = data[std_str];
+            var mean = data[mean_str];
+            var std = data[std_str];
             $(".output-mean").text(mean);
             $(".output-std").text(std);
         }
@@ -363,7 +363,7 @@
             }
             // else redraw the diagram
             d3.json("{% url 'get-water-use'%}", function (error, data) {
-                draw_histogram(data, "water_use", "Water Used per Well");
+                draw_chart1(data, "water_use", "Water Used per Well");
                 update_chart1_footer(data, "water_use_mean", "water_use_std");
             });
 
@@ -377,7 +377,7 @@
             }
             // else redraw the diagram
             d3.json("{% url 'get-horizontal-length'%}", function (error, data) {
-                draw_histogram(data, "horizontal_length", "Horizontal Length per Well");
+                draw_chart1(data, "horizontal_length", "Horizontal Length per Well");
                 update_chart1_footer(data, "horizontal_length_mean", "horizontal_length_std");
             });
         });
@@ -390,7 +390,7 @@
             }
             // else redraw the diagram
             d3.json("{% url 'get-water-use-per-horizontal-foot'%}", function (error, data) {
-                draw_histogram(data, "water_use_per_horizontal_foot", "Water Used per Horizontal Foot");
+                draw_chart1(data, "water_use_per_horizontal_foot", "Water Used per Horizontal Foot");
                 update_chart1_footer(data, "water_use_per_horizontal_foot_mean", "water_use_per_horizontal_foot_std");
             });
         });
@@ -402,7 +402,6 @@
             })
         });
 
-
         function is_Int(value) {
             return !!((parseFloat(value) == parseInt(value)) && !isNaN(value));
         }
@@ -410,15 +409,102 @@
         $("#chart1-cal-button").click(function () {
             var input = $(this).closest('.additional-info').find('#Well_number').val();
             var mean = $(this).closest('.additional-info').find('.output-mean').text();
-            var result = $(this).closest('.additional-info').find('.output-result')
+            var result = $(this).closest('.additional-info').find('.output-result');
             if (is_Int(input)) {
                 result.removeClass('output-error');
-                result.text((mean*input).toFixed(2));
+                result.text((mean * input).toFixed(2));
             } else {
                 result.addClass('output-error');
                 result.text('Please input an integer number')
             }
         });
+
+        function draw_chart2(data) {
+            var margin = {top: 20, right: 30, bottom: 40, left: 50},
+                    width = $("#chart2").width() - margin.left - margin.right,
+                    height = $("#chart2").height() - margin.top - margin.bottom;
+            var xRange = d3.scale.ordinal()
+                    .domain(data.map(function (d) {return d.year;}))
+                    .rangeRoundBands([0, width], .4);
+            var yRange = d3.scale.linear()
+                    .domain([0, d3.max(data, function (d) {return d.mean;})])
+                    .range([height, 0]);
+            var xAxis = d3.svg.axis()
+                    .scale(xRange)
+                    .orient("bottom");
+            var yAxis = d3.svg.axis()
+                    .scale(yRange)
+                    .orient("left");
+            var svg = d3.select("#chart2").select("svg");
+            var chart = svg.select("g");
+            svg.selectAll(".x.axis").transition().duration(500)
+                    .call(xAxis);
+            svg.selectAll(".y.axis").transition().duration(500)
+                    .call(yAxis);
+
+            {#                chart.select('.ylabel').text("Annual Average Water Use per Well");#}
+            chart.selectAll(".bar")
+                    .remove();
+
+            // set up the bars and text
+            var bar = chart.selectAll(".bar")
+                    .data(data)
+                    .enter()
+                    .append("g")
+                    .attr("class", "bar");
+            bar.append("rect")
+                    .attr("x", function (d) {return xRange(d.year)})
+                    .attr("width", xRange.rangeBand())
+                    .attr("y", height)
+                    .attr("height", 0)
+                    .attr("fill", "steelblue");
+            bar.selectAll("rect")
+                    .transition()
+                    .duration(500)
+                    .attr("y", function (d) {return yRange(d.mean)})
+                    .attr("height", function (d) {return height - yRange(d.mean)});
+            bar.selectAll("rect")
+                    .on("mouseover", function () { d3.select(this).attr("fill", "green"); })
+                    .on("mouseout", function () { d3.select(this).attr("fill", "steelblue"); });
+            bar.append("text")
+                    .attr("dy", "0.75em")
+                    .attr("y", height - 10)
+                    .attr("x", function (d) {return xRange(d.year) + xRange.rangeBand() / 2;})
+                    .attr("text-anchor", "middle")
+                    .text(function (d) { return d.mean; });
+            bar.selectAll("text")
+                    .transition()
+                    .duration(500)
+                    .attr("y", function (d) {return yRange(d.mean) - 10});
+        }
+
+        $("#water-use-kpis-radio1").click(function () {
+            if ($(this).parent().hasClass("checked")) {
+                return;
+            }
+            d3.json("{% url 'get-annual-water' %}", function (error, data) {
+                draw_chart2(data);
+            });
+        });
+
+        $("#water-use-kpis-radio2").click(function () {
+            if ($(this).parent().hasClass("checked")) {
+                return;
+            }
+            d3.json("{% url 'get-annual-horizontal-feet-dilled' %}", function (error, data) {
+                draw_chart2(data);
+            });
+        });
+
+        $("#water-use-kpis-radio3").click(function () {
+            if ($(this).parent().hasClass("checked")) {
+                return;
+            }
+            d3.json("{% url 'get-annual-bbls-ft-metric' %}", function (error, data) {
+                draw_chart2(data);
+            });
+        });
+
 
         {#        $(".chart-footer.info").addClass('hide');#}
     </script>
