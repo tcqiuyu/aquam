@@ -341,7 +341,7 @@ class WaterQualityAnalyzer():
             }
         }
     
-    def __calc_flowback_volume(self, parameter):
+    def __calc_flowback_volume(self, parameter, location_name):
         
         def arp_model(x, Q0, D, b):
             if b > 0.0:
@@ -352,27 +352,28 @@ class WaterQualityAnalyzer():
             else:
                 return 0.0
         
-        values_list = self.model.objects.values_list("date", "wells_number").order_by("date")
+        objs = self.model.objects.filter(location=location_name).order_by("date")
         wells_increase = {}
         pre_wells_number = 0
-        for value in values_list:
-            cur_date, cur_wells_number = value
+        for obj in objs:
+            cur_date = obj.date
+            cur_wells_number = obj.wells_number
             if cur_wells_number > pre_wells_number:
                 wells_increase[cur_date] = cur_wells_number - pre_wells_number
                 pre_wells_number = cur_wells_number
-        wells_matrix = np.zeros([len(wells_increase), len(values_list)], dtype=int)
-        days_matrix = np.zeros([len(wells_increase), len(values_list)], dtype=int)
+        wells_matrix = np.zeros([len(wells_increase), len(objs)], dtype=int)
+        days_matrix = np.zeros([len(wells_increase), len(objs)], dtype=int)
         for j in range(len(wells_increase)):
             jdate = sorted(wells_increase)[j]
             wells_increase_number = wells_increase[jdate]
-            for i in range(len(values_list)):
-                idate = values_list[i][0]
+            for i in range(len(objs)):
+                idate = objs[i].date
                 if idate >= jdate:
                     wells_matrix[j][i] = wells_increase_number
                     days_matrix[j][i] = (idate - jdate).days + 1
-        volume_matrix = np.zeros([len(wells_increase), len(values_list)], dtype=float)
+        volume_matrix = np.zeros([len(wells_increase), len(objs)], dtype=float)
         for j in range(len(wells_increase)):
-            for i in range(len(values_list)):
+            for i in range(len(objs)):
                 day = days_matrix[j][i]
                 wells_number = wells_matrix[j][i]
                 if 0 < day <= 30:
@@ -395,13 +396,13 @@ class WaterQualityAnalyzer():
         volume_matrix = volume_matrix * self.unit
         return volume_matrix, days_matrix
     
-    def __calc_water_quality(self,parameter, coefficient):
+    def __calc_water_quality(self, parameter, coefficient, location_name):
         
         def water_quality_equation(x, alpha, beta):
             return alpha * math.log(x) + beta
         
         # produced water volume
-        volume_matrix, days_matrix = self.__calc_flowback_volume(parameter)
+        volume_matrix, days_matrix = self.__calc_flowback_volume(parameter, location_name)
         cols, rows = volume_matrix.shape
         volume_array = np.zeros(rows, dtype=float)
         volume_matrix2 = volume_matrix.transpose()
@@ -430,8 +431,8 @@ class WaterQualityAnalyzer():
             quality_dict[constituent] = quality_array.tolist()
         return quality_dict, volume_array
     
-    def set_database(self, location_name):
-        quality_dict, volume_array = self.__calc_water_quality(location_name)
+    def set_database(self, parameter, coefficient, location_name):
+        quality_dict, volume_array = self.__calc_water_quality(parameter, coefficient)
         objs = self.model.objects.filter(location=location_name).order_by("date")
         for i in range(len(objs)):
             obj = objs[i]
@@ -449,19 +450,19 @@ class WaterQualityAnalyzer():
             obj.volume = volume_array[i]
             obj.save()
     
-    def get_water_quality_values(self):
-        objs = self.model.objects.all()
+    def get_water_quality_result(self, parameter, coefficient, location_name):
+        quality_dict, volume_array = self.__calc_water_quality(parameter, coefficient, location_name)
+        objs = self.model.objects.filter(location=location_name).order_by("date")
         result = []
-        for obj in objs:
-            value = {"date": str(obj.date),
-                     "wells_number": float(obj.wells_number),
-                     "TDS": float(obj.tds),
-                     "Chloride": float(obj.chloride),
-                     "Sodium": float(obj.sodium),
-                     "Calcium": float(obj.calcium),
-                     "Iron": float(obj.iron),
-                     "volume": float(obj.volume)
-                }
+        for i in range(len(objs)):
+            value = {"date": str(objs[i].date),
+                   "TDS": abs(quality_dict["TDS"][i]),
+                   "Chloride":abs(quality_dict["Chloride"][i]),
+                   "Sodium":abs(quality_dict["Sodium"][i]),
+                   "Calcium":abs(quality_dict["Calcium"][i]),
+                   "Iron":abs(quality_dict["Iron"][i]),
+                   "Volume": volume_array[i]
+            }
             result.append(value)
         return result
 

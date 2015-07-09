@@ -43,7 +43,7 @@
 {% block footer %}
 <script type="text/javascript">
     $(document).ready(function() {
-        d3.json("{% url 'get-water-quality-values'%}", function (error, data) {
+        d3.json("{% url 'get-water-quality-result'%}", function (error, data) {
             console.log(data)
         });
     });

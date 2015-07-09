@@ -117,9 +117,12 @@ def water_quality_analyzer(request):
     context = {"page_title": "AQUAM | Water Quality Analyzer"}
     return render_to_response("solutions/water-quality-analyzer.html", context, context_instance=RequestContext(request))
 
-def get_water_quality_values(request):
+def get_water_quality_result(request):
     analyzer = WaterQualityAnalyzer(WaterQuality)
-    result = analyzer.get_water_quality_values()
+    location_name = "Greeley Crescent"
+    parameter = analyzer.parameters[location_name]
+    coefficient = analyzer.coefficients[location_name]
+    result = analyzer.get_water_quality_result(parameter, coefficient, location_name)
     return HttpResponse(json.dumps(result), content_type="application/json")
 
 def water_treatment_analyzer(request):
