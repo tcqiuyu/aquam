@@ -1,0 +1,39 @@
+# !/usr/bin/env/python 
+# -*- coding:utf-8 -*-
+
+import psycopg2
+
+
+def import_data(location_name, constituent_name):
+    try:
+        conn = psycopg2.connect(database='aquamdb', user='aquam', password='admin', host='127.0.0.1', port='5432')
+    except:
+        print 'unable to connect to the database.';
+    cur = conn.cursor()
+    
+    for day in range(1, 2001):
+        location = location_name
+        days = day
+        stages = 20
+        constituent = constituent_name
+        sql = 'INSERT INTO solutions_watertreatment (location, days, stages, constituent) \
+               VALUES (%s, %s, %s, %s);'
+        try:
+            vals = [location, days, stages, constituent]
+            cur.execute(sql, vals)
+            conn.commit()
+            print location, constituent, days
+        except Exception as ex:
+            cur.close()
+            conn.close()
+            print ex.message
+            break
+    cur.close()
+    conn.close()
+    
+if __name__ == '__main__':
+    constituent_names = ["TDS", "Sodium", "Chloride", "Calcium", "Iron"]
+    location_names = ['Core', 'Mustang', 'Greeley Crescent', 'East Pony', 'West Pony', 'Wells Ranch', 'Commins']
+    for location_name in location_names:
+        for constituent_name in constituent_names:
+            import_data(location_name, constituent_name)
