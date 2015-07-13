@@ -20,6 +20,7 @@ from django.contrib import admin
 # Apps imports
 import views as aquam_views
 import apps.solutions.views as solutions_views
+import apps.geoanalytics.views as geoanalytics_views
 
 
 urlpatterns = [
@@ -53,5 +54,8 @@ urlpatterns = [
     
     # Water Treatment Analyzer
     url(r"^solutions/water-treatment-analyzer/$", solutions_views.water_treatment_analyzer, name="water-treatment-analyzer"),
-    url(r"^solutions/water-treatment-analyzer/water-treatment-iteration-result/$", solutions_views.get_treatment_iteration_result, name="water-treatment-iteration-result")
+    url(r"^solutions/water-treatment-analyzer/water-treatment-iteration-result/$", solutions_views.get_treatment_iteration_result, name="water-treatment-iteration-result"),
+    
+    # Water Use Geoanalyzer
+    url(r"^geoanalytics/water-use-geoanalyzer/$", geoanalytics_views.water_use_geoanalyzer, name="water-use-geoanalyzer"),
 ]

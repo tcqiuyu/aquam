@@ -28,14 +28,6 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # DATABASE CONFIGURATION
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'aquamdb',
-        'USER': 'aquam',
-        'PASSWORD': 'admin',
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
-    },
-    'geodb': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': 'aquamdb',
         'USER': 'aquam',

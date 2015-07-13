@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block header %}
+<link rel="stylesheet" href="http://js.arcgis.com/3.13/esri/css/esri.css">
+<script src="http://js.arcgis.com/3.13/"></script>
+<script>
+  var map;
+  require(["esri/map", "dojo/domReady!"], function(Map) {
+    map = new Map("map-container", {
+      center: [-105.0781, 40.5592],
+      zoom: 10,
+      basemap: "streets"
+    });
+  });
+</script>
+{% endblock %}
+
+{% block mainbody %}
+    <div class="container">
+        <div class="jumbotron">
+            <h2>Water Use Geoanalyzer</h2>
+            
+            <p>This analyzer is an interactive tool designed to fit the user, in this case,
+                an operator or a water management company to anlayze their statistics of water,
+                current and historical to establish a baseline and a trend to improve their water
+                use scenarios significantly. This tool also provides the user to look at
+                Key Performance Indicators (KPIs) such as average horizontal length drilled,
+                average water used per well and bbls water used per horizontal foot,
+                on an annual comparison basis. </p>
+        </div>
+        
+        <hr>
+        <div id="map-div" style="width:100%; height:500px">
+            <div id="map-container" style="width:100%; height:100%"> </div>
+        </div>
+        
+        <hr>
+        <div>
+            {{ objs }}
+        </div>
+        
+        <hr>
+    </div>
+{% endblock %}
