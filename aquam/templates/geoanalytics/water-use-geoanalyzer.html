@@ -116,38 +116,43 @@
             }
         };
         var popupTemplate = new PopupTemplate({
-            title: "API: {API}",
+            title: "Attributes",
             fieldInfos:[
                 {
-                    filedName: "WellName",
-                    label: "Well Name",
-                    visible: true
+                    fieldName:"API",
+                    label:"API", 
+                    visible:true
+                }, 
+                {
+                    fieldName:"WellName", 
+                    label:"WellName", 
+                    visible:true
                 },
                 {
-                    filedName: "FractureDate",
-                    label: "Fracture Date",
-                    visible: true,
-                    format: { dateFormat: "shortDateShortTime" }
+                    fieldName:"FractureDate", 
+                    label:"Fracture Date", 
+                    visible:true,
+                    format:{ dateFormat:"shortDate" }
                 },
                 {
-                    filedName: "State",
-                    label: "State",
-                    visible: true
+                    fieldName:"State", 
+                    label:"State", 
+                    visible:true
                 },
                 {
-                    filedName: "County",
-                    label: "County",
-                    visible: true
+                    fieldName:"County", 
+                    label:"County", 
+                    visible:true
                 },
                 {
-                    filedName: "HorizontalLength",
-                    label: "HorizontalLength",
-                    visible: true
+                    fieldName:"HorizontalLength", 
+                    label:"Horizontal Length", 
+                    visible:true
                 },
                 {
-                    filedName: "WaterUse",
-                    label: "WaterUse",
-                    visible: true
+                    fieldName:"WaterUse", 
+                    label:"Water Use", 
+                    visible:true
                 }
             ]
         });
