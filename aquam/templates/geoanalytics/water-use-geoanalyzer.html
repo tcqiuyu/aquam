@@ -4,16 +4,6 @@
 {% block header %}
 <link rel="stylesheet" href="http://js.arcgis.com/3.13/esri/css/esri.css">
 <script src="http://js.arcgis.com/3.13/"></script>
-<script>
-  var map;
-  require(["esri/map", "dojo/domReady!"], function(Map) {
-    map = new Map("map-container", {
-      center: [-105.0781, 40.5592],
-      zoom: 10,
-      basemap: "streets"
-    });
-  });
-</script>
 {% endblock %}
 
 {% block mainbody %}
@@ -37,9 +27,168 @@
         
         <hr>
         <div>
-            {{ objs }}
+            {{ data }}
         </div>
         
         <hr>
     </div>
+{% endblock %}
+
+{% block footer %}
+<script type="text/javascript">
+    var map;
+    require(["esri/map","esri/request", "esri/layers/FeatureLayer", "esri/dijit/PopupTemplate", "esri/geometry/Point", "esri/graphic", "dojo/_base/array", "dojo/domReady!"], function(Map, esriRequest, FeatureLayer, PopupTemplate, Point, Graphic, array){
+        var featureLayer;
+        map = new Map("map-container", {
+            basemap: "topo",
+            center: [-98.545682, 28.624585],
+            zoom: 8
+        });
+        var layerDefinition = {
+                "geometryType": "esriGeometryPoint",
+                "objectIdField": "ObjectID",
+                "drawingInfo": {
+                    "renderer": {
+                        "type": "simple",
+                        "symbol": {
+                            "type": "esriSMS",
+                            "style": "esriSMSCircle",
+                            "color": [67, 100, 255, 70],
+                            "size": 7,
+                            "outline":{
+                                "width": 0.5,
+                                "color": [0, 0, 0, 70],
+                            }
+                        }
+                    }
+                },
+                "fields":[
+                    {
+                        "name": "ObjectID",
+                        "alias": "ObjectID",
+                        "type": "esriFieldTypeOID"
+                    },
+                    {
+                        "name": "API",
+                        "alias": "API",
+                        "type": "esriFieldTypeString"
+                    },
+                    {
+                        "name": "WellName",
+                        "alias": "WellName",
+                        "type": "esriFieldTypeString",
+                    },
+                    {
+                        "name": "FractureDate",
+                        "alias": "FractureDate",
+                        "type": "esriFieldTypeDate"
+                    },
+                    {
+                        "name": "State",
+                        "alias": "State",
+                        "type": "esriFieldTypeString",
+                    },
+                    {
+                        "name": "County",
+                        "alias": "County",
+                        "type": "esriFieldTypeString",
+                    },
+                    {
+                        "name": "HorizontalLength",
+                        "alias": "HorizontalLength",
+                        "type": "esriFieldTypeDouble",
+                    },
+                    {
+                        "name": "WaterUse",
+                        "alias": "WaterUse",
+                        "type": "esriFieldTypeDouble",
+                    }
+                ]
+            };
+        var featureCollection = {
+            "layerDefinition": layerDefinition,
+            "featureSet":{
+                "features": [],
+                "geometryType": "esriGeometryPoint"
+            }
+        };
+        var popupTemplate = new PopupTemplate({
+            title: "{API}",
+            fieldInfos: [
+                {
+                    filedName: "{WellName}",
+                    label: "Well Name",
+                    visible: true
+                },
+                {
+                    filedName: "FractureDate",
+                    label: "Fracture Date",
+                    visible: true,
+                    format: {
+                        dateFormat: "shortDateShortTime"
+                    }
+                },
+                {
+                    filedName: "State",
+                    label: "State",
+                    visible: true
+                },
+                {
+                    filedName: "County",
+                    label: "County",
+                    visible: true
+                },
+                {
+                    filedName: "HorizontalLength",
+                    label: "HorizontalLength",
+                    visible: true
+                },
+                {
+                    filedName: "WaterUse",
+                    label: "WaterUse",
+                    visible: true
+                }
+            ]
+        });
+        featureLayer = new FeatureLayer(featureCollection, {
+            id: "waterUseLayer",
+            mode: FeatureLayer.MODE_SNAPSHOT,
+            infoTemplate: popupTemplate
+        });
+        
+        var requestHandle = esriRequest({
+            url: "{% url 'get-geo-water-use'%}",
+            handleAs: "json"
+        });
+        requestHandle.then(requestSucceeded, requestFailed);
+        
+        function requestSucceeded(response, io){
+            response = JSON.parse(response);
+            var features = [];
+            array.forEach(response.features, function(item){
+                var attr = {};
+                attr["API"] = item.properties.api;
+                attr["WellName"] = item.properties.well_name;
+                attr["FractureDate"] = Date.parse(item.properties.frac_date);
+                attr["State"] = item.properties.state;
+                attr["County"] = item.properties.county;
+                attr["HorizontalLength"] = parseFloat(item.properties.horizontal_length);
+                attr["WaterUse"] = parseFloat(item.properties.water_use);
+                var lon = item.geometry.coordinates[0];
+                var lat = item.geometry.coordinates[1];
+                var geometry = new Point(lon, lat);
+                var graphic = new Graphic(geometry);
+                graphic.setAttributes(attr);
+                features.push(graphic);
+            });
+            featureLayer.applyEdits(features);
+        }
+        
+        function requestFailed(error){
+            alert(error.message);
+        }
+        
+        map.addLayer(featureLayer);
+    });
+</script>
 {% endblock %}

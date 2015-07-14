@@ -58,4 +58,5 @@ urlpatterns = [
     
     # Water Use Geoanalyzer
     url(r"^geoanalytics/water-use-geoanalyzer/$", geoanalytics_views.water_use_geoanalyzer, name="water-use-geoanalyzer"),
+    url(r"^geoanalytics/water-use-geoanalyzer/get-geo-water-use/$", geoanalytics_views.get_geo_water_use, name="get-geo-water-use")
 ]
