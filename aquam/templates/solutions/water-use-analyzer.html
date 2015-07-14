@@ -3,7 +3,6 @@
 
 {% block header %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/chart.css' %}"/>
-    <!-- D3 -->
     <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 {% endblock %}
 
@@ -11,7 +10,6 @@
     <div class="container">
         <div class="jumbotron">
             <h2>Water Use Analyzer</h2>
-
             <p>This analyzer is an interactive tool designed to fit the user, in this case,
                 an operator or a water management company to anlayze their statistics of water,
                 current and historical to establish a baseline and a trend to improve their water
@@ -196,7 +194,6 @@
 
 {% block footer %}
     <script type="text/javascript">
-
         // draw the base graph first, then load data when needed
         $(document).ready(function () {
             var margin = {top: 20, right: 30, bottom: 40, left: 70},
@@ -214,7 +211,6 @@
             var yAxis = d3.svg.axis()
                     .scale(init_yRange)
                     .orient("left");
-
             var svg = d3.selectAll(".chart").append("svg")
                     .attr("width", width + margin.left + margin.right)
                     .attr("height", height + margin.top + margin.bottom)
@@ -277,9 +273,7 @@
                     .attr("text-anchor", "middle")
                     .attr("font-size", 12)
                     .text("Water Use (bbls)");
-
         });
-
         function draw_chart1(data, data_name, xlabel) {
             var margin = {top: 20, right: 30, bottom: 40, left: 50},
                     width = $("#chart1").width() - margin.left - margin.right,
@@ -301,14 +295,12 @@
             var yAxis = d3.svg.axis()
                     .scale(yRange)
                     .orient("left");
-
             var svg = d3.select("#chart1").select("svg");
             var chart = svg.select("g");
             svg.selectAll(".x.axis").transition().duration(500)
                     .call(xAxis);
             svg.selectAll(".y.axis").transition().duration(500)
                     .call(yAxis);
-
             chart.select('.xlabel').text(xlabel);
             chart.selectAll(".bar")
                     .remove();
@@ -331,7 +323,6 @@
                     .duration(500)
                     .attr("y", function (d) {return yRange(d.y);})
                     .attr("height", function (d) { return height - yRange(d.y); });
-
             bar.selectAll("rect")
                     .on("mouseover", function () { d3.select(this).attr("fill", "green"); })
                     .on("mouseout", function () { d3.select(this).attr("fill", "steelblue"); });
@@ -346,14 +337,12 @@
                     .duration(500)
                     .attr("y", function (d) {return yRange(d.y) - 10;})
         }
-
         function update_chart1_footer(data, mean_str, std_str) {
             var mean = data[mean_str];
             var std = data[std_str];
             $(".output-mean").text(mean);
             $(".output-std").text(std);
         }
-
         // histogram-1
         $("#water-use-analytics-radio-1").click(function () {
             // if the button is already in clicked status, do nothing
@@ -365,9 +354,7 @@
                 draw_chart1(data, "water_use", "Water Used per Well");
                 update_chart1_footer(data, "water_use_mean", "water_use_std");
             });
-
         });
-
         // histogram-2
         $("#water-use-analytics-radio-2").click(function () {
             // if the button is already in clicked status, do nothing
@@ -380,7 +367,6 @@
                 update_chart1_footer(data, "horizontal_length_mean", "horizontal_length_std");
             });
         });
-
         // histogram-3
         $("#water-use-analytics-radio-3").click(function () {
             // if the button is already in clicked status, do nothing
@@ -393,18 +379,15 @@
                 update_chart1_footer(data, "water_use_per_horizontal_foot_mean", "water_use_per_horizontal_foot_std");
             });
         });
-
         $(window).on("resize", function () {
             $("svg").each(function () {
                 var width = $(this).parent().width();
                 $(this).attr("width", width);
             })
         });
-
         function is_Int(value) {
             return !!((parseFloat(value) == parseInt(value)) && !isNaN(value));
         }
-
         $("#chart1-cal-button").click(function () {
             var input = $(this).closest('.additional-info').find('#Well_number').val();
             var mean = $(this).closest('.additional-info').find('.output-mean').text();
@@ -417,7 +400,6 @@
                 result.text('Please input an integer number')
             }
         });
-
         function draw_chart2(data, ylabel) {
             var margin = {top: 20, right: 30, bottom: 40, left: 50},
                     width = $("#chart2").width() - margin.left - margin.right,
@@ -440,12 +422,10 @@
                     .call(xAxis);
             svg.selectAll(".y.axis").transition().duration(500)
                     .call(yAxis);
-
             chart.select('.ylabel').text(ylabel).attr("fill", "white");
             chart.select('.ylabel').transition().duration(500).attr("fill", "black");
             chart.selectAll(".bar")
                     .remove();
-
             // set up the bars and text
             var bar = chart.selectAll(".bar")
                     .data(data)
@@ -477,7 +457,6 @@
                     .duration(500)
                     .attr("y", function (d) {return yRange(d.mean) - 10});
         }
-
         $("#water-use-kpis-radio1").click(function () {
             if ($(this).parent().hasClass("checked")) {
                 return;
@@ -486,7 +465,6 @@
                 draw_chart2(data, "Annual Average Water User per Well");
             });
         });
-
         $("#water-use-kpis-radio2").click(function () {
             if ($(this).parent().hasClass("checked")) {
                 return;
@@ -495,7 +473,6 @@
                 draw_chart2(data, "Annual Average Horizontal Feet Drilled");
             });
         });
-
         $("#water-use-kpis-radio3").click(function () {
             if ($(this).parent().hasClass("checked")) {
                 return;
@@ -504,7 +481,6 @@
                 draw_chart2(data, "Annual bbls/ft Metric");
             });
         });
-
         function draw_chart3(data, option) {
             var vals = data["data"];
 {#            vals.sort(function (a, b) {#}
@@ -532,14 +508,12 @@
                     .call(xAxis);
             svg.selectAll(".y.axis").transition().duration(500)
                     .call(yAxis);
-
             chart.selectAll(".plot")
                     .remove();
             chart.selectAll("line")
                     .remove();
             chart.select(".line")
                     .remove();
-
             var dot = chart.append("g").attr("class", "plot")
                     .selectAll(".dot")
                     .data(vals)
@@ -550,7 +524,6 @@
                     .attr("cy", function (d) {return yRange(d.water_use);})
                     .style("fill", "white");
             dot.transition().duration(500).style("fill", "steelblue");
-
             if (option == "linear") {
                 var line = chart.append("line")
                         .style("stroke", "#CE5B56")
@@ -578,29 +551,23 @@
                         .attr("class", "line")
                         .attr("d", line_func(vals));
                 line2.transition().duration(500).delay(300).style("opacity", 1);
-
             }
-
         }
-
         $("#water-use-relationships-radio1").click(function () {
             d3.json("{% url 'get-linear-fitting' %}", function (error, data) {
                 draw_chart3(data, "linear")
             });
         });
-
         $("#water-use-relationships-radio2").click(function () {
             d3.json("{% url 'get-quadratic-fitting' %}", function (error, data) {
                 draw_chart3(data, "quadratic")
             });
         });
-
         $("#water-use-relationships-radio3").click(function () {
             d3.json("{% url 'get-quadratic-fitting' %}", function (error, data) {
                 draw_chart3(data, "cubic")
             });
         });
-
         $(".chart-footer.info").addClass('hide');
     </script>
     <script src="{% static 'js/radio_button.js' %}"></script>

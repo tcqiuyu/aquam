@@ -2,8 +2,8 @@
 {% load staticfiles %}
 
 {% block header %}
-<link rel="stylesheet" href="http://js.arcgis.com/3.13/esri/css/esri.css">
-<script src="http://js.arcgis.com/3.13/"></script>
+    <link rel="stylesheet" href="http://js.arcgis.com/3.13/esri/css/esri.css">
+    <script src="http://js.arcgis.com/3.13/"></script>
 {% endblock %}
 
 {% block mainbody %}
@@ -21,6 +21,7 @@
         </div>
         
         <hr>
+        <h3>Heatmap</h3>
         <div id="map-div" style="width:100%; height:500px">
             <div id="map-container" style="width:100%; height:100%"> </div>
         </div>
@@ -37,7 +38,9 @@
 {% block footer %}
 <script type="text/javascript">
     var map;
-    require(["esri/map","esri/request", "esri/layers/FeatureLayer", "esri/dijit/PopupTemplate", "esri/geometry/Point", "esri/graphic", "dojo/_base/array", "dojo/domReady!"], function(Map, esriRequest, FeatureLayer, PopupTemplate, Point, Graphic, array){
+    require(["esri/map","esri/request", "esri/layers/FeatureLayer", "esri/dijit/PopupTemplate", 
+        "esri/geometry/Point", "esri/graphic", "dojo/_base/array", "dojo/domReady!"], 
+        function(Map, esriRequest, FeatureLayer, PopupTemplate, Point, Graphic, array){
         var featureLayer;
         map = new Map("map-container", {
             basemap: "topo",
@@ -113,10 +116,10 @@
             }
         };
         var popupTemplate = new PopupTemplate({
-            title: "{API}",
-            fieldInfos: [
+            title: "API: {API}",
+            fieldInfos:[
                 {
-                    filedName: "{WellName}",
+                    filedName: "WellName",
                     label: "Well Name",
                     visible: true
                 },
@@ -124,9 +127,7 @@
                     filedName: "FractureDate",
                     label: "Fracture Date",
                     visible: true,
-                    format: {
-                        dateFormat: "shortDateShortTime"
-                    }
+                    format: { dateFormat: "shortDateShortTime" }
                 },
                 {
                     filedName: "State",
