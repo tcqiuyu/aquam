@@ -777,11 +777,11 @@ label.water-quality-radio {
     margin-bottom: 10px;
 }
 
-#y1-axis-path {
+#y1-axis-path, #y1-axis-ticks {
     stroke: blue;
 }
 
-#y2-axis-path {
+#y2-axis-path, #y2-axis-ticks {
     stroke: red;
 }
 

@@ -4,6 +4,8 @@
 {% block header %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/chart.css' %}"/>
     <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <script src="{% static 'js/bootstrap-slider.min.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-slider.css' %}"/>
 {% endblock %}
 
 {% block mainbody %}
@@ -28,12 +30,14 @@
                             <span id="dp-title">Locations</span>
                             <span class="caret"></span></button>
                         <ul class="dropdown-menu" id="dp-content">
-
                         </ul>
                     </div>
                 </div>
                 <div class="panel-body">
 
+                    <div class="row">
+
+                    </div>
                     <div class="panel panel-default">
                         <!-- Default panel contents -->
                         <div class="panel-heading">Fitting Equation</div>
@@ -56,7 +60,7 @@
                                 <tr>
                                     <td class="col-head">TDS</td>
                                     <td class="col-body" id="tds-k"></td>
-                                    <td class="col-body" id="tdk-d"></td>
+                                    <td class="col-body" id="tds-d"></td>
                                 </tr>
                                 <tr>
                                     <td class="col-head">Sodium</td>
@@ -92,7 +96,7 @@
                                 <div class="fraction">
                                     <span class="fup">Q<sub>0</sub></span>
                                     <span class="bar">/</span>
-                                    <span class="fdn">( I + D * t ) <i><sup>1/b</sup></i></span>
+                                    <span class="fdn">( 1 + D * t ) <i><sup>1/b</sup></i></span>
                                 </div>
                             </div>
 
@@ -116,22 +120,16 @@
                                     <td class="col-body" id="q0-3"></td>
                                 </tr>
                                 <tr>
-                                    <td class="col-head">I</td>
-                                    <td class="col-body" id="i-1"></td>
-                                    <td class="col-body" id="i-2"></td>
-                                    <td class="col-body" id="i-3"></td>
-                                </tr>
-                                <tr>
                                     <td class="col-head">D</td>
                                     <td class="col-body" id="d-1"></td>
                                     <td class="col-body" id="d-2"></td>
                                     <td class="col-body" id="d-3"></td>
                                 </tr>
                                 <tr>
-                                    <td class="col-head">1/b</td>
-                                    <td class="col-body" id="1/b-1"></td>
-                                    <td class="col-body" id="1/b-2"></td>
-                                    <td class="col-body" id="1/b-3"></td>
+                                    <td class="col-head">b</td>
+                                    <td class="col-body" id="b-1"></td>
+                                    <td class="col-body" id="b-2"></td>
+                                    <td class="col-body" id="b-3"></td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -172,12 +170,17 @@
                 </div>
                 <div class="panel-body">
 
-
                     <div id="chart1" class="chart" style="width:100%; height:500px">
                     </div>
 
                 </div>
 
+                <div class="panel-footer chart-footer hide" id="chart1-footer">
+                    Filter by days interval: <b id="slider-day-start"></b> <input id="water-quality-slider" type="text"
+                                                                                  class="span2"/>
+                    <b id="slider-day-end"></b>
+
+                </div>
             </div>
         </div>
     </div>
@@ -186,7 +189,58 @@
 {% block footer %}
     <script type="text/javascript">
         $(document).ready(function () {
-            var margin = {top: 20, right:70, bottom: 40, left: 70},
+
+            $("#water-quality-slider").slider({});
+
+            d3.json("{% url 'get-water-quality-settings'%}", function (error, data) {
+                //dropdown content
+                locations = data.locations;
+                coefficients = data.coefficients;
+                parameters = data.parameters;
+                var dp_content = "";
+                for (i = 0; i < locations.length; i++) {
+                    dp_content = dp_content.concat("<li id=\"dp-")
+                            .concat(locations[i])
+                            .concat("\"><a>")
+                            .concat(locations[i])
+                            .concat("</li></a>")
+                }
+                var dp = $("#dp-content");
+                dp.html(dp_content);
+
+                dp.find("li").click(function () {
+                    var selected_location = $(this).find("a").html();
+                    var selected_coefficients = coefficients[selected_location];
+                    var selected_parameters = parameters[selected_location];
+                    $("#dp-title").html(selected_location);
+                    //coefficients
+                    $("#tds-k").html(selected_coefficients["TDS"][0]);
+                    $("#tds-d").html(selected_coefficients["TDS"][1]);
+                    $("#sodium-k").html(selected_coefficients["Sodium"][0]);
+                    $("#sodium-d").html(selected_coefficients["Sodium"][1]);
+                    $("#chloride-k").html(selected_coefficients["Chloride"][0]);
+                    $("#chloride-d").html(selected_coefficients["Chloride"][1]);
+                    $("#calcium-k").html(selected_coefficients["Calcium"][0]);
+                    $("#calcium-d").html(selected_coefficients["Calcium"][1]);
+                    $("#iron-k").html(selected_coefficients["Iron"][0]);
+                    $("#iron-d").html(selected_coefficients["Iron"][1]);
+                    //parameters
+                    console.log(selected_parameters);
+                    $("#q0-1").html(selected_parameters["Fracturing Flowback"]["Q0"]);
+                    $("#q0-2").html(selected_parameters["Transition"]["Q0"]);
+                    $("#q0-3").html(selected_parameters["Produced Water"]["Q0"]);
+                    $("#d-1").html(selected_parameters["Fracturing Flowback"]["D"]);
+                    $("#d-2").html(selected_parameters["Transition"]["D"]);
+                    $("#d-3").html(selected_parameters["Produced Water"]["D"]);
+                    $("#b-1").html(selected_parameters["Fracturing Flowback"]["b"]);
+                    $("#b-2").html(selected_parameters["Transition"]["b"]);
+                    $("#b-3").html(selected_parameters["Produced Water"]["b"]);
+
+                });
+
+            });
+
+            var margin = {top: 20, right: 70, bottom: 40, left: 110},
                     width = $(".chart").width() - margin.left - margin.right,
                     height = $(".chart").height() - margin.top - margin.bottom;
             var init_xRange = d3.scale.linear()
@@ -252,18 +306,28 @@
         $("#water-quality-radio1").click(function () {
             d3.json("{% url 'get-water-quality-result'%}", function (error, data) {
                 console.log(data);
-                var margin = {top: 20, right: 70, bottom: 40, left: 70},
+                var margin = {top: 20, right: 70, bottom: 40, left: 110},
                         width = $("#chart1").width() - margin.left - margin.right,
                         height = $("#chart1").height() - margin.top - margin.bottom;
-                var xRange = d3.time.scale()
-                        .domain(d3.extent(data, function (d) { return d.date;}))
+                {#                var xRange = d3.time.scale()#}
+                {#                        .domain(d3.extent(data, function (d) { return d.date;}))#}
+                {#                        .range([0, width]);#}
+                var endday = d3.time.format("%Y-%m-%d").parse(d3.max(data, function (d) {return d.date;}));
+                var startday = d3.time.format("%Y-%m-%d").parse(d3.min(data, function (d) {return d.date;}));
+                var interval = endday - startday;
+                var interval_day = interval / (24 * 3600 * 1000);
+                $("#chart1-footer").removeClass("hide");
+                $("#slider-day-start").html(1);
+                $("#slider-day-end").html(interval_day+1);
+                var xRange = d3.scale.linear()
+                        .domain([0, interval_day + 1])
                         .range([0, width]);
                 console.log(d3.extent(data, function (d) { return d.date;}));
                 var y1Range = d3.scale.linear()
                         .domain([0, d3.max(data, function (d) { return d.Volume;})])
                         .range([height, 0]);
                 var y2Range = d3.scale.linear()
-                        .domain([0, d3.max(data, function (d) { return d.TDS;})])
+                        .domain(d3.extent(data, function (d) { return d.TDS;}))
                         .range([height, 0]);
                 var xAxis = d3.svg.axis()
                         .scale(xRange)
@@ -279,10 +343,55 @@
                 svg.select(".x.axis").transition().duration(500)
                         .call(xAxis);
                 svg.selectAll("#y1-axis").transition().duration(500)
+                        .attr("fill", "blue")
                         .call(y1Axis);
                 svg.selectAll("#y2-axis").transition().duration(500)
+                        .attr("fill", "red")
                         .call(y2Axis);
+                svg.selectAll("#y1-axis").selectAll("line")
+                        .attr("id", "y1-axis-ticks");
+                svg.selectAll("#y2-axis").selectAll("line")
+                        .attr("id", "y2-axis-ticks");
+                {#                var dot = chart.append("g").attr("class", "plot")#}
+                {#                        .selectAll(".dot")#}
+                {#                        .data(data)#}
+                {#                        .enter().append("circle")#}
+                {#                        .attr("class", "dot")#}
+                {#                        .attr("r", 2)#}
+                {#                        .attr("cx", function (d) {#}
+                {#                            return xRange((d3.time.format("%Y-%m-%d").parse(d.date) - minday)#}
+                {#                                    / (24 * 3600 * 1000) + 1);#}
+                {#                        })#}
+                {#                        .attr("cy", function (d) {return y2Range(d.TDS);})#}
+                {#                        .style("stroke", "black");#}
+                var line1_func = d3.svg.line()
+                        .x(function (d) {
+                            return xRange((d3.time.format("%Y-%m-%d").parse(d.date) - startday)
+                                    / (24 * 3600 * 1000) + 1);
+                        })
+                        .y(function (d) {return y1Range(d.Volume);})
+                        .interpolate("basis");
+                var line1 = chart.append("path")
+                        .style("stroke", "blue")
+                        .style("fill", "transparent")
+                        .attr("class", "line")
+                        .attr("d", line1_func(data));
+
+                var line2_func = d3.svg.line()
+                        .x(function (d) {
+                            return xRange((d3.time.format("%Y-%m-%d").parse(d.date) - startday)
+                                    / (24 * 3600 * 1000) + 1);
+                        })
+                        .y(function (d) {return y2Range(d.TDS);})
+                        .interpolate("basis");
+                var line2 = chart.append("path")
+                        .style("stroke", "red")
+                        .style("fill", "transparent")
+                        .attr("class", "line")
+                        .attr("d", line2_func(data));
+
             });
+
         })
     </script>
 {% endblock %}

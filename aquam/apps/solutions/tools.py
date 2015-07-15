@@ -449,7 +449,15 @@ class WaterQualityAnalyzer():
                     obj.iron = abs(quality_dict[constituent][i])
             obj.volume = volume_array[i]
             obj.save()
-    
+
+    def get_water_quality_settings(self):
+        result={
+            "locations": self.locations,
+            "parameters": self.parameters,
+            "coefficients": self.coefficients
+        }
+        return result
+
     def get_water_quality_result(self, parameter, coefficient, location_name):
         quality_dict, volume_array = self.__calc_water_quality(parameter, coefficient, location_name)
         objs = self.model.objects.filter(location=location_name).order_by("date")

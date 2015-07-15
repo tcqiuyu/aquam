@@ -546,7 +546,8 @@
                     color = "#23B05C"
                 }
                 var line2 = chart.append("path")
-                        .style("fill", color)
+                        .style("stroke", color)
+                        .style("fill", "transparent")
                         .style("opacity", 0)
                         .attr("class", "line")
                         .attr("d", line_func(vals));
@@ -564,7 +565,7 @@
             });
         });
         $("#water-use-relationships-radio3").click(function () {
-            d3.json("{% url 'get-quadratic-fitting' %}", function (error, data) {
+            d3.json("{% url 'get-cubic-fitting' %}", function (error, data) {
                 draw_chart3(data, "cubic")
             });
         });

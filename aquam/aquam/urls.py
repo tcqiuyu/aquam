@@ -22,7 +22,6 @@ import views as aquam_views
 import apps.solutions.views as solutions_views
 import apps.geoanalytics.views as geoanalytics_views
 
-
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r"^$", aquam_views.index, name="index"),
@@ -30,32 +29,46 @@ urlpatterns = [
     url(r"^solutions/$", aquam_views.solutions, name="solutions"),
     url(r"^geoanalytics/$", aquam_views.geoanalytics, name="geoanalytics"),
     url(r"^contact/$", aquam_views.contact, name="contact"),
-    
+
     # Water Use Analyzer
     url(r"^solutions/water-use-analyzer/$", solutions_views.water_use_analyzer, name="water-use-analyzer"),
     url(r"^solutions/water-use-analyzer/get-water-use/$", solutions_views.get_water_use, name="get-water-use"),
-    url(r"^solutions/water-use-analyzer/get-horizontal-length/$", solutions_views.get_horizontal_length, name="get-horizontal-length"),
-    url(r"^solutions/water-use-analyzer/get-water-use-per-horizontal-foot/$", solutions_views.get_water_use_per_horizontal_foot, name="get-water-use-per-horizontal-foot"),
-    url(r"^solutions/water-use-analyzer/get-annual-water-use/$", solutions_views.get_annual_water_use, name="get-annual-water"),
-    url(r"^solutions/water-use-analyzer/get-annual-horizontal-feet-dilled/$", solutions_views.get_annual_horizontal_feet_drilled, name="get-annual-horizontal-feet-drilled"),
-    url(r"^solutions/water-use-analyzer/get-annual-bbls-ft-metric/$", solutions_views.get_annual_bbls_ft_metric, name="get-annual-bbls-ft-metric"),
-    url(r"^solutions/water-use-analyzer/get_linear_fitting", solutions_views.get_linear_fitting, name="get-linear-fitting"),
-    url(r"^solutions/water-use-analyzer/get_quadratic_fitting", solutions_views.get_quadratic_fitting, name="get-quadratic-fitting"),
-    url(r"^solutions/water-use-analyzer/get-cubic-fitting", solutions_views.get_cubic_fitting, name="get-cubic-fitting"),
-    
+    url(r"^solutions/water-use-analyzer/get-horizontal-length/$", solutions_views.get_horizontal_length,
+        name="get-horizontal-length"),
+    url(r"^solutions/water-use-analyzer/get-water-use-per-horizontal-foot/$",
+        solutions_views.get_water_use_per_horizontal_foot, name="get-water-use-per-horizontal-foot"),
+    url(r"^solutions/water-use-analyzer/get-annual-water-use/$", solutions_views.get_annual_water_use,
+        name="get-annual-water"),
+    url(r"^solutions/water-use-analyzer/get-annual-horizontal-feet-dilled/$",
+        solutions_views.get_annual_horizontal_feet_drilled, name="get-annual-horizontal-feet-drilled"),
+    url(r"^solutions/water-use-analyzer/get-annual-bbls-ft-metric/$", solutions_views.get_annual_bbls_ft_metric,
+        name="get-annual-bbls-ft-metric"),
+    url(r"^solutions/water-use-analyzer/get_linear_fitting", solutions_views.get_linear_fitting,
+        name="get-linear-fitting"),
+    url(r"^solutions/water-use-analyzer/get_quadratic_fitting", solutions_views.get_quadratic_fitting,
+        name="get-quadratic-fitting"),
+    url(r"^solutions/water-use-analyzer/get-cubic-fitting", solutions_views.get_cubic_fitting,
+        name="get-cubic-fitting"),
+
     # Produced Water Modeler
     url(r"^solutions/produced-water-modeler/$", solutions_views.produced_water_modeler, name="produced-water-modeler"),
     url(r"^solutions/produced-water-modeler/get-arp-model/$", solutions_views.get_arp_model, name="get-arp-model"),
-    url(r"^solutions/produced-water-modeler/get-arp-prediction/$", solutions_views.get_arp_prediction, name="get-arp-prediction"),
-    
+    url(r"^solutions/produced-water-modeler/get-arp-prediction/$", solutions_views.get_arp_prediction,
+        name="get-arp-prediction"),
+
     # Water Quality Analyzer
     url(r"^solutions/water-quality-analyzer/$", solutions_views.water_quality_analyzer, name="water-quality-analyzer"),
-    url(r"^solutions/water-quality-analyzer/get-water-quality-result/$", solutions_views.get_water_quality_result, name="get-water-quality-result"),
-    
+    url(r"^solutions/water-quality-analyzer/get-water-quality-result/$", solutions_views.get_water_quality_result,
+        name="get-water-quality-result"),
+    url(r"^solutions/water-quality-analyzer/get-water-quality-settings/$",
+        solutions_views.get_water_quality_settings, name="get-water-quality-settings"),
+
     # Water Treatment Analyzer
-    url(r"^solutions/water-treatment-analyzer/$", solutions_views.water_treatment_analyzer, name="water-treatment-analyzer"),
-    url(r"^solutions/water-treatment-analyzer/water-treatment-iteration-result/$", solutions_views.get_treatment_iteration_result, name="water-treatment-iteration-result"),
-    
+    url(r"^solutions/water-treatment-analyzer/$", solutions_views.water_treatment_analyzer,
+        name="water-treatment-analyzer"),
+    url(r"^solutions/water-treatment-analyzer/water-treatment-iteration-result/$",
+        solutions_views.get_treatment_iteration_result, name="water-treatment-iteration-result"),
+
     # Water Use Geoanalyzer
     url(r"^geoanalytics/water-use-geoanalyzer/$", geoanalytics_views.water_use_geoanalyzer, name="water-use-geoanalyzer"),
     url(r"^geoanalytics/water-use-geoanalyzer/get-geo-water-use/$", geoanalytics_views.get_geo_water_use, name="get-geo-water-use"),
@@ -63,4 +76,5 @@ urlpatterns = [
     # Water Use Heatmapper
     url(r"^geoanalytics/water-use-heatmapper/$", geoanalytics_views.water_use_heatmapper, name="water-use-heatmapper"),
     url(r"^geoanalytics/water-use-heatmapper/get-heat-water-use/$", geoanalytics_views.get_heat_water_use, name="get-heat-water-use")
+
 ]
