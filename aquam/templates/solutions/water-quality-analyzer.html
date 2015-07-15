@@ -189,8 +189,7 @@
 {% block footer %}
     <script type="text/javascript">
         $(document).ready(function () {
-
-            $("#water-quality-slider").slider({});
+            {#            $("#water-quality-slider").slider({});#}
 
             d3.json("{% url 'get-water-quality-settings'%}", function (error, data) {
                 //dropdown content
@@ -316,9 +315,14 @@
                 var startday = d3.time.format("%Y-%m-%d").parse(d3.min(data, function (d) {return d.date;}));
                 var interval = endday - startday;
                 var interval_day = interval / (24 * 3600 * 1000);
+                $("#water-quality-slider").attr("data-slider-min", "1")
+                        .attr("data-slider-max", interval_day + 1)
+                        .attr("data-slider-value", "[" + 1 + "," + interval_day + 1 + "]")
+                        .slider({});
+
                 $("#chart1-footer").removeClass("hide");
                 $("#slider-day-start").html(1);
-                $("#slider-day-end").html(interval_day+1);
+                $("#slider-day-end").html(interval_day + 1);
                 var xRange = d3.scale.linear()
                         .domain([0, interval_day + 1])
                         .range([0, width]);
