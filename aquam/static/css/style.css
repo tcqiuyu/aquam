@@ -694,6 +694,7 @@ label.solution-radio {
 .radio-group {
     text-align: center;
     overflow: auto;
+
 }
 
 .chart-footer {
@@ -710,7 +711,7 @@ label.solution-radio {
     color: #34495E;
 }
 
-.additional-info .output-error{
+.additional-info .output-error {
     color: #CE5B56;
 }
 
@@ -730,7 +731,6 @@ label.solution-radio {
     font-size: 95%;
 }
 
-
 label.solution-radio.checked {
     background-color: #266c8e;
     color: #FFFFFF;
@@ -745,3 +745,43 @@ label.solution-radio.checked {
 .bar text {
     fill: black;
 }
+
+/*Style in water quality page*/
+.fraction {
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0 0.2em 0.4ex;
+    text-align: center;
+}
+
+.fraction > span {
+    display: block;
+    padding-top: 0.15em;
+}
+
+.fraction span.fdn {
+    border-top: thin solid black;
+}
+
+.fraction span.bar {
+    display: none;
+}
+
+label.water-quality-radio {
+    display: inline-block;
+    font-size: 15px;
+    font-weight: bold;
+    padding: 10px 20px 10px 30px;
+    /*margin-left: 8%;*/
+    /*margin-right: 8%;*/
+    margin-bottom: 10px;
+}
+
+#y1-axis-path {
+    stroke: blue;
+}
+
+#y2-axis-path {
+    stroke: red;
+}
+

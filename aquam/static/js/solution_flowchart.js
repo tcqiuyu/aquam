@@ -73,7 +73,7 @@ var node_4 = node_2.clone();
 node_4.translate(340);
 node_4.attr({
 	a: {'xlink:href': 'produced-water-modeler/'},
-	text: {text: '   Produced\nWater Storage'}
+	text: {text: '    Produced\nWater Storage'}
 });
 
 var node_5 = node_3.clone();
