@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load staticfiles %}
 
+
 {% block mainbody %}
     <div class="bloc  l-bloc" id="bloc-2">
         <div class="container bloc-lg">
@@ -31,23 +32,23 @@
 	                    for a particular time frame, as specified by the user.
                     </p>
                     <p>
-                    	<a class="btn btn-default" href="statistical-analysis" role="button">Try the demo &raquo;</a>
+                    	<button type="button" class="btn btn-default">Try the demo &raquo;</button>
          			</p>
                 </div>
                 <div class="col-sm-6">
-                    <a href="statistical-analysis"><img src="{% static 'img/placeholder-image.png' %}" class="img-responsive" alt=''/></a>
+                    <a href="{% url 'water-use-geoanalyzer' %}"><img src="{% static 'img/placeholder-image.png' %}" class="img-responsive" alt=''/></a>
                 </div>
             </div>
 
 			<hr class="featurette-divider">
-
+            
             <div class="row">
                 <div class="col-sm-6">
-                    <a href="water-use-analyzer"><img src="{% static 'img/placeholder-image.png' %}" class="img-responsive" alt=''/></a>
+                    <a href="{% url 'water-use-heatmapper' %}"><img src="{% static 'img/placeholder-image.png' %}" class="img-responsive" alt=''/></a>
                 </div>
                 <div class="col-sm-6">
                 	<h3 class="mg-md">
-                        <a href="water-use-analyzer">Explore the Data by Heatmaps</a><br/><a href="water-use-analyzer"></a>
+                        <a href="{% url 'water-use-heatmapper' %}">Water Use Heatmapper</a><br/><a href="{% url 'water-use-heatmapper' %}"></a>
                     </h3>
                     <p>
 	                    This analyzer is an interactive tool designed to fit the user, in this case,
@@ -59,15 +60,14 @@
 						on an annual comparison basis.
                     </p>
                     <p>
-                    	<a class="btn btn-default" href="water-use-analyzer" role="button">Try the demo &raquo;</a>
+                    	<a class="btn btn-default" href="{% url 'water-use-heatmapper' %}" role="button">Try the demo &raquo;</a>
          			</p>
                 </div>
             </div>
-
+            
             <hr class="featurette-divider">
-
+            
         </div>
     </div>
-    <!-- bloc-2 END -->
 
 {% endblock %}

@@ -113,8 +113,9 @@ def get_arp_prediction(request):
 def water_quality_analyzer(request):
     analyzer = WaterQualityAnalyzer(WaterQuality)
     location = "Greeley Crescent"
+    locations = analyzer.locations
     #analyzer.set_database(location)
-    context = {"page_title": "AQUAM | Water Quality Analyzer"}
+    context = {"page_title": "AQUAM | Water Quality Analyzer", "locations": locations}
     return render_to_response("solutions/water-quality-analyzer.html", context, context_instance=RequestContext(request))
 
 def get_water_quality_result(request):

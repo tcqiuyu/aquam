@@ -9,7 +9,7 @@
 {% block mainbody %}
     <div class="jumbotron">
         <div class="container">
-            <h2>Water Use Geoanalyzer</h2>
+            <h2>Water Use Heatmapper</h2>
             
             <p>This analyzer is an interactive tool designed to fit the user, in this case,
                 an operator or a water management company to anlayze their statistics of water,
@@ -21,7 +21,7 @@
             </p>
         </div>
     </div>
-        
+    
     <div class="container">
         <hr>
         <div id="map-div" style="width:100%; height:600px">
@@ -35,14 +35,15 @@
 {% block footer %}
 <script type="text/javascript">
     var map;
-    require(["esri/map","esri/request", "esri/layers/FeatureLayer", "esri/dijit/PopupTemplate", "esri/Color",
-        "esri/geometry/Point", "esri/graphic", "dojo/_base/array", "dojo/domReady!"], 
-        function(Map, esriRequest, FeatureLayer, PopupTemplate, Color, Point, Graphic, array){
+    require(["esri/map","esri/request", "esri/SpatialReference", "esri/layers/FeatureLayer", "esri/renderers/HeatmapRenderer", 
+        "esri/geometry/Point", "esri/geometry/Extent", "esri/graphic", "dojo/_base/array", "dojo/domReady!"], 
+        function(Map, esriRequest, SpatialReference, FeatureLayer, HeatmapRenderer, Point,Extent, Graphic, array){
         var featureLayer;
         map = new Map("map-container", {
             basemap: "topo",
             center: [-98.545682, 28.624585],
-            zoom: 10
+            zoom: 9,
+            minZoom: 8
         });
         var layerDefinition = {
                 "geometryType": "esriGeometryPoint",
@@ -53,6 +54,8 @@
                         "symbol": {
                             "type": "esriSMS",
                             "style": "esriSMSCircle",
+                            "color": [255, 40, 100, 90],
+                            "size": 4,
                             "outline":{
                                 "width": 0.5,
                                 "color": [160, 160,160, 70],
@@ -110,51 +113,9 @@
                 "geometryType": "esriGeometryPoint"
             }
         };
-        var popupTemplate = new PopupTemplate({
-            title: "Attributes",
-            fieldInfos:[
-                {
-                    fieldName:"API",
-                    label:"API", 
-                    visible:true
-                }, 
-                {
-                    fieldName:"WellName", 
-                    label:"WellName", 
-                    visible:true
-                },
-                {
-                    fieldName:"FractureDate", 
-                    label:"Fracture Date", 
-                    visible:true,
-                    format:{ dateFormat:"shortDate" }
-                },
-                {
-                    fieldName:"State", 
-                    label:"State", 
-                    visible:true
-                },
-                {
-                    fieldName:"County", 
-                    label:"County", 
-                    visible:true
-                },
-                {
-                    fieldName:"HorizontalLength", 
-                    label:"Horizontal Length", 
-                    visible:true
-                },
-                {
-                    fieldName:"WaterUse", 
-                    label:"Water Use", 
-                    visible:true
-                }
-            ]
-        });
         var featureLayer = new FeatureLayer(featureCollection, {
-            id: "featureLayer",
+            id: "heatmapFeatureLayer",
             mode: FeatureLayer.MODE_SNAPSHOT,
-            infoTemplate: popupTemplate
         });
         
         var requestHandle = esriRequest({
@@ -189,24 +150,14 @@
             alert(error.message);
         }
         
-        featureLayer.renderer.setSizeInfo({
-            field: "WaterUse",
-            valueUnit: "inches",
-            valueRepresentation: "diameter"
+        var heatmapRenderer = new HeatmapRenderer({
+            blurRadius: 20,
+            maxPixelIntensity: 300,
+            minPixelIntensity: 30,
+            colors: ["rgba(0, 0, 255, 0)","rgb(0, 255, 0)","rgb(255, 255, 0)", "rgb(255, 0, 0)"]
         });
-        
-        featureLayer.renderer.setColorInfo({
-            field: "WaterUse",
-            minDataValue: 20000,
-            maxDataValue: 260000,
-            colors: [
-                new Color([0, 0, 255]), 
-                new Color([0, 255, 0]), 
-                new Color([255, 255, 0]), 
-                new Color([255, 0, 0])
-            ]
-        });
-        map.addLayers([featureLayer]);
+        featureLayer.setRenderer(heatmapRenderer);
+        map.addLayer(featureLayer);
     });
 </script>
 {% endblock %}

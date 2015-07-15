@@ -58,5 +58,9 @@ urlpatterns = [
     
     # Water Use Geoanalyzer
     url(r"^geoanalytics/water-use-geoanalyzer/$", geoanalytics_views.water_use_geoanalyzer, name="water-use-geoanalyzer"),
-    url(r"^geoanalytics/water-use-geoanalyzer/get-geo-water-use/$", geoanalytics_views.get_geo_water_use, name="get-geo-water-use")
+    url(r"^geoanalytics/water-use-geoanalyzer/get-geo-water-use/$", geoanalytics_views.get_geo_water_use, name="get-geo-water-use"),
+    
+    # Water Use Heatmapper
+    url(r"^geoanalytics/water-use-heatmapper/$", geoanalytics_views.water_use_heatmapper, name="water-use-heatmapper"),
+    url(r"^geoanalytics/water-use-heatmapper/get-heat-water-use/$", geoanalytics_views.get_heat_water_use, name="get-heat-water-use")
 ]

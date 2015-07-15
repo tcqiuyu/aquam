@@ -461,7 +461,7 @@ class WaterQualityAnalyzer():
                    "Sodium":abs(quality_dict["Sodium"][i]),
                    "Calcium":abs(quality_dict["Calcium"][i]),
                    "Iron":abs(quality_dict["Iron"][i]),
-                   "Volume": volume_array[i]
+                   "Volume": np.sum(volume_array[:i+1])
             }
             result.append(value)
         return result
