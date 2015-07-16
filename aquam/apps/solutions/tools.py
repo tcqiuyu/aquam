@@ -472,7 +472,7 @@ class WaterQualityAnalyzer():
         result = []
         for i in range(len(objs)):
             value = {"date": str(objs[i].date),
-                     "Wells number": wells_number[i][0],
+                     "Wells_number": wells_number[i][0],
                      "TDS": abs(quality_dict["TDS"][i]),
                      "Chloride": abs(quality_dict["Chloride"][i]),
                      "Sodium": abs(quality_dict["Sodium"][i]),

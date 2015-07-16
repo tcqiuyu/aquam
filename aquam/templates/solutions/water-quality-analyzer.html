@@ -7,6 +7,10 @@
     <script src="{% static 'js/bootstrap-slider.min.js' %}"></script>
     <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-slider.css' %}"/>
     <link rel="stylesheet" type="text/css" href="{% static 'css/custom-slider.css' %}"/>
+    <!-- Jquery tipsy -->
+    <script src="{% static 'js/jquery.tipsy.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/tipsy.css' %}"/>
+
 {% endblock %}
 
 {% block mainbody %}
@@ -334,7 +338,7 @@
                 $("#slider-day-start").html(1);
                 $("#slider-day-end").html(interval_day + 1);
                 var xRange = d3.scale.linear()
-                        .domain([0, interval_day + 1])
+                        .domain([0, (interval_day + 1) * 1.1])
                         .range([0, width]);
                 console.log(d3.extent(data, function (d) { return d.date;}));
                 var y1Range = d3.scale.linear()
@@ -357,7 +361,7 @@
                 svg.select(".x.axis").transition().duration(500)
                         .call(xAxis);
                 svg.selectAll("#y1-axis").transition().duration(500)
-                        .attr("fill", "#337AB6")
+                        .attr("fill", "steelblue")
                         .call(y1Axis);
                 svg.selectAll("#y2-axis").transition().duration(500)
                         .attr("fill", "red")
@@ -366,12 +370,13 @@
                         .attr("id", "y1-axis-ticks");
                 svg.selectAll("#y2-axis").selectAll("line")
                         .attr("id", "y2-axis-ticks");
+
                 var line1_func = d3.svg.line()
                         .x(function (d) {return xRange((parseDate(d.date) - startday) / (24 * 3600 * 1000) + 1); })
                         .y(function (d) {return y1Range(d.Volume);})
                         .interpolate("basis");
                 var line1 = chart.append("path")
-                        .style("stroke", "#337AB6")
+                        .style("stroke", "blue")
                         .style("stroke-width", "1.5")
                         .style("fill", "transparent")
                         .attr("class", "line")
@@ -387,12 +392,52 @@
                         .style("fill", "transparent")
                         .attr("class", "line")
                         .attr("d", line2_func(data));
+
+                var bar_y_range = d3.scale.linear()
+                        .domain([0, d3.max(data, function (d) {return d.Wells_number})])
+                        .range([height, 0]);
+
+                var bar = chart.selectAll(".bar")
+                        .data(data)
+                        .enter()
+                        .append("g")
+                        .attr("class", "bar")
+                        .attr("transform", function (d) {
+                            var x_offset = xRange((parseDate(d.date) - startday) / (24 * 3600 * 1000) + 1);
+                            return "translate(" + x_offset + "," + 0 + ")";
+                        });
+                bar.append("rect")
+                        .attr("x", 1)
+                        .attr("y", height)
+                        .attr("fill", "#B6B14E")
+                        .attr("well_number", function (d) {return d.Wells_number;})
+                        .style("opacity", "0.4")
+                        .attr("width", xRange(2) - xRange(1))
+                        .attr("height", 0);
+                bar.selectAll("rect")
+                        .transition()
+                        .duration(500)
+                        .attr("y", function (d) {return bar_y_range(d.Wells_number);})
+                        .attr("height", function (d) { return height - bar_y_range(d.Wells_number); });
+                bar.selectAll("rect")
+                        .on("mouseover", function () {
+                            var rect = d3.select(this);
+                            rect.style("opacity", "1");
+                        })
+                        .on("mouseout", function () {
+                            d3.select(this).style("opacity", "0.4");
+                        });
+                $(".bar rect").tipsy({
+                    gravity: 's',
+                    html: true,
+                    title: function () {
+                        return $(this).attr("well_number");
+                    }
+                });
             });
 
-{#            d3.json("{% url 'get-water-quality-result'%}", function (error, data) {#}
-{##}
-{#            });#}
-        });
+        })
+        ;
 
         function parseDate(str) {
             return d3.time.format("%Y-%m-%d").parse(str);
