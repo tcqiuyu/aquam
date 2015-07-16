@@ -1,0 +1,19 @@
+/*Style for jointjs*/
+.connection-wrap {
+    cursor: default;
+}
+
+.link:hover .marker-vertices,
+.link:hover .marker-arrowheads,
+.link:hover .link-tools {
+    opacity: 0;
+    cursor: default;
+}
+
+#chart-container {
+    text-align: center;
+}
+
+#flowchart {
+    margin: 0 auto;
+}

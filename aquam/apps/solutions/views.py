@@ -124,7 +124,6 @@ def get_arp_prediction(request):
 
 # Water Quality Analyzer Views & JSON APIs
 def water_quality_analyzer(request):
-    analyzer = WaterQualityAnalyzer(WaterQuality)
     #analyzer.set_database(location)
     context = {"page_title": "AQUAM | Water Quality Analyzer"}
     return render_to_response("solutions/water-quality-analyzer.html", context, context_instance=RequestContext(request))
@@ -136,8 +135,10 @@ def get_water_quality_settings(request):
     return HttpResponse(json.dumps(result), content_type="application/json")
 
 def get_water_quality_result(request):
+    location = request.__str__().split("/")[4].split("'")[0]
+    location_name = location.replace("%20", " ")
     analyzer = WaterQualityAnalyzer(WaterQuality)
-    location_name = "Greeley Crescent"
+    # location_name = "Greeley Crescent"
     parameter = analyzer.parameters[location_name]
     coefficient = analyzer.coefficients[location_name]
     result = analyzer.get_water_quality_result(parameter, coefficient, location_name)

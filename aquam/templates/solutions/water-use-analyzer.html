@@ -10,6 +10,7 @@
     <div class="container">
         <div class="jumbotron">
             <h2>Water Use Analyzer</h2>
+
             <p>This analyzer is an interactive tool designed to fit the user, in this case,
                 an operator or a water management company to anlayze their statistics of water,
                 current and historical to establish a baseline and a trend to improve their water
@@ -330,6 +331,7 @@
                     .attr("dy", "0.75em")
                     .attr("y", height - 10)
                     .attr("x", xRange(data[1].x) / 2 - xRange(data[0].x) / 2 - 1)
+                    .style("fill", "black")
                     .attr("text-anchor", "middle")
                     .text(function (d) { return d.y; });
             bar.selectAll("text")
@@ -351,7 +353,7 @@
             }
             // else redraw the diagram
             d3.json("{% url 'get-water-use'%}", function (error, data) {
-                draw_chart1(data, "water_use", "Water Used per Well");
+                draw_chart1(data, "water_use", "Water Used per Well(bbls)");
                 update_chart1_footer(data, "water_use_mean", "water_use_std");
             });
         });
@@ -363,7 +365,7 @@
             }
             // else redraw the diagram
             d3.json("{% url 'get-horizontal-length'%}", function (error, data) {
-                draw_chart1(data, "horizontal_length", "Horizontal Length per Well");
+                draw_chart1(data, "horizontal_length", "Horizontal Length per Well(ft)");
                 update_chart1_footer(data, "horizontal_length_mean", "horizontal_length_std");
             });
         });
@@ -375,7 +377,7 @@
             }
             // else redraw the diagram
             d3.json("{% url 'get-water-use-per-horizontal-foot'%}", function (error, data) {
-                draw_chart1(data, "water_use_per_horizontal_foot", "Water Used per Horizontal Foot");
+                draw_chart1(data, "water_use_per_horizontal_foot", "Water Used per Horizontal Foot(bbls/ft)");
                 update_chart1_footer(data, "water_use_per_horizontal_foot_mean", "water_use_per_horizontal_foot_std");
             });
         });
@@ -451,6 +453,7 @@
                     .attr("y", height - 10)
                     .attr("x", function (d) {return xRange(d.year) + xRange.rangeBand() / 2;})
                     .attr("text-anchor", "middle")
+                    .style("fill", "black")
                     .text(function (d) { return d.mean; });
             bar.selectAll("text")
                     .transition()
@@ -462,7 +465,7 @@
                 return;
             }
             d3.json("{% url 'get-annual-water' %}", function (error, data) {
-                draw_chart2(data, "Annual Average Water User per Well");
+                draw_chart2(data, "Annual Average Water User per Well(bbls)");
             });
         });
         $("#water-use-kpis-radio2").click(function () {
@@ -470,7 +473,7 @@
                 return;
             }
             d3.json("{% url 'get-annual-horizontal-feet-drilled' %}", function (error, data) {
-                draw_chart2(data, "Annual Average Horizontal Feet Drilled");
+                draw_chart2(data, "Annual Average Horizontal Feet Drilled(ft)");
             });
         });
         $("#water-use-kpis-radio3").click(function () {
@@ -483,9 +486,9 @@
         });
         function draw_chart3(data, option) {
             var vals = data["data"];
-{#            vals.sort(function (a, b) {#}
-{#                return a.horizontal_length - b.horizontal_length;#}
-{#            });#}
+            {#            vals.sort(function (a, b) {#}
+            {#                return a.horizontal_length - b.horizontal_length;#}
+            {#            });#}
             console.log(vals);
             var margin = {top: 20, right: 30, bottom: 40, left: 70},
                     width = $("#chart3").width() - margin.left - margin.right,
@@ -546,8 +549,7 @@
                     color = "#23B05C"
                 }
                 var line2 = chart.append("path")
-                        .style("stroke", color)
-                        .style("fill", "transparent")
+                        .style("fill", color)
                         .style("opacity", 0)
                         .attr("class", "line")
                         .attr("d", line_func(vals));
@@ -565,7 +567,7 @@
             });
         });
         $("#water-use-relationships-radio3").click(function () {
-            d3.json("{% url 'get-cubic-fitting' %}", function (error, data) {
+            d3.json("{% url 'get-quadratic-fitting' %}", function (error, data) {
                 draw_chart3(data, "cubic")
             });
         });
