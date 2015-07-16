@@ -1,0 +1,11 @@
+.slider-horizontal{
+    margin: 0 10px 0 10px;
+}
+
+.slider-horizontal .slider-selection{
+    background: #348eb5;
+}
+
+.slider-track-low, .slider-track-high{
+    background: #c5c5c5;
+}
