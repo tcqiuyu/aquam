@@ -353,7 +353,7 @@
             }
             // else redraw the diagram
             d3.json("{% url 'get-water-use'%}", function (error, data) {
-                draw_chart1(data, "water_use", "Water Used per Well");
+                draw_chart1(data, "water_use", "Water Used per Well(bbls)");
                 update_chart1_footer(data, "water_use_mean", "water_use_std");
             });
         });
@@ -365,7 +365,7 @@
             }
             // else redraw the diagram
             d3.json("{% url 'get-horizontal-length'%}", function (error, data) {
-                draw_chart1(data, "horizontal_length", "Horizontal Length per Well");
+                draw_chart1(data, "horizontal_length", "Horizontal Length per Well(ft)");
                 update_chart1_footer(data, "horizontal_length_mean", "horizontal_length_std");
             });
         });
@@ -377,7 +377,7 @@
             }
             // else redraw the diagram
             d3.json("{% url 'get-water-use-per-horizontal-foot'%}", function (error, data) {
-                draw_chart1(data, "water_use_per_horizontal_foot", "Water Used per Horizontal Foot");
+                draw_chart1(data, "water_use_per_horizontal_foot", "Water Used per Horizontal Foot(bbls/ft)");
                 update_chart1_footer(data, "water_use_per_horizontal_foot_mean", "water_use_per_horizontal_foot_std");
             });
         });
@@ -465,7 +465,7 @@
                 return;
             }
             d3.json("{% url 'get-annual-water' %}", function (error, data) {
-                draw_chart2(data, "Annual Average Water User per Well");
+                draw_chart2(data, "Annual Average Water User per Well(bbls)");
             });
         });
         $("#water-use-kpis-radio2").click(function () {
@@ -473,7 +473,7 @@
                 return;
             }
             d3.json("{% url 'get-annual-horizontal-feet-drilled' %}", function (error, data) {
-                draw_chart2(data, "Annual Average Horizontal Feet Drilled");
+                draw_chart2(data, "Annual Average Horizontal Feet Drilled(ft)");
             });
         });
         $("#water-use-kpis-radio3").click(function () {
