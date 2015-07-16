@@ -160,12 +160,12 @@
                                     Sodium
                                 </label>
                                 <label class="radio-inline water-quality-radio">
-                                    <input type="radio" name="inlineRadioOptions" id="water-quality-radio3"
+                                    <input type="radio" name="inlineRadioOptions" id="water-quality-radio4"
                                            value="Water Used per horizontal Foot">
                                     Calcium
                                 </label>
                                 <label class="radio-inline water-quality-radio">
-                                    <input type="radio" name="inlineRadioOptions" id="water-quality-radio3"
+                                    <input type="radio" name="inlineRadioOptions" id="water-quality-radio5"
                                            value="Water Used per horizontal Foot">
                                     Iron
                                 </label>
@@ -178,13 +178,13 @@
 
                         </div>
 
-                        <div class="panel-footer chart-footer hide" id="chart1-footer">
-                            Filter by days interval: <b id="slider-day-start"></b> <input id="water-quality-slider"
-                                                                                          type="text"
-                                                                                          class="span2"/>
-                            <b id="slider-day-end"></b>
-
-                        </div>
+{#                        <div class="panel-footer chart-footer hide" id="chart1-footer">#}
+{#                            Filter by days interval: <b id="slider-day-start"></b> <input id="water-quality-slider"#}
+{#                                                                                          type="text"#}
+{#                                                                                          class="span2"/>#}
+{#                            <b id="slider-day-end"></b>#}
+{##}
+{#                        </div>#}
                     </div>
                 </div>
             </div>
@@ -198,6 +198,10 @@
     <script type="text/javascript">
         $(document).ready(function () {
             {#            $("#water-quality-slider").slider({});#}
+            $(".radio-group").on('click', 'input[type=radio]', function () {
+                $(this).closest('.radio-group').find('.radio-inline, .water-quality-radio, .radio').removeClass('checked');
+                $(this).closest('.radio-inline, .solution-radio, .radio').addClass('checked');
+            });
 
             d3.json("{% url 'get-water-quality-settings'%}", function (error, data) {
                 //dropdown content
@@ -206,6 +210,9 @@
                 parameters = data.parameters;
                 var dp_content = "";
                 for (i = 0; i < locations.length; i++) {
+                    if (locations[i] == "West Pony") {
+                        continue;
+                    }
                     dp_content = dp_content.concat("<li id=\"dp-")
                             .concat(locations[i])
                             .concat("\"><a>")
@@ -250,7 +257,7 @@
             });
 
             function init_chart() {
-                var margin = {top: 20, right: 70, bottom: 40, left: 120},
+                var margin = {top: 20, right: 120, bottom: 40, left: 120},
                         width = $(".chart").width() - margin.left - margin.right,
                         height = $(".chart").height() - margin.top - margin.bottom;
                 var init_xRange = d3.scale.linear()
@@ -268,6 +275,7 @@
                 var y2Axis = d3.svg.axis()
                         .scale(init_yRange)
                         .orient("right");
+                d3.select("#chart1").select("svg").remove();
                 var svg = d3.selectAll(".chart").append("svg")
                         .attr("width", width + margin.left + margin.right)
                         .attr("height", height + margin.top + margin.bottom)
@@ -315,20 +323,19 @@
         });
 
         $("#water-quality-radio1").click(function () {
+            if ($(this).parent().hasClass("checked")) {
+                return;
+            }
             var current_Location = $("#dp-title").html();
             var quality_request = 'get-water-quality-result/'.concat(current_Location);
             d3.json(quality_request, function (error, data) {
                 console.log(data);
-                var margin = {top: 20, right: 70, bottom: 40, left: 120},
+                var margin = {top: 20, right: 120, bottom: 40, left: 120},
                         width = $("#chart1").width() - margin.left - margin.right,
                         height = $("#chart1").height() - margin.top - margin.bottom;
-                {#                var xRange = d3.time.scale()#}
-                {#                        .domain(d3.extent(data, function (d) { return d.date;}))#}
-                {#                        .range([0, width]);#}
                 var endday = parseDate(d3.max(data, function (d) {return d.date;}));
                 var startday = parseDate(d3.min(data, function (d) {return d.date;}));
-                var interval = endday - startday;
-                var interval_day = interval / (24 * 3600 * 1000);
+                var interval_day = (endday - startday) / (24 * 3600 * 1000);
                 $("#water-quality-slider").attr("data-slider-min", "1")
                         .attr("data-slider-max", interval_day + 1)
                         .attr("data-slider-value", "[" + 1 + "," + interval_day + 1 + "]")
@@ -337,40 +344,162 @@
                 $("#chart1-footer").removeClass("hide");
                 $("#slider-day-start").html(1);
                 $("#slider-day-end").html(interval_day + 1);
-                var xRange = d3.scale.linear()
-                        .domain([0, (interval_day + 1) * 1.1])
-                        .range([0, width]);
-                console.log(d3.extent(data, function (d) { return d.date;}));
-                var y1Range = d3.scale.linear()
-                        .domain([0, d3.max(data, function (d) { return d.Volume;})])
-                        .range([height, 0]);
-                var y2Range = d3.scale.linear()
-                        .domain(d3.extent(data, function (d) { return d.TDS;}))
-                        .range([height, 0]);
-                var xAxis = d3.svg.axis()
-                        .scale(xRange)
-                        .orient("bottom");
-                var y1Axis = d3.svg.axis()
-                        .scale(y1Range)
-                        .orient("left");
-                var y2Axis = d3.svg.axis()
-                        .scale(y2Range)
-                        .orient("right");
-                var svg = d3.select("#chart1").select("svg");
-                var chart = svg.select("g");
-                svg.select(".x.axis").transition().duration(500)
-                        .call(xAxis);
-                svg.selectAll("#y1-axis").transition().duration(500)
-                        .attr("fill", "steelblue")
-                        .call(y1Axis);
-                svg.selectAll("#y2-axis").transition().duration(500)
-                        .attr("fill", "red")
-                        .call(y2Axis);
-                svg.selectAll("#y1-axis").selectAll("line")
-                        .attr("id", "y1-axis-ticks");
-                svg.selectAll("#y2-axis").selectAll("line")
-                        .attr("id", "y2-axis-ticks");
 
+                draw_chart(interval_day, startday, width, height, data, "TDS");
+
+            });
+        });
+
+        $("#water-quality-radio2").click(function () {
+            if ($(this).parent().hasClass("checked")) {
+                return;
+            }
+            var current_Location = $("#dp-title").html();
+            var quality_request = 'get-water-quality-result/'.concat(current_Location);
+            d3.json(quality_request, function (error, data) {
+                console.log(data);
+                var margin = {top: 20, right: 120, bottom: 40, left: 120},
+                        width = $("#chart1").width() - margin.left - margin.right,
+                        height = $("#chart1").height() - margin.top - margin.bottom;
+                var endday = parseDate(d3.max(data, function (d) {return d.date;}));
+                var startday = parseDate(d3.min(data, function (d) {return d.date;}));
+                var interval_day = (endday - startday) / (24 * 3600 * 1000);
+                $("#water-quality-slider").attr("data-slider-min", "1")
+                        .attr("data-slider-max", interval_day + 1)
+                        .attr("data-slider-value", "[" + 1 + "," + interval_day + 1 + "]")
+                        .slider({});
+
+                $("#chart1-footer").removeClass("hide");
+                $("#slider-day-start").html(1);
+                $("#slider-day-end").html(interval_day + 1);
+
+                draw_chart(interval_day, startday, width, height, data, "Chloride");
+
+            });
+        });
+
+        $("#water-quality-radio3").click(function () {
+            if ($(this).parent().hasClass("checked")) {
+                return;
+            }
+            var current_Location = $("#dp-title").html();
+            var quality_request = 'get-water-quality-result/'.concat(current_Location);
+            d3.json(quality_request, function (error, data) {
+                console.log(data);
+                var margin = {top: 20, right: 120, bottom: 40, left: 120},
+                        width = $("#chart1").width() - margin.left - margin.right,
+                        height = $("#chart1").height() - margin.top - margin.bottom;
+                var endday = parseDate(d3.max(data, function (d) {return d.date;}));
+                var startday = parseDate(d3.min(data, function (d) {return d.date;}));
+                var interval_day = (endday - startday) / (24 * 3600 * 1000);
+                $("#water-quality-slider").attr("data-slider-min", "1")
+                        .attr("data-slider-max", interval_day + 1)
+                        .attr("data-slider-value", "[" + 1 + "," + interval_day + 1 + "]")
+                        .slider({});
+
+                $("#chart1-footer").removeClass("hide");
+                $("#slider-day-start").html(1);
+                $("#slider-day-end").html(interval_day + 1);
+
+                draw_chart(interval_day, startday, width, height, data, "Sodium");
+
+            });
+        });
+
+        $("#water-quality-radio4").click(function () {
+            if ($(this).parent().hasClass("checked")) {
+                return;
+            }
+            var current_Location = $("#dp-title").html();
+            var quality_request = 'get-water-quality-result/'.concat(current_Location);
+            d3.json(quality_request, function (error, data) {
+                console.log(data);
+                var margin = {top: 20, right: 120, bottom: 40, left: 120},
+                        width = $("#chart1").width() - margin.left - margin.right,
+                        height = $("#chart1").height() - margin.top - margin.bottom;
+                var endday = parseDate(d3.max(data, function (d) {return d.date;}));
+                var startday = parseDate(d3.min(data, function (d) {return d.date;}));
+                var interval_day = (endday - startday) / (24 * 3600 * 1000);
+                $("#water-quality-slider").attr("data-slider-min", "1")
+                        .attr("data-slider-max", interval_day + 1)
+                        .attr("data-slider-value", "[" + 1 + "," + interval_day + 1 + "]")
+                        .slider({});
+
+                $("#chart1-footer").removeClass("hide");
+                $("#slider-day-start").html(1);
+                $("#slider-day-end").html(interval_day + 1);
+
+                draw_chart(interval_day, startday, width, height, data, "Calcium");
+
+            });
+        });
+
+        $("#water-quality-radio5").click(function () {
+            if ($(this).parent().hasClass("checked")) {
+                return;
+            }
+            var current_Location = $("#dp-title").html();
+            var quality_request = 'get-water-quality-result/'.concat(current_Location);
+            d3.json(quality_request, function (error, data) {
+                console.log(data);
+                var margin = {top: 20, right: 120, bottom: 40, left: 120},
+                        width = $("#chart1").width() - margin.left - margin.right,
+                        height = $("#chart1").height() - margin.top - margin.bottom;
+                var endday = parseDate(d3.max(data, function (d) {return d.date;}));
+                var startday = parseDate(d3.min(data, function (d) {return d.date;}));
+                var interval_day = (endday - startday) / (24 * 3600 * 1000);
+                $("#water-quality-slider").attr("data-slider-min", "1")
+                        .attr("data-slider-max", interval_day + 1)
+                        .attr("data-slider-value", "[" + 1 + "," + interval_day + 1 + "]")
+                        .slider({});
+
+                $("#chart1-footer").removeClass("hide");
+                $("#slider-day-start").html(1);
+                $("#slider-day-end").html(interval_day + 1);
+
+                draw_chart(interval_day, startday, width, height, data, "Iron");
+
+            });
+        });
+
+        function draw_chart(interval_day, startday, width, height, data, y2) {
+            var xRange = d3.scale.linear()
+                    .domain([0, (interval_day + 1) * 1.1])
+                    .range([0, width]);
+            var y1Range = d3.scale.linear()
+                    .domain([0, d3.max(data, function (d) { return d.Volume;})])
+                    .range([height, 0]);
+            var y2Range = d3.scale.linear()
+                    .domain(d3.extent(data, function (d) { return d[y2];}))
+                    .range([height, 0]);
+            var xAxis = d3.svg.axis()
+                    .scale(xRange)
+                    .orient("bottom");
+            var y1Axis = d3.svg.axis()
+                    .scale(y1Range)
+                    .orient("left");
+            var y2Axis = d3.svg.axis()
+                    .scale(y2Range)
+                    .orient("right");
+            var svg = d3.select("#chart1").select("svg");
+
+            var chart = svg.select("g");
+            svg.select(".x.axis").transition().duration(500)
+                    .call(xAxis);
+            svg.selectAll("#y1-axis").transition().duration(500)
+                    .attr("fill", "steelblue")
+                    .call(y1Axis);
+            svg.selectAll("#y2-axis").transition().duration(500)
+                    .attr("fill", "red")
+                    .call(y2Axis);
+            svg.selectAll("#y1-axis").selectAll("line")
+                    .attr("id", "y1-axis-ticks");
+            svg.selectAll("#y2-axis").selectAll("line")
+                    .attr("id", "y2-axis-ticks");
+            chart.selectAll("#line2")
+                    .remove();
+
+            if (d3.select("#line1").empty()) {
                 var line1_func = d3.svg.line()
                         .x(function (d) {return xRange((parseDate(d.date) - startday) / (24 * 3600 * 1000) + 1); })
                         .y(function (d) {return y1Range(d.Volume);})
@@ -379,20 +508,28 @@
                         .style("stroke", "blue")
                         .style("stroke-width", "1.5")
                         .style("fill", "transparent")
+                        .style("opacity", 0)
                         .attr("class", "line")
+                        .attr("id", "line1")
                         .attr("d", line1_func(data));
+                line1.transition().duration(500).delay(300).style("opacity", 1);
+            }
 
-                var line2_func = d3.svg.line()
-                        .x(function (d) {return xRange((parseDate(d.date) - startday) / (24 * 3600 * 1000) + 1); })
-                        .y(function (d) {return y2Range(d.TDS);})
-                        .interpolate("basis");
-                var line2 = chart.append("path")
-                        .style("stroke", "red")
-                        .style("stroke-width", "1.5")
-                        .style("fill", "transparent")
-                        .attr("class", "line")
-                        .attr("d", line2_func(data));
+            var line2_func = d3.svg.line()
+                    .x(function (d) {return xRange((parseDate(d.date) - startday) / (24 * 3600 * 1000) + 1); })
+                    .y(function (d) {return y2Range(d[y2]);})
+                    .interpolate("basis");
+            var line2 = chart.append("path")
+                    .style("stroke", "red")
+                    .style("stroke-width", "1.5")
+                    .style("fill", "transparent")
+                    .style("opacity", 0)
+                    .attr("class", "line")
+                    .attr("id", "line2")
+                    .attr("d", line2_func(data));
+            line2.transition().duration(500).delay(300).style("opacity", 1);
 
+            if (chart.select(".bar").empty()) {
                 var bar_y_range = d3.scale.linear()
                         .domain([0, d3.max(data, function (d) {return d.Wells_number})])
                         .range([height, 0]);
@@ -434,10 +571,9 @@
                         return $(this).attr("well_number");
                     }
                 });
-            });
+            }
 
-        })
-        ;
+        }
 
         function parseDate(str) {
             return d3.time.format("%Y-%m-%d").parse(str);

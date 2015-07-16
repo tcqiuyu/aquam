@@ -141,7 +141,7 @@ def get_water_quality_result(request):
     # location_name = "Greeley Crescent"
     parameter = analyzer.parameters[location_name]
     coefficient = analyzer.coefficients[location_name]
-    result = analyzer.get_water_quality_result(parameter, coefficient, location)
+    result = analyzer.get_water_quality_result(parameter, coefficient, location_name)
     return HttpResponse(json.dumps(result), content_type="application/json")
 
 def water_treatment_analyzer(request):

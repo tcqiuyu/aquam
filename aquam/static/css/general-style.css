@@ -758,10 +758,13 @@ label.water-quality-radio {
 }
 
 #y1-axis-path, #y1-axis-ticks {
-    stroke: #266c8e;
+    stroke: steelblue;
 }
 
 #y2-axis-path, #y2-axis-ticks {
-    stroke: #B04F52;
+    stroke: red;
 }
 
+.col-body, .row-head{
+    text-align: right;
+}
