@@ -4,7 +4,7 @@
     <div class="container">
         <nav class="navbar row">
             <div class="navbar-header">
-                <a class="navbar-brand" href="/"><img src="{% static 'img/logo.png' %}" alt=''/>AQUAM</a>
+                <a class="navbar-brand"><img src="{% static 'img/' %}" alt=''/>AQUAM</a>
                 <button id="nav-toggle" type="button" class="ui-navbar-toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-1">
                     <span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
                 </button>
@@ -25,7 +25,6 @@
                         <a href="/contact">Contact</a>
                     </li>
                 </ul>
-                {% include 'partial/login-panel.html' %}
             </div>
         </nav>
     </div>

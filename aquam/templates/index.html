@@ -3,59 +3,110 @@
 
 {% block mainbody %}
     <!-- BODY -->
-    <div class="bloc  l-bloc" id="bloc-1">
-        <div class="container bloc-lg">
-            <div class="row">
-                <div class="col-sm-12">
-                    <div id="carousel-2" class="carousel slide" data-ride="carousel">
-                        <ol class="carousel-indicators">
-                            <li data-target="#carousel-2" data-slide-to="0">
-                            </li>
-                            <li data-target="#carousel-2" data-slide-to="1" class="active">
-                            </li>
-                            <li data-target="#carousel-2" data-slide-to="2">
-                            </li>
-                        </ol>
-                        <div class="carousel-inner">
-                            <div class="item">
-                                <img src="{% static 'img/placeholder-image-wide.png' %}" alt=''/>
-
-                                <div class="carousel-caption">
-                                </div>
-                            </div>
-                            <div class="item active">
-                                <img src="{% static 'img/placeholder-image-wide.png' %}" alt=''/>
-
-                                <div class="carousel-caption">
-                                </div>
-                            </div>
-                            <div class="item">
-                                <img src="{% static 'img/placeholder-image-wide.png' %}" alt=''/>
-
-                                <div class="carousel-caption">
-                                </div>
-                            </div>
-                        </div>
-                        <a class="left carousel-control" href="#carousel-2" role="button" data-slide="prev"><span
-                           class="fa fa-chevron-left"></span><span class="sr-only">Previous</span></a><a
-                           class="right carousel-control" href="#carousel-2" role="button" data-slide="next"><span
-                           class="fa fa-chevron-right"></span><span class="sr-only">Next</span></a>
+    <div id="header-bloc" class="row">
+        <div id="carousel-2" class="carousel slide" data-ride="carousel">
+            <ol class="carousel-indicators">
+                <li data-target="#carousel-2" data-slide-to="0">
+                </li>
+                <li data-target="#carousel-2" data-slide-to="1" class="active">
+                </li>
+                <li data-target="#carousel-2" data-slide-to="2">
+                </li>
+                <li data-target="#carousel-2" data-slide-to="3">
+                </li>
+                <li data-target="#carousel-2" data-slide-to="4">
+                </li>
+            </ol>
+            <div class="carousel-inner" style="height:400px; width:100%">
+                <div class="item active">
+                    <img class="slider-img" src="{% static 'img/slider-1-1.jpg' %}" alt=''/>
+    
+                    <div class="carousel-caption">
                     </div>
+                </div>
+                <div class="item">
+                    <img class="slider-img" src="{% static 'img/slider-2-1.jpg' %}" alt=''/>
+    
+                    <div class="carousel-caption">
+                    </div>
+                </div>
+                <div class="item">
+                    <img class="slider-img" src="{% static 'img/slider-3-1.jpg' %}" alt=''/>
                     
-                    <hr class="featurette-divider">
+                    <div class="carousel-caption">
+                    </div>
+                </div>
+                <div class="item">
+                    <img class="slider-img" src="{% static 'img/slider-4-1.jpg' %}" alt=''/>
                     
-                    <h4>AQUAM</h4>
-                    <p>
-                        AQUAM is an oilfield water management program designed for the oil and gas operators for 
-                        effectively managing their day-to-day water management operations. It has been targeted 
-                        to help operators improve their water management while simultanrously mitigating environmental 
-                        impacts, while addressing the overall goal, which would be to comprehensively reduce fresh water 
-                        use, optimize produced water recycling, minimizing truck traffic and other potential environmental 
-                        and community concerns. It is based on a Desktop-to-Drill Site (D2D) Platform currently being 
-                        developed by the CEWS. 
-                    </p>
+                    <div class="carousel-caption">
+                    </div>
+                </div>
+                <div class="item">
+                    <img class="slider-img" src="{% static 'img/slider-5-1.jpg' %}" alt=''/>
+                    
+                    <div class="carousel-caption">
+                    </div>
                 </div>
             </div>
+            
+            <a class="left carousel-control" href="#carousel-2" role="button" data-slide="prev"><span
+               class="fa fa-chevron-left"></span><span class="sr-only">Previous</span></a><a
+               class="right carousel-control" href="#carousel-2" role="button" data-slide="next"><span
+               class="fa fa-chevron-right"></span><span class="sr-only">Next</span></a>
+        </div>
+    </div>
+    
+    
+    
+    <div class="bloc  l-bloc" id="bloc-1">
+        <div class="container bloc-lg">
+            <div>
+                <h3 class="text-center">What is AQUAM?</h3>
+                <p style="font-size:18px" align="justify">
+                    AQUAM is an oilfield water management program designed for the oil and gas operators for 
+                    effectively managing their day-to-day water management operations. It has been targeted 
+                    to help operators improve their water management while simultanrously mitigating environmental 
+                    impacts, while addressing the overall goal, which would be to comprehensively reduce fresh water 
+                    use, optimize produced water recycling, minimizing truck traffic and other potential environmental 
+                    and community concerns. It is based on a Desktop-to-Drill Site (D2D) Platform currently being 
+                    developed by the CEWS. 
+                </p>
+            </div>
+            <hr class="featurette-divider">
+            <div>
+                <h3 class="text-center">Scientific Water Management</h3>
+                <p style="font-size:18px" align="justify">
+                    Oilfield water is managed in a scientific way. Here provides two ways for the water management - the traditional
+                    way based on the mathematical modeling, statitical analysis and charting, as well as a modern way based on geoanalytical techniques.
+                </p>
+            </div>
+            
+            <div class="row" style="margin-top:30px;">
+                <div class="col-md-6 portfolio-item">
+                    <a href="{% url 'solutions'%}">
+                        <img class="img-responsive" src="{% static 'img/home-solutions.jpg' %}" alt="">
+                    </a>
+                    <h3>
+                        <a href="{% url 'solutions'%}">Mathematical and Statistical Solutions</a>
+                    </h3>
+                    <p>
+                        Statistical analysis, mathematical modeling are based on powerful scientific computation packages 
+                        - <a href="http://www.scipy.org/" style="text-decoration: underline; color: blue">Scipy</a> 
+                        and <a href="http://www.numpy.org/" style="text-decoration: underline; color: blue">Numpy</a>.
+                    </p>
+                </div>
+                <div class="col-md-6 portfolio-item">
+                    <a href="{% url 'geoanalytics'%}">
+                        <img class="img-responsive" src="{% static 'img/home-geoanalytics.jpg' %}" alt="">
+                    </a>
+                    <h3>
+                        <a href="{% url 'geoanalytics'%}">Geoanalytical Solutions</a>
+                    </h3>
+                    <p>GIS provides an new way to mine the story behind the spatial data.</p>
+                </div>
+            </div>
+            <hr class="featurette-divider">
         </div>
     </div>
     <!-- BODY END -->

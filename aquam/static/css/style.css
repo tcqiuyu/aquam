@@ -5,10 +5,11 @@
 
 body {
     margin: 0;
-    padding: 0;
+    padding: padding-top: 100px;
     background: #FFF;
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
+    height: 100%;
 }
 
 a:hover {
@@ -174,10 +175,12 @@ h1, h2, h3, h4, h5, h6, p, label, .btn, a {
 
 .navbar {
     margin-bottom: 0;
+    height: 100px;
 }
 
 .navbar-header a {
     color: #FFFFFF;
+    padding-top:40px;
 }
 
 .navbar-brand {
@@ -348,6 +351,13 @@ iframe {
 
 /* = Carousel
 -------------------------------------------------------------- */
+
+.slider-img{
+     width: 100%; 
+     max-width: 100%";
+     height: 100%;
+     max-height: 100%;
+}
 
 .carousel-control span {
     position: absolute;
@@ -544,7 +554,8 @@ iframe {
 /* Footer
 ------------------------- */
 .bloc-footer {
-    padding-top: 15px;
+    height: 150px;
+    padding-top: 75px;
     text-align: center;
 }
 
@@ -585,6 +596,9 @@ iframe {
 
 /* Log-in component
 -------------------------- */
+.login-component {
+    margin-top: 13px;
+}
 .login-component ul {
     list-style-type: none;
 }
@@ -785,3 +799,22 @@ label.water-quality-radio {
     stroke: red;
 }
 
+
+/* = Home, Solutions, Geoanalytics, Contact pages
+-------------------------------------------------------------*/
+.img-responsive{
+    height: 350px;
+    width: 100%;
+    max-height: 100%;
+    max-width: 100%;
+}
+
+.header-bloc{
+    height: 300px;
+}
+
+.jumbotron{
+    height: 100%;
+    width: 100%;
+    background-color: #A4C7FF;
+}
