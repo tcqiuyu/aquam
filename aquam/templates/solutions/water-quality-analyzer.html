@@ -39,7 +39,7 @@
                     <div class="row">
 
                     </div>
-                    <div class="panel panel-default">
+                    <div class="panel panel-info">
                         <!-- Default panel contents -->
                         <div class="panel-heading">Fitting Equation</div>
                         <div class="panel-body">
@@ -88,7 +88,7 @@
                         </div>
                     </div>
 
-                    <div class="panel panel-default">
+                    <div class="panel panel-info">
                         <!-- Default panel contents -->
                         <div class="panel-heading">Arp's Model</div>
                         <div class="panel-body">
@@ -136,53 +136,56 @@
                             </table>
                         </div>
                     </div>
-                </div>
-            </div>
 
-            <div class="panel panel-primary chart-panel" id="water-use-kpis">
-                <div class="panel-heading chart-heading">
-                    <form class="radio-group row">
-                        <label class="radio-inline water-quality-radio">
-                            <input type="radio" name="inlineRadioOptions" id="water-quality-radio1"
-                                   value="Water used per well">
-                            TDS
-                        </label>
-                        <label class="radio-inline water-quality-radio">
-                            <input type="radio" name="inlineRadioOptions" id="water-quality-radio2"
-                                   value="Horizontal Length per Well">
-                            Chloride
-                        </label>
-                        <label class="radio-inline water-quality-radio">
-                            <input type="radio" name="inlineRadioOptions" id="water-quality-radio3"
-                                   value="Water Used per horizontal Foot">
-                            Sodium
-                        </label>
-                        <label class="radio-inline water-quality-radio">
-                            <input type="radio" name="inlineRadioOptions" id="water-quality-radio3"
-                                   value="Water Used per horizontal Foot">
-                            Calcium
-                        </label>
-                        <label class="radio-inline water-quality-radio">
-                            <input type="radio" name="inlineRadioOptions" id="water-quality-radio3"
-                                   value="Water Used per horizontal Foot">
-                            Iron
-                        </label>
-                    </form>
-                </div>
-                <div class="panel-body">
+                    <div class="panel panel-info chart-panel hide" id="water-quality-chart">
+                        <div class="panel-heading chart-heading">
+                            <form class="radio-group row">
+                                <label class="radio-inline water-quality-radio">
+                                    <input type="radio" name="inlineRadioOptions" id="water-quality-radio1"
+                                           value="Water used per well">
+                                    TDS
+                                </label>
+                                <label class="radio-inline water-quality-radio">
+                                    <input type="radio" name="inlineRadioOptions" id="water-quality-radio2"
+                                           value="Horizontal Length per Well">
+                                    Chloride
+                                </label>
+                                <label class="radio-inline water-quality-radio">
+                                    <input type="radio" name="inlineRadioOptions" id="water-quality-radio3"
+                                           value="Water Used per horizontal Foot">
+                                    Sodium
+                                </label>
+                                <label class="radio-inline water-quality-radio">
+                                    <input type="radio" name="inlineRadioOptions" id="water-quality-radio3"
+                                           value="Water Used per horizontal Foot">
+                                    Calcium
+                                </label>
+                                <label class="radio-inline water-quality-radio">
+                                    <input type="radio" name="inlineRadioOptions" id="water-quality-radio3"
+                                           value="Water Used per horizontal Foot">
+                                    Iron
+                                </label>
+                            </form>
+                        </div>
+                        <div class="panel-body">
 
-                    <div id="chart1" class="chart" style="width:100%; height:500px">
+                            <div id="chart1" class="chart" style="width:100%; height:500px">
+                            </div>
+
+                        </div>
+
+                        <div class="panel-footer chart-footer hide" id="chart1-footer">
+                            Filter by days interval: <b id="slider-day-start"></b> <input id="water-quality-slider"
+                                                                                          type="text"
+                                                                                          class="span2"/>
+                            <b id="slider-day-end"></b>
+
+                        </div>
                     </div>
-
-                </div>
-
-                <div class="panel-footer chart-footer hide" id="chart1-footer">
-                    Filter by days interval: <b id="slider-day-start"></b> <input id="water-quality-slider" type="text"
-                                                                                  class="span2"/>
-                    <b id="slider-day-end"></b>
-
                 </div>
             </div>
+
+
         </div>
     </div>
 {% endblock %}
@@ -236,75 +239,81 @@
                     $("#b-2").html(selected_parameters["Transition"]["b"]);
                     $("#b-3").html(selected_parameters["Produced Water"]["b"]);
 
+                    $("#water-quality-chart").removeClass("hide");
+                    init_chart();
                 });
 
             });
 
-            var margin = {top: 20, right: 70, bottom: 40, left: 120},
-                    width = $(".chart").width() - margin.left - margin.right,
-                    height = $(".chart").height() - margin.top - margin.bottom;
-            var init_xRange = d3.scale.linear()
-                    .domain(d3.extent([0, 0]))
-                    .range([0, width]);
-            var init_yRange = d3.scale.linear()
-                    .domain(d3.extent([0, 0]))
-                    .range([height, 0]);
-            var xAxis = d3.svg.axis()
-                    .scale(init_xRange)
-                    .orient("bottom");
-            var yAxis = d3.svg.axis()
-                    .scale(init_yRange)
-                    .orient("left");
-            var y2Axis = d3.svg.axis()
-                    .scale(init_yRange)
-                    .orient("right");
-            var svg = d3.selectAll(".chart").append("svg")
-                    .attr("width", width + margin.left + margin.right)
-                    .attr("height", height + margin.top + margin.bottom)
-                    .append("g")
-                    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-            svg.append("g")
-                    .attr("class", "x axis")
-                    .attr("transform", "translate(0," + height + ")")
-                    .call(xAxis);
-            svg.append("g")
-                    .attr("class", "y axis")
-                    .attr("transform", "translate(0, 0)")
-                    .attr("id", "y1-axis")
-                    .call(yAxis);
-            svg.select("#y1-axis")
-                    .select("path")
-                    .attr("id", "y1-axis-path");
-            svg.append("g")
-                    .attr("class", "y axis")
-                    .attr("transform", "translate(" + width + ", 0)")
-                    .attr("id", "y2-axis")
-                    .call(y2Axis);
-            svg.select("#y2-axis")
-                    .select("path")
-                    .attr("id", "y2-axis-path");
-            var chart1 = d3.select("#chart1").select("g");
-            chart1.append("text")
-                    .attr("class", "xlabel")
-                    .attr("text-anchor", "middle")
-                    .attr("x", width / 2)
-                    .attr("y", height + margin.bottom - 5)
-                    .attr("font-size", 12)
-                    .text("Days");
-            chart1.append("text")
-                    .attr("class", "ylabel")
-                    .attr("x", 0 - (height / 2))
-                    .attr("y", 0 - margin.left + 20)
-                    .attr("dy", "1em")
-                    .attr("transform", "rotate(-90)")
-                    .attr("text-anchor", "middle")
-                    .attr("font-size", 12)
-                    .attr("fill", "#337AB6")
-                    .text("Volume (bbls)");
+            function init_chart() {
+                var margin = {top: 20, right: 70, bottom: 40, left: 120},
+                        width = $(".chart").width() - margin.left - margin.right,
+                        height = $(".chart").height() - margin.top - margin.bottom;
+                var init_xRange = d3.scale.linear()
+                        .domain(d3.extent([0, 0]))
+                        .range([0, width]);
+                var init_yRange = d3.scale.linear()
+                        .domain(d3.extent([0, 0]))
+                        .range([height, 0]);
+                var xAxis = d3.svg.axis()
+                        .scale(init_xRange)
+                        .orient("bottom");
+                var yAxis = d3.svg.axis()
+                        .scale(init_yRange)
+                        .orient("left");
+                var y2Axis = d3.svg.axis()
+                        .scale(init_yRange)
+                        .orient("right");
+                var svg = d3.selectAll(".chart").append("svg")
+                        .attr("width", width + margin.left + margin.right)
+                        .attr("height", height + margin.top + margin.bottom)
+                        .append("g")
+                        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+                svg.append("g")
+                        .attr("class", "x axis")
+                        .attr("transform", "translate(0," + height + ")")
+                        .call(xAxis);
+                svg.append("g")
+                        .attr("class", "y axis")
+                        .attr("transform", "translate(0, 0)")
+                        .attr("id", "y1-axis")
+                        .call(yAxis);
+                svg.select("#y1-axis")
+                        .select("path")
+                        .attr("id", "y1-axis-path");
+                svg.append("g")
+                        .attr("class", "y axis")
+                        .attr("transform", "translate(" + width + ", 0)")
+                        .attr("id", "y2-axis")
+                        .call(y2Axis);
+                svg.select("#y2-axis")
+                        .select("path")
+                        .attr("id", "y2-axis-path");
+                var chart1 = d3.select("#chart1").select("g");
+                chart1.append("text")
+                        .attr("class", "xlabel")
+                        .attr("text-anchor", "middle")
+                        .attr("x", width / 2)
+                        .attr("y", height + margin.bottom - 5)
+                        .attr("font-size", 12)
+                        .text("Days");
+                chart1.append("text")
+                        .attr("class", "ylabel")
+                        .attr("x", 0 - (height / 2))
+                        .attr("y", 0 - margin.left + 20)
+                        .attr("dy", "1em")
+                        .attr("transform", "rotate(-90)")
+                        .attr("text-anchor", "middle")
+                        .attr("font-size", 12)
+                        .attr("fill", "#337AB6")
+                        .text("Volume (bbls)");
+            }
         });
 
         $("#water-quality-radio1").click(function () {
-            d3.json("{% url 'get-water-quality-result'%}", function (error, data) {
+            var current_Location = $("#dp-title").html();
+            var quality_request = 'get-water-quality-result/'.concat(current_Location);
+            d3.json(quality_request, function (error, data) {
                 console.log(data);
                 var margin = {top: 20, right: 70, bottom: 40, left: 120},
                         width = $("#chart1").width() - margin.left - margin.right,
@@ -363,7 +372,7 @@
                         .interpolate("basis");
                 var line1 = chart.append("path")
                         .style("stroke", "#337AB6")
-                        .style("stroke-width", "1.6")
+                        .style("stroke-width", "1.5")
                         .style("fill", "transparent")
                         .attr("class", "line")
                         .attr("d", line1_func(data));
@@ -374,13 +383,15 @@
                         .interpolate("basis");
                 var line2 = chart.append("path")
                         .style("stroke", "red")
-                        .style("stroke-width", "1.6")
+                        .style("stroke-width", "1.5")
                         .style("fill", "transparent")
                         .attr("class", "line")
                         .attr("d", line2_func(data));
-
             });
 
+{#            d3.json("{% url 'get-water-quality-result'%}", function (error, data) {#}
+{##}
+{#            });#}
         });
 
         function parseDate(str) {
