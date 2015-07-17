@@ -178,6 +178,7 @@ h1, h2, h3, h4, h5, h6, p, label, .btn, a {
     height: 100px;
 }
 
+
 .navbar-header a {
     color: #FFFFFF;
     padding-top:40px;
@@ -202,27 +203,31 @@ h1, h2, h3, h4, h5, h6, p, label, .btn, a {
 }
 
 .navbar .nav {
-    padding-top: 2px;
     margin-right: -16px;
     float: right;
 }
 
 .nav > li {
     float: left;
-    margin-top: 4px;
     font-size: 16px;
 }
 
 .nav li a {
+    height: 100px;
+    padding-top: 40px;
     color: #FFFFFF;
 }
 
-.nav > li a:hover, .nav > li a:focus {
-    background: transparent;
+.nav > li a:hover, .nav > li a:focus{
+    background-color: #0b427a !important;
+}
+
+.nav .active{
+    background-color: #0b427a !important;
 }
 
 .navbar-toggle {
-    margin: 10px 10px 0 0;
+    margin: 0;
     border: 0px;
 }
 
