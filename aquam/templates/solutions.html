@@ -45,23 +45,21 @@
             <div class="row">
                 <div class="col-sm-6">
                     <h3 class="mg-md">
-                        <a href="{% url 'water-use-geoanalyzer' %}">Water User Analyzer</a>
+                        <a href="{% url 'water-use-analyzer' %}">Water User Analyzer</a>
                     </h3>
                     <p>
-                        This modeler is an interactive tool designed to model water production trends based on historical data,
-                        giving the user a temporal edge of analyzing how much water was produced over a specific amount of time,
-                        and how the user could imperatively plan the amount of water to be handled on a particular day. It has
-                        been strategically designed to estimate time based production of water based on trends fitted to the well
-                        known Arp's Equation for modeling produced water.  Not only does it calculate the water to be produced
-                        on a particular day, it also seamless integrates the numbers to estimate  average water production volumes
-                        for a particular time frame, as specified by the user.
+                        The Water Use modeler is an interactive  tool designed to fit the user, in this case, an operator 
+                        or a water management company to anlayze their statistics of water, current and historical to establish 
+                        a baseline and a trend to improve their water use scenarios significantly. This tool also provides the 
+                        user to look at Key Performance Indicators (KPIs) such as average horizontal length drilled, average 
+                        water used per well and bbls water used per horizontal foot, on an annual comparison basis. 
                     </p>
                     <p>
-                        <button type="button" class="btn btn-default">Try the demo &raquo;</button>
+                        <a class="btn btn-default" href="{% url 'water-use-analyzer' %}" role="button">Try the demo &raquo;</a>
                     </p>
                 </div>
                 <div class="col-sm-6">
-                    <a href="{% url 'water-use-geoanalyzer' %}"><img src="{% static 'img/placeholder-image.png' %}" class="img-responsive" alt=''/></a>
+                    <img src="{% static 'img/placeholder-image.png' %}" class="img-responsive" alt=''/>
                 </div>
             </div>
         
@@ -69,23 +67,22 @@
             
             <div class="row">
                 <div class="col-sm-6">
-                    <a href="{% url 'water-use-heatmapper' %}"><img src="{% static 'img/placeholder-image.png' %}" class="img-responsive" alt=''/></a>
+                    <img src="{% static 'img/placeholder-image.png' %}" class="img-responsive" alt=''/>
                 </div>
                 <div class="col-sm-6">
                     <h3 class="mg-md">
-                        <a href="{% url 'water-use-heatmapper' %}">Produced Water Modeler</a><br/><a href="{% url 'water-use-heatmapper' %}"></a>
+                        <a href="{% url 'water-quality-analyzer' %}">Water Quality Analyzer</a>
                     </h3>
                     <p>
-                        This analyzer is an interactive tool designed to fit the user, in this case,
-                        an operator or a water management company to anlayze their statistics of water,
-                        current and historical to establish a baseline and a trend to improve their water
-                        use scenarios significantly. This tool also provides the user to look at
-                        Key Performance Indicators (KPIs) such as average horizontal length drilled,
-                        average water used per well and bbls water used per horizontal foot,
-                        on an annual comparison basis.
+                        Water Quality is a paramount part of estimating the pertinent treatment required to reuse the produced water 
+                        to a beneficial reuse condition. This modeler will estimate the quality of the water being produced, 
+                        simultaneously addressing the temporal aspects of the changing water quality. In laymen terms, this 
+                        tool helps estimate the incoming water quality of produced water with respect to time, in order to plan 
+                        effective treatment. It models the water quality based on historical averages of water quality for any 
+                        specific dataset. 
                     </p>
                     <p>
-                        <a class="btn btn-default" href="{% url 'water-use-heatmapper' %}" role="button">Try the demo &raquo;</a>
+                        <a class="btn btn-default" href="{% url 'water-quality-analyzer' %}" role="button">Try the demo &raquo;</a>
                     </p>
                 </div>
             </div>
@@ -95,47 +92,43 @@
             <div class="row">
                 <div class="col-sm-6">
                     <h3 class="mg-md">
-                        <a href="{% url 'water-use-geoanalyzer' %}">Water Quality Analyzer</a>
+                        <a href="{% url 'produced-water-modeler' %}">Produced Water Modeler</a>
                     </h3>
                     <p>
-                        This modeler is an interactive tool designed to model water production trends based on historical data,
-                        giving the user a temporal edge of analyzing how much water was produced over a specific amount of time,
-                        and how the user could imperatively plan the amount of water to be handled on a particular day. It has
-                        been strategically designed to estimate time based production of water based on trends fitted to the well
-                        known Arp's Equation for modeling produced water.  Not only does it calculate the water to be produced
-                        on a particular day, it also seamless integrates the numbers to estimate  average water production volumes
-                        for a particular time frame, as specified by the user.
+                        The Produced Water Modeler is an interactive tool designed to model water production trends 
+                        based on historical data, giving the user a temporal edge of analyzing how much water was 
+                        produced over a specific amount of time, and how the user could imperatively plan the amount 
+                        of water to be handled on a particular day. It has been strategically designed to estimate 
+                        time based production of water based on trends fitted to the well known Arp's Equation for 
+                        modeling produced water.  Not only does it calculate the water to be produced on a particular 
+                        day, it also seamless integrates the numbers to estimate  average water production volumes 
+                        for a particular time frame, as specified by the user. 
+                        
                     </p>
                     <p>
-                        <button type="button" class="btn btn-default">Try the demo &raquo;</button>
+                        <a class="btn btn-default" href="{% url 'produced-water-modeler' %}" role="button">Try the demo &raquo;</a>
                     </p>
                 </div>
                 <div class="col-sm-6">
-                    <a href="{% url 'water-use-geoanalyzer' %}"><img src="{% static 'img/placeholder-image.png' %}" class="img-responsive" alt=''/></a>
+                    <img src="{% static 'img/placeholder-image.png' %}" class="img-responsive" alt=''/>
                 </div>
             </div>
-        
+            
             <hr class="featurette-divider">
             
             <div class="row">
                 <div class="col-sm-6">
-                    <a href="{% url 'water-use-heatmapper' %}"><img src="{% static 'img/placeholder-image.png' %}" class="img-responsive" alt=''/></a>
+                    <img src="{% static 'img/placeholder-image.png' %}" class="img-responsive" alt=''/>
                 </div>
                 <div class="col-sm-6">
                     <h3 class="mg-md">
-                        <a href="{% url 'water-use-heatmapper' %}">Water Treatment Analyzer</a><br/><a href="{% url 'water-use-heatmapper' %}"></a>
+                        <a href="{% url 'water-treatment-analyzer' %}">Water Treatment Analyzer</a>
                     </h3>
                     <p>
-                        This analyzer is an interactive tool designed to fit the user, in this case,
-                        an operator or a water management company to anlayze their statistics of water,
-                        current and historical to establish a baseline and a trend to improve their water
-                        use scenarios significantly. This tool also provides the user to look at
-                        Key Performance Indicators (KPIs) such as average horizontal length drilled,
-                        average water used per well and bbls water used per horizontal foot,
-                        on an annual comparison basis.
+                        This analyzer is an interactive tool designed to produced water treatment ...
                     </p>
                     <p>
-                        <a class="btn btn-default" href="{% url 'water-use-heatmapper' %}" role="button">Try the demo &raquo;</a>
+                        <a class="btn btn-default" href="{% url 'water-treatment-analyzer' %}" role="button">Try the demo &raquo;</a>
                     </p>
                 </div>
             </div>

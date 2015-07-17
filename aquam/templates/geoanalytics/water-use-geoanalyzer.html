@@ -21,13 +21,16 @@
             </p>
         </div>
     </div>
-        
+    
     <div class="container">
         <hr>
         <div id="map-div" style="width:100%; height:600px">
-            <div id="map-container" style="width:100%; height:100%"> </div>
+            <div id="map-container1" style="width:100%; height:100%"> </div>
         </div>
         <hr>
+        <div id="map-div" style="width:100%; height:600px">
+            <div id="map-container2" style="width:100%; height:100%"> </div>
+        </div>
     </div>
     
 {% endblock %}
@@ -39,7 +42,7 @@
         "esri/geometry/Point", "esri/graphic", "dojo/_base/array", "dojo/domReady!"], 
         function(Map, esriRequest, FeatureLayer, PopupTemplate, Color, Point, Graphic, array){
         var featureLayer;
-        map = new Map("map-container", {
+        map = new Map("map-container1", {
             basemap: "topo",
             center: [-98.545682, 28.624585],
             zoom: 10
@@ -207,6 +210,134 @@
             ]
         });
         map.addLayers([featureLayer]);
+    });
+</script>
+
+<script type="text/javascript">
+    var map;
+    require(["esri/map","esri/request", "esri/SpatialReference", "esri/layers/FeatureLayer", "esri/renderers/HeatmapRenderer", 
+        "esri/geometry/Point", "esri/geometry/Extent", "esri/graphic", "dojo/_base/array", "dojo/domReady!"], 
+        function(Map, esriRequest, SpatialReference, FeatureLayer, HeatmapRenderer, Point,Extent, Graphic, array){
+        var featureLayer;
+        map = new Map("map-container2", {
+            basemap: "topo",
+            center: [-98.545682, 28.624585],
+            zoom: 9,
+            minZoom: 8
+        });
+        var layerDefinition = {
+                "geometryType": "esriGeometryPoint",
+                "objectIdField": "ObjectID",
+                "drawingInfo": {
+                    "renderer": {
+                        "type": "simple",
+                        "symbol": {
+                            "type": "esriSMS",
+                            "style": "esriSMSCircle",
+                            "color": [255, 40, 100, 90],
+                            "size": 4,
+                            "outline":{
+                                "width": 0.5,
+                                "color": [160, 160,160, 70],
+                            }
+                        }
+                    }
+                },
+                "fields":[
+                    {
+                        "name": "ObjectID",
+                        "alias": "ObjectID",
+                        "type": "esriFieldTypeOID"
+                    },
+                    {
+                        "name": "API",
+                        "alias": "API",
+                        "type": "esriFieldTypeString"
+                    },
+                    {
+                        "name": "WellName",
+                        "alias": "WellName",
+                        "type": "esriFieldTypeString",
+                    },
+                    {
+                        "name": "FractureDate",
+                        "alias": "FractureDate",
+                        "type": "esriFieldTypeDate"
+                    },
+                    {
+                        "name": "State",
+                        "alias": "State",
+                        "type": "esriFieldTypeString",
+                    },
+                    {
+                        "name": "County",
+                        "alias": "County",
+                        "type": "esriFieldTypeString",
+                    },
+                    {
+                        "name": "HorizontalLength",
+                        "alias": "HorizontalLength",
+                        "type": "esriFieldTypeDouble",
+                    },
+                    {
+                        "name": "WaterUse",
+                        "alias": "WaterUse",
+                        "type": "esriFieldTypeDouble",
+                    }
+                ]
+            };
+        var featureCollection = {
+            "layerDefinition": layerDefinition,
+            "featureSet":{
+                "features": [],
+                "geometryType": "esriGeometryPoint"
+            }
+        };
+        var featureLayer = new FeatureLayer(featureCollection, {
+            id: "heatmapFeatureLayer",
+            mode: FeatureLayer.MODE_SNAPSHOT,
+        });
+        
+        var requestHandle = esriRequest({
+            url: "{% url 'get-geo-water-use'%}",
+            handleAs: "json"
+        });
+        requestHandle.then(requestSucceeded, requestFailed);
+        
+        function requestSucceeded(response, io){
+            response = JSON.parse(response);
+            var features = [];
+            array.forEach(response.features, function(item){
+                var attr = {};
+                attr["API"] = item.properties.api;
+                attr["WellName"] = item.properties.well_name;
+                attr["FractureDate"] = Date.parse(item.properties.frac_date);
+                attr["State"] = item.properties.state;
+                attr["County"] = item.properties.county;
+                attr["HorizontalLength"] = parseFloat(item.properties.horizontal_length);
+                attr["WaterUse"] = parseFloat(item.properties.water_use);
+                var lon = item.geometry.coordinates[0];
+                var lat = item.geometry.coordinates[1];
+                var geometry = new Point(lon, lat);
+                var graphic = new Graphic(geometry);
+                graphic.setAttributes(attr);
+                features.push(graphic);
+            });
+            featureLayer.applyEdits(features);
+        }
+        
+        function requestFailed(error){
+            alert(error.message);
+        }
+        
+        var heatmapRenderer = new HeatmapRenderer({
+            blurRadius: 20,
+            maxPixelIntensity: 300,
+            minPixelIntensity: 30,
+            colors: ["rgba(0, 0, 255, 0)","rgb(0, 255, 0)","rgb(255, 255, 0)", "rgb(255, 0, 0)"]
+        });
+        featureLayer.setRenderer(heatmapRenderer);
+        map.addLayer(featureLayer);
     });
 </script>
 {% endblock %}

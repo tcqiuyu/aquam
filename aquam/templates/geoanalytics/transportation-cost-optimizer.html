@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block header %}
+    <link rel="stylesheet" href="http://js.arcgis.com/3.13/esri/css/esri.css">
+    <script src="http://js.arcgis.com/3.13/"></script>
+{% endblock %}
+
+{% block mainbody %}
+    <div class="jumbotron">
+        <div class="container">
+            <h2>Transportantion & Cost Optimizer - Coming Soon...</h2>
+            <p>
+                This optimizer is an interactive tool designed to optimize the route for produced water transportation.
+                An optimized route will help to minimize the cost and save time.
+            </p>
+        </div>
+    </div>
+    
+    <div class="bloc  l-bloc" id="bloc-2">
+        <div class="container bloc-lg">
+            <img src="{% static 'img/slide-1.png' %}" style="height:600px; width:100%; max-height:100%; max-width:100%"/>
+            <hr class="featurette-divider">
+            <img src="{% static 'img/slide-2.png' %}" style="height:600px; width:100%; max-height:100%; max-width:100%"/>
+            <hr class="featurette-divider">
+            <img src="{% static 'img/slide-3.png' %}" style="height:600px; width:100%; max-height:100%; max-width:100%"/>
+            <hr class="featurette-divider">
+            <img src="{% static 'img/slide-4.png' %}" style="height:600px; width:100%; max-height:100%; max-width:100%"/>
+        </div>
+    </div>
+{% endblock %}
+
+{% block footer %}
+<script type="text/javascript">
+
+</script>
+{% endblock %}

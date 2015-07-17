@@ -16,8 +16,10 @@
             </div>
         </div>
     </div>
+    
     <div class="bloc  l-bloc" id="bloc-2">
         <div class="container bloc-lg">
+            <hr class="featurette-divider">
             <div class="row">
             	<div class="col-sm-6">
                 	<h3 class="mg-md">
@@ -33,11 +35,11 @@
 	                    for a particular time frame, as specified by the user.
                     </p>
                     <p>
-                    	<button type="button" class="btn btn-default">Try the demo &raquo;</button>
+                    	<a class="btn btn-default" href="{% url 'water-use-geoanalyzer' %}" role="button">Try the demo &raquo;</a>
          			</p>
                 </div>
                 <div class="col-sm-6">
-                    <a href="{% url 'water-use-geoanalyzer' %}"><img src="{% static 'img/placeholder-image.png' %}" class="img-responsive" alt=''/></a>
+                    <img src="{% static 'img/placeholder-image.png' %}" class="img-responsive" alt=''/>
                 </div>
             </div>
 
@@ -45,23 +47,18 @@
             
             <div class="row">
                 <div class="col-sm-6">
-                    <a href="{% url 'water-use-heatmapper' %}"><img src="{% static 'img/placeholder-image.png' %}" class="img-responsive" alt=''/></a>
+                    <img src="{% static 'img/placeholder-image.png' %}" class="img-responsive" alt=''/>
                 </div>
                 <div class="col-sm-6">
                 	<h3 class="mg-md">
-                        <a href="{% url 'water-use-heatmapper' %}">Water Use Heatmapper</a><br/><a href="{% url 'water-use-heatmapper' %}"></a>
+                        <a href="{% url 'transportation-cost-optimizer' %}">Transportation & Cost Optimizer</a>
                     </h3>
                     <p>
-	                    This analyzer is an interactive tool designed to fit the user, in this case,
-						an operator or a water management company to anlayze their statistics of water,
-						current and historical to establish a baseline and a trend to improve their water
-						use scenarios significantly. This tool also provides the user to look at
-						Key Performance Indicators (KPIs) such as average horizontal length drilled,
-						average water used per well and bbls water used per horizontal foot,
-						on an annual comparison basis.
+	                    This optimizer is an interactive tool designed to optimize the route for produced water transportation.
+                        An optimized route will help to minimize the cost and save time.
                     </p>
                     <p>
-                    	<a class="btn btn-default" href="{% url 'water-use-heatmapper' %}" role="button">Try the demo &raquo;</a>
+                    	<a class="btn btn-default" href="{% url 'transportation-cost-optimizer' %}" role="button">Try the demo &raquo;</a>
          			</p>
                 </div>
             </div>

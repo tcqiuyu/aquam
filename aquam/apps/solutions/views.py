@@ -160,7 +160,6 @@ def water_treatment_analyzer(request):
     return render_to_response("solutions/water-treatment-analyzer.html", context,
                               context_instance=RequestContext(request))
 
-
 def get_treatment_iteration_result(request):
     analyzer = WaterTreatmentAnalyzer(WaterTreatment)
     location_name = "Core"

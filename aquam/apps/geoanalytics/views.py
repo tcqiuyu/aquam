@@ -8,7 +8,7 @@ from django.http import HttpResponse, JsonResponse
 
 # Apps imports
 from apps.geoanalytics.models import GeoWaterUse
-from apps.geoanalytics.tools import WaterUseGeoanalyzer, WaterUseHeatmapper
+from apps.geoanalytics.tools import WaterUseGeoanalyzer
 
 
 # Create your views here.
@@ -22,12 +22,6 @@ def get_geo_water_use(request):
     return HttpResponse(json.dumps(result), content_type="application/json")
 
 
-def water_use_heatmapper(request):
-    context = {"page_title": "AQUAM | Water Use Heatmapper"}
-    return render_to_response("geoanalytics/water-use-heatmapper.html", context, context_instance=RequestContext(request))
-
-def get_heat_water_use(request):
-    heatmapper = WaterUseHeatmapper(GeoWaterUse)
-    result = heatmapper.get_heat_water_use()
-    return HttpResponse(json.dumps(result), content_type="application/json")
-    
+def transportation_cost_optimizer(request):
+    context = {"page_title": "AQUAM | Transportation Cost Optimizer"}
+    return render_to_response("geoanalytics/transportation-cost-optimizer.html", context, context_instance=RequestContext(request))

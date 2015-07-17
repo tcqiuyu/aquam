@@ -208,7 +208,7 @@ class ProducedWaterModeler():
             data.append(obj)
         result = {"data": data, "Q0": round(Q0, 3), "D": round(D, 3), "b": round(b, 3)}
         return result
-
+    
     def get_arp_prediction(self, arp_model, start_date, end_date, wells_num_per_month):
         # day arrays
         start_year = start_date.year
@@ -696,7 +696,7 @@ class WaterTreatmentAnalyzer():
             obj.vfresh_iter_3 = result[8]
             obj.ratio_iter_3 = result[9]
             obj.save()
-
+    
     def get_treatment_iteration_result(self, end_day, coefficients, methods, constants, parameters, stages,
                                        location_name, constituent_name, percent):
         coefficient = coefficients[location_name][constituent_name]
