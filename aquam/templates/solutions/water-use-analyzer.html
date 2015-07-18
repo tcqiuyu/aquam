@@ -4,6 +4,9 @@
 {% block header %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/chart.css' %}"/>
     <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <!-- Jquery tipsy -->
+    <script src="{% static 'js/jquery.tipsy.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/tipsy.css' %}"/>
 {% endblock %}
 
 {% block mainbody %}
@@ -231,7 +234,7 @@
                     .attr("text-anchor", "middle")
                     .attr("x", width / 2)
                     .attr("y", height + margin.bottom - 5)
-                    .attr("font-size", 12);
+                    .attr("font-size", 14);
             chart1.append("text")
                     .attr("class", "ylabel")
                     .attr("x", 0 - (height / 2))
@@ -239,7 +242,7 @@
                     .attr("dy", "1em")
                     .attr("transform", "rotate(-90)")
                     .attr("text-anchor", "middle")
-                    .attr("font-size", 12)
+                    .attr("font-size", 14)
                     .text("Number of Wells");
             var chart2 = d3.select("#chart2").select("g");
             chart2.append("text")
@@ -247,7 +250,7 @@
                     .attr("text-anchor", "middle")
                     .attr("x", width / 2)
                     .attr("y", height + margin.bottom - 5)
-                    .attr("font-size", 12)
+                    .attr("font-size", 14)
                     .text("Year");
             chart2.append("text")
                     .attr("class", "ylabel")
@@ -256,14 +259,14 @@
                     .attr("dy", "1em")
                     .attr("transform", "rotate(-90)")
                     .attr("text-anchor", "middle")
-                    .attr("font-size", 12);
+                    .attr("font-size", 14);
             var chart3 = d3.select("#chart3").select("g");
             chart3.append("text")
                     .attr("class", "xlabel")
                     .attr("text-anchor", "middle")
                     .attr("x", width / 2)
                     .attr("y", height + margin.bottom - 5)
-                    .attr("font-size", 12)
+                    .attr("font-size", 14)
                     .text("The length of Horizontal Well (ft)");
             chart3.append("text")
                     .attr("class", "ylabel")
@@ -272,10 +275,22 @@
                     .attr("dy", "1em")
                     .attr("transform", "rotate(-90)")
                     .attr("text-anchor", "middle")
-                    .attr("font-size", 12)
+                    .attr("font-size", 14)
                     .text("Water Use (bbls)");
         });
-        function draw_chart1(data, data_name, xlabel) {
+
+        function color_picker(scheme) {
+            switch (scheme) {
+                case 1:
+                    return "#A8383B";
+                case 2:
+                    return "#4A2D73";
+                case 3:
+                    return "#338A2E";
+            }
+        }
+
+        function draw_chart1(data, data_name, xlabel, scheme) {
             var margin = {top: 20, right: 30, bottom: 40, left: 50},
                     width = $("#chart1").width() - margin.left - margin.right,
                     height = $("#chart1").height() - margin.top - margin.bottom;
@@ -315,7 +330,7 @@
             bar.append("rect")
                     .attr("x", 1)
                     .attr("y", height)
-                    .attr("fill", "steelblue")
+                    .attr("fill", color_picker(scheme))
                     .attr("width", xRange(data[1].x) - xRange(data[0].x) - 1)
                     .attr("height", 0);
             // transition effect
@@ -325,8 +340,8 @@
                     .attr("y", function (d) {return yRange(d.y);})
                     .attr("height", function (d) { return height - yRange(d.y); });
             bar.selectAll("rect")
-                    .on("mouseover", function () { d3.select(this).attr("fill", "green"); })
-                    .on("mouseout", function () { d3.select(this).attr("fill", "steelblue"); });
+                    .on("mouseover", function () { d3.select(this).attr("fill", "#AA9F39"); })
+                    .on("mouseout", function () { d3.select(this).attr("fill", color_picker(scheme)); });
             bar.append("text")
                     .attr("dy", "0.75em")
                     .attr("y", height - 10)
@@ -353,7 +368,7 @@
             }
             // else redraw the diagram
             d3.json("{% url 'get-water-use'%}", function (error, data) {
-                draw_chart1(data, "water_use", "Water Used per Well(bbls)");
+                draw_chart1(data, "water_use", "Water Used per Well(bbls)", 1);
                 update_chart1_footer(data, "water_use_mean", "water_use_std");
             });
         });
@@ -365,7 +380,7 @@
             }
             // else redraw the diagram
             d3.json("{% url 'get-horizontal-length'%}", function (error, data) {
-                draw_chart1(data, "horizontal_length", "Horizontal Length per Well(ft)");
+                draw_chart1(data, "horizontal_length", "Horizontal Length per Well(ft)", 2);
                 update_chart1_footer(data, "horizontal_length_mean", "horizontal_length_std");
             });
         });
@@ -377,19 +392,22 @@
             }
             // else redraw the diagram
             d3.json("{% url 'get-water-use-per-horizontal-foot'%}", function (error, data) {
-                draw_chart1(data, "water_use_per_horizontal_foot", "Water Used per Horizontal Foot(bbls/ft)");
+                draw_chart1(data, "water_use_per_horizontal_foot", "Water Used per Horizontal Foot(bbls/ft)", 3);
                 update_chart1_footer(data, "water_use_per_horizontal_foot_mean", "water_use_per_horizontal_foot_std");
             });
         });
+
         $(window).on("resize", function () {
             $("svg").each(function () {
                 var width = $(this).parent().width();
                 $(this).attr("width", width);
             })
         });
+
         function is_Int(value) {
             return !!((parseFloat(value) == parseInt(value)) && !isNaN(value));
         }
+
         $("#chart1-cal-button").click(function () {
             var input = $(this).closest('.additional-info').find('#Well_number').val();
             var mean = $(this).closest('.additional-info').find('.output-mean').text();
@@ -402,15 +420,16 @@
                 result.text('Please input an integer number')
             }
         });
-        function draw_chart2(data, ylabel) {
+        function draw_chart2(data, ylabel, scheme) {
+            console.log(data);
             var margin = {top: 20, right: 30, bottom: 40, left: 50},
                     width = $("#chart2").width() - margin.left - margin.right,
                     height = $("#chart2").height() - margin.top - margin.bottom;
             var xRange = d3.scale.ordinal()
                     .domain(data.map(function (d) {return d.year;}))
-                    .rangeRoundBands([0, width], .5);
+                    .rangeRoundBands([0, width], .6);
             var yRange = d3.scale.linear()
-                    .domain([0, 1.2 * d3.max(data, function (d) {return d.mean;})])
+                    .domain([0, 1.4 * d3.max(data, function (d) {return d.mean;})])
                     .range([height, 0]);
             var xAxis = d3.svg.axis()
                     .scale(xRange)
@@ -428,6 +447,7 @@
             chart.select('.ylabel').transition().duration(500).attr("fill", "black");
             chart.selectAll(".bar")
                     .remove();
+            chart.selectAll("line").remove();
             // set up the bars and text
             var bar = chart.selectAll(".bar")
                     .data(data)
@@ -439,15 +459,15 @@
                     .attr("width", xRange.rangeBand())
                     .attr("y", height)
                     .attr("height", 0)
-                    .attr("fill", "steelblue");
+                    .attr("fill", color_picker(scheme));
             bar.selectAll("rect")
                     .transition()
                     .duration(500)
                     .attr("y", function (d) {return yRange(d.mean)})
                     .attr("height", function (d) {return height - yRange(d.mean)});
             bar.selectAll("rect")
-                    .on("mouseover", function () { d3.select(this).attr("fill", "green"); })
-                    .on("mouseout", function () { d3.select(this).attr("fill", "steelblue"); });
+                    .on("mouseover", function () { d3.select(this).attr("fill", "#AA9F39"); })
+                    .on("mouseout", function () { d3.select(this).attr("fill", color_picker(scheme)); });
             bar.append("text")
                     .attr("dy", "0.75em")
                     .attr("y", height - 10)
@@ -459,13 +479,38 @@
                     .transition()
                     .duration(500)
                     .attr("y", function (d) {return yRange(d.mean) - 10});
+
+            for (i = 0; i < data.length; i++) {
+
+                var line = chart.append("line")
+                        .style("stroke", color_picker((scheme + 1) % 3 + 1))
+                        .style("stroke-width", 2)
+                        .attr("x1", xRange(data[i].year) + 1 / 2 * xRange.rangeBand())
+                        .attr("y1", yRange(data[i].mean))
+                        .attr("x2", xRange(data[i].year) + 1 / 2 * xRange.rangeBand())
+                        .attr("y2", yRange(data[i].mean))
+                        .attr("std", data[i].std);
+                line.transition()
+                        .duration(500)
+                        .delay(500)
+                        .attr("y1", yRange(data[i].mean - data[i].std))
+                        .attr("y2", yRange(data[i].mean + data[i].std));
+            }
+
+            $("[std]").tipsy({
+                gravity: 's',
+                html: true,
+                title: function () {
+                    return "Standard Deviation=" + $(this).attr("std");
+                }
+            });
         }
         $("#water-use-kpis-radio1").click(function () {
             if ($(this).parent().hasClass("checked")) {
                 return;
             }
             d3.json("{% url 'get-annual-water' %}", function (error, data) {
-                draw_chart2(data, "Annual Average Water User per Well(bbls)");
+                draw_chart2(data, "Annual Average Water User per Well(bbls)", 1);
             });
         });
         $("#water-use-kpis-radio2").click(function () {
@@ -473,7 +518,7 @@
                 return;
             }
             d3.json("{% url 'get-annual-horizontal-feet-drilled' %}", function (error, data) {
-                draw_chart2(data, "Annual Average Horizontal Feet Drilled(ft)");
+                draw_chart2(data, "Annual Average Horizontal Feet Drilled(ft)", 2);
             });
         });
         $("#water-use-kpis-radio3").click(function () {
@@ -481,15 +526,11 @@
                 return;
             }
             d3.json("{% url 'get-annual-bbls-ft-metric' %}", function (error, data) {
-                draw_chart2(data, "Annual bbls/ft Metric");
+                draw_chart2(data, "Annual bbls/ft Metric", 3);
             });
         });
         function draw_chart3(data, option) {
             var vals = data["data"];
-            {#            vals.sort(function (a, b) {#}
-            {#                return a.horizontal_length - b.horizontal_length;#}
-            {#            });#}
-            console.log(vals);
             var margin = {top: 20, right: 30, bottom: 40, left: 70},
                     width = $("#chart3").width() - margin.left - margin.right,
                     height = $("#chart3").height() - margin.top - margin.bottom;
@@ -511,25 +552,27 @@
                     .call(xAxis);
             svg.selectAll(".y.axis").transition().duration(500)
                     .call(yAxis);
-            chart.selectAll(".plot")
-                    .remove();
             chart.selectAll("line")
                     .remove();
             chart.select(".line")
                     .remove();
-            var dot = chart.append("g").attr("class", "plot")
-                    .selectAll(".dot")
-                    .data(vals)
-                    .enter().append("circle")
-                    .attr("class", "dot")
-                    .attr("r", 2)
-                    .attr("cx", function (d) {return xRange(d.horizontal_length);})
-                    .attr("cy", function (d) {return yRange(d.water_use);})
-                    .style("fill", "white");
-            dot.transition().duration(500).style("fill", "steelblue");
+
+            if (svg.select(".plot").empty()) {
+                var dot = chart.append("g").attr("class", "plot")
+                        .selectAll(".dot")
+                        .data(vals)
+                        .enter().append("circle")
+                        .attr("class", "dot")
+                        .attr("r", 2)
+                        .attr("cx", function (d) {return xRange(d.horizontal_length);})
+                        .attr("cy", function (d) {return yRange(d.water_use);})
+                        .style("fill", "white");
+                dot.transition().duration(500).style("fill", "steelblue");
+            }
+
             if (option == "linear") {
                 var line = chart.append("line")
-                        .style("stroke", "#CE5B56")
+                        .style("stroke", color_picker(1))
                         .style("stroke-width", "2.5")
                         .style("opacity", "0")
                         .attr("x1", xRange(d3.min(vals, function (d) {return d.horizontal_length;})))
@@ -544,9 +587,9 @@
                         .interpolate("linear");
                 var color;
                 if (option == "quadratic") {
-                    color = "#9956B0"
+                    color = color_picker(2)
                 } else if (option == "cubic") {
-                    color = "#23B05C"
+                    color = color_picker(3)
                 }
                 var line2 = chart.append("path")
                         .style("fill", color)

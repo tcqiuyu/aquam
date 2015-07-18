@@ -488,7 +488,7 @@
                         .range([height, 0]);
             } else {
                 y2Range = d3.scale.linear()
-                        .domain(d3.extent(data, function (d) { return d[y2];}))
+                        .domain([0, d3.max(data, function (d) { return d[y2];})])
                         .range([height, 0]);
             }
             var xAxis = d3.svg.axis()
