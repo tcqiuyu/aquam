@@ -65,7 +65,10 @@ node_2.attr({
 
 var node_3 = node_1.clone();
 node_3.translate(0, 320);
+node_3.removeAttr("a");
 node_3.attr({
+	rect: {fill: '#909091'},
+	a: {cursor: 'default'},
 	text: {text: '  Alternative\nSurface  Use'}
 });
 
@@ -79,13 +82,17 @@ node_4.attr({
 var node_5 = node_3.clone();
 node_5.translate(420);
 node_5.attr({
-	a: {'xlink:href': 'water-treatment-analyzer/'},
+	rect: {fill: '#2D69A6'},
+	a: {'xlink:href': 'water-treatment-analyzer/', 'cursor': 'pointer'},
 	text: {text: 'Treatment'}
 });
 
 var node_6 = node_4.clone();
 node_6.translate(350);
+node_6.removeAttr("a");
 node_6.attr({
+	rect: {fill: '#909091'},
+	a: {cursor: 'default'},
 	text: {text: 'Disposal'}
 });
 
