@@ -115,7 +115,7 @@ def get_arp_prediction(request):
     modeler = ProducedWaterModeler(ProducedWater)
     # get the parameters from request later
     input = request.__str__().split("get-arp-prediction/")[1].split("/")
-    wells_num_per_month = input[0]
+    wells_num_per_month = int(input[0])
     # start_date = datetime.date(2014, 3, 1)
     # end_date = datetime.date(2014, 6, 1)
     start_date_str = input[1].split("-")
