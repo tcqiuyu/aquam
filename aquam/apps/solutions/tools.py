@@ -259,8 +259,8 @@ class ProducedWaterModeler():
                 q = 0
                 if t > 0:
                     q = Q0 / (1 + D * t) ** (1 / b)
-                produced_water_arr[i][j] = round(q, 3)
-
+                produced_water_arr[i][j] = round(q * wells_num_per_month, 3)
+        
         # prediction
         day_volume = np.zeros(day_range, dtype=float)
         for i in range(day_range):
