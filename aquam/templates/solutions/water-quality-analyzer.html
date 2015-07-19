@@ -203,7 +203,7 @@
                 $(this).closest('.radio-inline, .solution-radio, .radio').addClass('checked');
             });
 
-            d3.json("{% url 'get-water-quality-settings'%}", function (error, data) {
+            d3.json("{% url 'get-water-quality-settings' %}", function (error, data) {
                 //dropdown content
                 locations = data.locations;
                 coefficients = data.coefficients;
@@ -473,7 +473,7 @@
         });
 
         function draw_chart(interval_day, startday, width, height, data, y2) {
-            $(".y2label").html(y2+" (mg/L)")
+            $(".y2label").html(y2 + " (mg/L)")
                     .css("opacity", "0");
             var xRange = d3.scale.linear()
                     .domain([0, (interval_day + 1) * 1.1])
@@ -599,5 +599,12 @@
         function parseDate(str) {
             return d3.time.format("%Y-%m-%d").parse(str);
         }
+
+        $(window).on("resize", function () {
+            $("svg").each(function () {
+                var width = $(this).parent().width();
+                $(this).attr("width", width);
+            })
+        });
     </script>
 {% endblock %}

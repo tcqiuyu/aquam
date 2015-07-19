@@ -702,7 +702,7 @@ label.solution-radio {
     color: #34495E;
 }
 
-.additional-info .output-error {
+.output-error {
     color: #CE5B56;
 }
 
@@ -805,4 +805,28 @@ label.water-quality-radio {
     fill: white;
     stroke: black;
     opacity: 0.8;
+}
+
+#produced-water-btn-cal {
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+
+.produced-water-label {
+    font-size: 15px;
+    margin-right: 5px;
+}
+
+#predict-cal {
+    height: 30px;
+    padding-top: 4px;
+    margin-top: 5px
+}
+
+#produced-water-est-output{
+    font-weight: bold;
+}
+
+.output-valid{
+    color: steelblue;
 }

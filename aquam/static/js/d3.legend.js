@@ -33,7 +33,7 @@
 				.attr("x", "1em")
 				.style("font-style", "italic")
 				.text(function (d) {
-					return d.key;
+					return d.key.replace(/_/g, " ");
 				});
 
 			li.selectAll("circle")
