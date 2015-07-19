@@ -5,7 +5,7 @@
 
 body {
     margin: 0;
-    padding: padding-top: 100px;
+    /*padding: padding-top: 100px;*/
     background: #FFF;
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
@@ -14,6 +14,9 @@ body {
 
 a:hover {
     text-decoration: none;
+}
+
+a:hover:not([cursor]) {
     cursor: pointer;
 }
 
@@ -172,10 +175,9 @@ h1, h2, h3, h4, h5, h6, p, label, .btn, a {
     height: 100px;
 }
 
-
 .navbar-header a {
     color: #FFFFFF;
-    padding-top:40px;
+    padding-top: 40px;
 }
 
 .navbar-brand {
@@ -212,11 +214,11 @@ h1, h2, h3, h4, h5, h6, p, label, .btn, a {
     color: #FFFFFF;
 }
 
-.nav > li a:hover, .nav > li a:focus{
+.nav > li a:hover, .nav > li a:focus {
     background-color: #0b427a !important;
 }
 
-.nav .active{
+.nav .active {
     background-color: #0b427a !important;
 }
 
@@ -350,11 +352,11 @@ iframe {
 
 /* = Carousel
 -------------------------------------------------------------- */
-.slider-img{
-     width: 100%; 
-     max-width: 100%";
-     height: 100%;
-     max-height: 100%;
+.slider-img {
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    max-height: 100%;
 }
 
 .carousel-control span {
@@ -552,8 +554,8 @@ iframe {
 /* Footer
 ------------------------- */
 .bloc-footer {
-    height: 150px;
-    padding-top: 75px;
+    height: 75px;
+    padding-top: 37px;
     text-align: center;
 }
 
@@ -774,25 +776,33 @@ label.water-quality-radio {
     stroke: red;
 }
 
-.col-body, .row-head{
+.col-body, .row-head {
     text-align: right;
 }
 
 /* = Home, Solutions, Geoanalytics, Contact pages
 -------------------------------------------------------------*/
-.img-responsive{
+.img-responsive {
     height: 350px;
     width: 100%;
     max-height: 100%;
     max-width: 100%;
 }
 
-.header-bloc{
+.header-bloc {
     height: 300px;
 }
 
-.jumbotron{
+.jumbotron {
     height: 100%;
     width: 100%;
     background-color: #A4C7FF;
+}
+
+/* = Produced water page
+-------------------------------------------------------------*/
+.legend rect {
+    fill: white;
+    stroke: black;
+    opacity: 0.8;
 }

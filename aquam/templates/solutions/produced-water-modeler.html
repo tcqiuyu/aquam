@@ -4,54 +4,246 @@
 {% block header %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/chart.css' %}"/>
     <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <script src="{% static 'js/d3.legend.js' %}"></script>
 {% endblock %}
 
 {% block mainbody %}
-<div class="container">
-    <div class="jumbotron">
-        <h2>Produced Water Modeler</h2>
-        <p>This modeler is an interactive tool designed to model water production trends based on 
-            historical data, giving the user a temporal edge of analyzing how much water was produced 
-            over a specific amount of time, and how the user could imperatively plan the amount of 
-            water to be handled on a particular day. It has been strategically designed to estimate 
-            time based production of water based on trends fitted to the well known Arp's Equation for 
-            modeling produced water. Not only does it calculate the water to be produced on a particular 
-            day, it also seamless integrates the numbers to estimate average water production volumes for 
-            a particular time frame, as specified by the user.
-        </p>
-    </div>
-    
-    <h3>Produced Water By Wells</h3>
-    
-    <div id="table-container">
-        {% include 'solutions/partial/produced-water-table.html'%}
-    </div>
-    
-    <hr>
-    
-    <div>
-        {{ data }}
-    </div>
-    
-    <hr>
-    <h3>Arp Model</h3>
-    <div class="chart" style="with:100%">
-        <div id="chart1" style="width:100%; height:500px"></div>
-        <hr/>
+    <div class="container">
+        <div class="jumbotron">
+            <h2>Produced Water Modeler</h2>
+
+            <p>This modeler is an interactive tool designed to model water production trends based on
+                historical data, giving the user a temporal edge of analyzing how much water was produced
+                over a specific amount of time, and how the user could imperatively plan the amount of
+                water to be handled on a particular day. It has been strategically designed to estimate
+                time based production of water based on trends fitted to the well known Arp's Equation for
+                modeling produced water. Not only does it calculate the water to be produced on a particular
+                day, it also seamless integrates the numbers to estimate average water production volumes for
+                a particular time frame, as specified by the user.
+            </p>
+        </div>
+
+        <h3>Produced Water By Wells</h3>
+
+        <div id="table-container">
+            {% include 'solutions/partial/produced-water-table.html' %}
+        </div>
+
+        <hr>
+
+        <div class="panel panel-primary chart-panel" id="water-use-analytics">
+            <div class="panel-heading chart-heading">
+                Arp's Model
+            </div>
+
+            <div class="panel-body">
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="panel panel-info">
+                            <div class="panel-heading">Equations</div>
+                            <div class="panel-body">
+                                <div class="eq-c">
+                                    <i>q</i>(t) =
+                                    <div class="fraction">
+                                        <span class="fup">Q<sub>0</sub></span>
+                                        <span class="bar">/</span>
+                                        <span class="fdn">( 1 + D * t ) <i><sup>1/b</sup></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 col-md-offset-1">
+                        <div class="panel panel-info">
+                            <div class="panel-heading">Parameters</div>
+                            <table class="table table-bordered table-striped">
+                                <tbody>
+                                <tr>
+                                    <td class="col-head">Initial production rate: <i><b>Q0</b></i></td>
+                                    <td class="col-body" id="table-Q0"></td>
+                                </tr>
+                                <tr>
+                                    <td class="col-head">Decline rate constant: <i><b>D</b></i></td>
+                                    <td class="col-body" id="table-D"></td>
+                                </tr>
+                                <tr>
+                                    <td class="col-head">Degree of curvature: <i><b>b</b></i></td>
+                                    <td class="col-body" id="table-b"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 col-md-offset-1">
+                        <div class="panel panel-info">
+                            <div class="panel-heading">Evaluation</div>
+                            <table class="table table-bordered table-striped">
+                                <tbody>
+                                <tr>
+                                    <td class="col-head">Accuracy:</td>
+                                    <td class="col-body" id="table-accuracy"></td>
+                                </tr>
+                                <tr>
+                                    <td class="col-head">RMSE:</td>
+                                    <td class="col-body" id="table-RMSE"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="panel panel-info">
+                    <div class="panel-heading">Graph</div>
+                    <div class="panel-body">
+                        <div class="chart" id="chart1" style="width:100%; height:500px">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 {% endblock %}
 
 {% block footer %}
-<script type="text/javascript">
-    $(document).ready(function() {
-        d3.json("{% url 'get-arp-model'%}", function(error, data) {
-           console.log(data)
+    <script type="text/javascript">
+        $(document).ready(function () {
+            d3.json("{% url 'get-arp-model'%}", function (error, data) {
+                console.log(data);
+                $("#table-Q0").html(data.Q0);
+                $("#table-D").html(data.D);
+                $("#table-b").html(data.b);
+
+                var chart_data = data.data;
+
+                var margin = {top: 20, right: 30, bottom: 40, left: 60},
+                        width = $(".chart").width() - margin.left - margin.right,
+                        height = $(".chart").height() - margin.top - margin.bottom;
+                var init_xRange = d3.scale.linear()
+                        .domain(d3.extent([0, 0]))
+                        .range([0, width]);
+                var init_yRange = d3.scale.linear()
+                        .domain(d3.extent([0, 0]))
+                        .range([height, 0]);
+                var xAxis = d3.svg.axis()
+                        .scale(init_xRange)
+                        .orient("bottom");
+                var yAxis = d3.svg.axis()
+                        .scale(init_yRange)
+                        .orient("left");
+                d3.select("#chart1").select("svg").remove();
+                var svg = d3.selectAll(".chart").append("svg")
+                        .attr("width", width + margin.left + margin.right)
+                        .attr("height", height + margin.top + margin.bottom)
+                        .append("g")
+                        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+                svg.append("g")
+                        .attr("class", "x axis")
+                        .attr("transform", "translate(0," + height + ")")
+                        .call(xAxis);
+                svg.append("g")
+                        .attr("class", "y axis")
+                        .attr("transform", "translate(0, 0)")
+                        .call(yAxis);
+                var chart1 = d3.select("#chart1").select("g");
+                chart1.append("text")
+                        .attr("class", "xlabel")
+                        .attr("text-anchor", "middle")
+                        .attr("x", width / 2)
+                        .attr("y", height + margin.bottom - 5)
+                        .attr("font-size", 14)
+                        .text("Days");
+                chart1.append("text")
+                        .attr("class", "y1label")
+                        .attr("x", 0 - (height / 2))
+                        .attr("y", 0 - margin.left)
+                        .attr("dy", "1em")
+                        .attr("transform", "rotate(-90)")
+                        .attr("text-anchor", "middle")
+                        .attr("font-size", 14)
+                        .text("Produced Water (bbls)");
+
+                var xRange = d3.scale.linear()
+                        .domain([0, d3.max(chart_data, function (d) {return d.day * 1.1;})])
+                        .range([0, width]);
+                var yRange = d3.scale.linear()
+                        .domain([-100, d3.max(chart_data, function (d) {return d.produced_water * 1.1;})])
+                        .range([height, 0]);
+                xAxis = d3.svg.axis()
+                        .scale(xRange)
+                        .orient("bottom");
+                yAxis = d3.svg.axis()
+                        .scale(yRange)
+                        .orient("left");
+                svg.select(".x.axis").transition().duration(500)
+                        .call(xAxis);
+                svg.selectAll(".y.axis").transition().duration(500)
+                        .call(yAxis);
+
+                draw_line(chart_data, chart1, xRange, yRange, "produced_water");
+                draw_line(chart_data, chart1, xRange, yRange, "fitted_produced_water");
+
+                var legend = svg.append("g")
+                        .attr("class", "legend")
+                        .attr("transform", "translate(" + (width - margin.left - 100) + ", 20) scale(1.1)")
+                        .style("font-size", "14px")
+                        .call(d3.legend);
+
+                svg.select(".legend").select(".legend-items")
+                        .selectAll(".legend-circle")
+                        .on('click', function () {
+                            var $this = d3.select(this);
+                            if ($this.style("fill") != "rgb(255, 255, 255)") {
+                                $this.style("fill", "white");
+                                svg.select("#" + $this.attr("represent")).remove();
+                            } else {
+                                $this.style("fill", $this.style("stroke"));
+                                var name = $this.attr("represent").split("-")[1];
+                                console.log(name);
+                                draw_line(chart_data, chart1, xRange, yRange, name, name);
+                            }
+                        })
+            });
+
         });
-    });
-    $(document).ready(function() {
-        d3.json("{% url 'get-arp-prediction'%}", function(error, data) {
-           console.log(data)
+
+        function draw_line(chart_data, chart, xRange, yRange, data_name) {
+            var line1_func = d3.svg.line()
+                    .x(function (d) {return xRange(d.day); })
+                    .y(function (d) {return yRange(d[data_name]);})
+                    .interpolate("basis");
+            var line1 = chart.append("path")
+                    .style("stroke", color_picker(data_name))
+                    .style("stroke-width", "1.5")
+                    .style("fill", "transparent")
+                    .style("opacity", 0)
+                    .attr("class", "line")
+                    .attr("id", "line-" + data_name)
+                    .attr("data-legend", data_name)
+                    .attr("d", line1_func(chart_data));
+            line1.transition().duration(500).delay(300).style("opacity", 1);
+        }
+
+        function color_picker(scheme) {
+            switch (scheme) {
+                case "produced_water":
+                    return "#A8383B";
+                case 2:
+                    return "#4A2D73";
+                case "fitted_produced_water":
+                    return "#338A2E";
+            }
+        }
+
+        $(document).ready(function () {
+            d3.json("{% url 'get-arp-prediction'%}", function (error, data) {
+                console.log(data);
+            });
         });
-    });
-</script>
+    </script>
 {% endblock %}
