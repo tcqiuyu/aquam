@@ -4,6 +4,26 @@
 {% block header %}
     <link rel="stylesheet" href="http://js.arcgis.com/3.13/esri/css/esri.css">
     <script src="http://js.arcgis.com/3.13/"></script>
+    <style type="text/css">
+        .map, #map-1, #map-2{
+            position:relative;
+            width:100%;
+            height:600px;
+        }
+        #map-1, #map-2{
+            width:100%;
+            height:100%;
+        }
+        .legend{
+            position:absolute;
+            height:200px;
+            width:110px;
+            right:10px;
+            bottom:40px;
+            background-color:white;
+            border-radius:5px;
+        }
+    </style>
 {% endblock %}
 
 {% block mainbody %}
@@ -21,28 +41,37 @@
             </p>
         </div>
     </div>
+       
     
     <div class="container">
-        <hr>
-        <div id="map-div" style="width:100%; height:600px">
-            <div id="map-container1" style="width:100%; height:100%"> </div>
+        <hr class="featurette-divider">
+        <div class="map">
+            <div id="map-1"></div>
+            <div class="legend">
+                <div id="legend-1"></div>
+            </div>
         </div>
-        <hr>
-        <div id="map-div" style="width:100%; height:600px">
-            <div id="map-container2" style="width:100%; height:100%"> </div>
+        
+        <hr class="featurette-divider">
+        
+        <div class="map">
+            <div id="map-2"></div>
+            <div class="legend">
+                <div id="legend-2"></div>
+            </div>
         </div>
     </div>
-    
 {% endblock %}
 
 {% block footer %}
 <script type="text/javascript">
     var map;
-    require(["esri/map","esri/request", "esri/layers/FeatureLayer", "esri/dijit/PopupTemplate", "esri/Color",
+    require(["esri/map","esri/request", "esri/layers/FeatureLayer", 
+        "esri/dijit/PopupTemplate", "esri/dijit/Legend", "esri/dijit/Scalebar", "esri/Color",
         "esri/geometry/Point", "esri/graphic", "dojo/_base/array", "dojo/domReady!"], 
-        function(Map, esriRequest, FeatureLayer, PopupTemplate, Color, Point, Graphic, array){
+        function(Map, esriRequest, FeatureLayer, PopupTemplate, Legend, Scalebar, Color, Point, Graphic, array){
         var featureLayer;
-        map = new Map("map-container1", {
+        map = new Map("map-1", {
             basemap: "topo",
             center: [-98.545682, 28.624585],
             zoom: 10
@@ -210,16 +239,29 @@
             ]
         });
         map.addLayers([featureLayer]);
+        var legend = new Legend({
+            map: map,
+        }, "legend-1");
+        legend.startup();
+        var scalebar = new Scalebar({
+            map: map,
+            // "dual" displays both miles and kilmometers
+            // "english" is the default, which displays miles
+            // use "metric" for kilometers
+            scalebarUnit: "dual"
+          });
+
     });
 </script>
 
 <script type="text/javascript">
     var map;
-    require(["esri/map","esri/request", "esri/SpatialReference", "esri/layers/FeatureLayer", "esri/renderers/HeatmapRenderer", 
+    require(["esri/map","esri/request", "esri/SpatialReference", "esri/dijit/Legend", "esri/layers/FeatureLayer", 
+        "esri/renderers/HeatmapRenderer", "esri/dijit/Scalebar", 
         "esri/geometry/Point", "esri/geometry/Extent", "esri/graphic", "dojo/_base/array", "dojo/domReady!"], 
-        function(Map, esriRequest, SpatialReference, FeatureLayer, HeatmapRenderer, Point,Extent, Graphic, array){
+        function(Map, esriRequest, SpatialReference, Legend, FeatureLayer, HeatmapRenderer, Scalebar, Point,Extent, Graphic, array){
         var featureLayer;
-        map = new Map("map-container2", {
+        map = new Map("map-2", {
             basemap: "topo",
             center: [-98.545682, 28.624585],
             zoom: 9,
@@ -234,12 +276,7 @@
                         "symbol": {
                             "type": "esriSMS",
                             "style": "esriSMSCircle",
-                            "color": [255, 40, 100, 90],
-                            "size": 4,
-                            "outline":{
-                                "width": 0.5,
-                                "color": [160, 160,160, 70],
-                            }
+                            "size": 4
                         }
                     }
                 },
@@ -248,31 +285,6 @@
                         "name": "ObjectID",
                         "alias": "ObjectID",
                         "type": "esriFieldTypeOID"
-                    },
-                    {
-                        "name": "API",
-                        "alias": "API",
-                        "type": "esriFieldTypeString"
-                    },
-                    {
-                        "name": "WellName",
-                        "alias": "WellName",
-                        "type": "esriFieldTypeString",
-                    },
-                    {
-                        "name": "FractureDate",
-                        "alias": "FractureDate",
-                        "type": "esriFieldTypeDate"
-                    },
-                    {
-                        "name": "State",
-                        "alias": "State",
-                        "type": "esriFieldTypeString",
-                    },
-                    {
-                        "name": "County",
-                        "alias": "County",
-                        "type": "esriFieldTypeString",
                     },
                     {
                         "name": "HorizontalLength",
@@ -309,11 +321,6 @@
             var features = [];
             array.forEach(response.features, function(item){
                 var attr = {};
-                attr["API"] = item.properties.api;
-                attr["WellName"] = item.properties.well_name;
-                attr["FractureDate"] = Date.parse(item.properties.frac_date);
-                attr["State"] = item.properties.state;
-                attr["County"] = item.properties.county;
                 attr["HorizontalLength"] = parseFloat(item.properties.horizontal_length);
                 attr["WaterUse"] = parseFloat(item.properties.water_use);
                 var lon = item.geometry.coordinates[0];
@@ -338,6 +345,17 @@
         });
         featureLayer.setRenderer(heatmapRenderer);
         map.addLayer(featureLayer);
+        var legend = new Legend({
+            map: map
+        }, "legend-2");
+        //legend.startup();
+        var scalebar = new Scalebar({
+            map: map,
+            // "dual" displays both miles and kilmometers
+            // "english" is the default, which displays miles
+            // use "metric" for kilometers
+            scalebarUnit: "dual"
+          });
     });
 </script>
 {% endblock %}

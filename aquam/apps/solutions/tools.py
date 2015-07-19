@@ -179,12 +179,12 @@ class ProducedWaterModeler():
 
     def __init__(self, model):
         self.model = model
-
+    
     def get_arp_model(self):
         # arp model
         def arp(x, D, b):
             return Q0 / (1 + D * x) ** (1 / b)
-
+        
         # fitting
         values_list = self.model.objects.values_list("days", "well_1", "well_2", "well_3", "well_4", "well_5", "well_6",
                                                      "well_7")
@@ -201,14 +201,21 @@ class ProducedWaterModeler():
         params = optimize.curve_fit(arp, days, produced_water)
         D, b = params[0]
         yfit = [arp(x, D, b) for x in days]
+        
         # results
         data = []
         for x, y, z in zip(days, produced_water, yfit):
             obj = {"day": x, "produced_water": y, "fitted_produced_water": z}
             data.append(obj)
-        result = {"data": data, "Q0": round(Q0, 3), "D": round(D, 3), "b": round(b, 3)}
+        
+        # evaluation
+        sstotal = (len(values_list) - 1) * np.var(produced_water)
+        ssresid = np.sum(np.power(produced_water - yfit, 2))
+        r2 = 1 - (ssresid / sstotal)
+        #rmse = np.std(produced_water)
+        result = {"data": data, "Q0": round(Q0, 3), "D": round(D, 3), "b": round(b, 3), "r2":round(r2,4)}
         return result
-    
+        
     def get_arp_prediction(self, arp_model, start_date, end_date, wells_num_per_month):
         # day arrays
         start_year = start_date.year
@@ -267,7 +274,7 @@ class WaterQualityAnalyzer():
     """
     Used for providing the water quality results computed based on Water Quality Model
     """
-
+    
     def __init__(self, model):
         self.model = model
         self.unit = 158.987
