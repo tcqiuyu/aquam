@@ -267,6 +267,7 @@ class ProducedWaterModeler():
             day_volume[i] = np.sum(produced_water_arr[i])
         total_volume = np.sum(day_volume)
         result = {"total_volume": round(total_volume, 3)}
+        print total_volume
         return result
 
 

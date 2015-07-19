@@ -114,9 +114,14 @@ def get_arp_model(request):
 def get_arp_prediction(request):
     modeler = ProducedWaterModeler(ProducedWater)
     # get the parameters from request later
-    start_date = datetime.date(2014, 3, 1)
-    end_date = datetime.date(2014, 6, 1)
-    wells_num_per_month = 5
+    input = request.__str__().split("get-arp-prediction/")[1].split("/")
+    wells_num_per_month = input[0]
+    # start_date = datetime.date(2014, 3, 1)
+    # end_date = datetime.date(2014, 6, 1)
+    start_date_str = input[1].split("-")
+    end_date_str = input[2].split("'")[0].split("-")
+    start_date=datetime.date(int(start_date_str[1]), int(start_date_str[0]), 1)
+    end_date=datetime.date(int(end_date_str[1]), int(end_date_str[0]), 1)
     arp_model = {"Q0": 549.7142, "b": 0.9380, "D": 0.1299}
     result = modeler.get_arp_prediction(arp_model, start_date, end_date, wells_num_per_month)
     return JsonResponse(result)

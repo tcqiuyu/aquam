@@ -5,6 +5,8 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/chart.css' %}"/>
     <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
     <script src="{% static 'js/d3.legend.js' %}"></script>
+    <script src="{% static 'js/bootstrap-datepicker.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-datepicker.css' %}"/>
 {% endblock %}
 
 {% block mainbody %}
@@ -38,11 +40,12 @@
 
             <div class="panel-body">
 
-                <div class="row">
-                    <div class="col-md-3">
-                        <div class="panel panel-info">
-                            <div class="panel-heading">Equations</div>
-                            <div class="panel-body">
+                <div class="panel panel-info">
+                    <div class="panel-heading">Equation</div>
+
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-md-2">
                                 <div class="eq-c">
                                     <i>q</i>(t) =
                                     <div class="fraction">
@@ -52,72 +55,142 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
 
-                    <div class="col-md-4 col-md-offset-1">
+                            <div class="col-md-4">
+                                <button type="button" class="btn btn-success" id="produced-water-btn-cal">Build Model
+                                </button>
+                            </div>
+                        </div>
+
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="panel panel-info">
+                                    <div class="panel-heading">Parameters</div>
+                                    <table class="table table-bordered table-striped">
+                                        <tbody>
+                                        <tr>
+                                            <td class="col-head">Initial production rate: <i><b>Q0</b></i></td>
+                                            <td class="col-body" id="table-Q0"></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="col-head">Decline rate constant: <i><b>D</b></i></td>
+                                            <td class="col-body" id="table-D"></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="col-head">Degree of curvature: <i><b>b</b></i></td>
+                                            <td class="col-body" id="table-b"></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4 col-md-offset-1">
+                                <div class="panel panel-info">
+                                    <div class="panel-heading">Evaluation</div>
+                                    <table class="table table-bordered table-striped">
+                                        <tbody>
+                                        <tr>
+                                            <td class="col-head">Accuracy:</td>
+                                            <td class="col-body" id="table-accuracy"></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+
+                        </div>
                         <div class="panel panel-info">
-                            <div class="panel-heading">Parameters</div>
-                            <table class="table table-bordered table-striped">
-                                <tbody>
-                                <tr>
-                                    <td class="col-head">Initial production rate: <i><b>Q0</b></i></td>
-                                    <td class="col-body" id="table-Q0"></td>
-                                </tr>
-                                <tr>
-                                    <td class="col-head">Decline rate constant: <i><b>D</b></i></td>
-                                    <td class="col-body" id="table-D"></td>
-                                </tr>
-                                <tr>
-                                    <td class="col-head">Degree of curvature: <i><b>b</b></i></td>
-                                    <td class="col-body" id="table-b"></td>
-                                </tr>
-                                </tbody>
-                            </table>
+                            <div class="panel-heading">Graph</div>
+                            <div class="panel-body">
+                                <div class="chart" id="chart1" style="width:100%; height:500px">
+                                </div>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="col-md-3 col-md-offset-1">
-                        <div class="panel panel-info">
-                            <div class="panel-heading">Evaluation</div>
-                            <table class="table table-bordered table-striped">
-                                <tbody>
-                                <tr>
-                                    <td class="col-head">Accuracy:</td>
-                                    <td class="col-body" id="table-accuracy"></td>
-                                </tr>
-                                <tr>
-                                    <td class="col-head">RMSE:</td>
-                                    <td class="col-body" id="table-RMSE"></td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
+                        <div class="panel panel-info hide">
+                            <div class="panel-heading">Estimation & Prediction</div>
 
+                            <div class="panel-body">
+                                <div class="row">
+                                    <form class="form-inline">
+                                        <div class="col-md-4 col-md-offset-1">
+                                            <span class="label label-default produced-water-label">Number of Wells</span>
+                                            <input type="text" class="input-sm form-control" name="well_number"
+                                                   id="well_number_input"/>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="input-daterange input-group" id="datepicker">
+                                                <span class="input-group-addon"
+                                                      style="border-right: 1px solid #ccc">Start date:</span>
+                                                <input type="text" class="input-sm form-control" name="start"
+                                                       id="start_date"/>
+                                                <span class="input-group-addon">End date:</span>
+                                                <input type="text" class="input-sm form-control" name="end"
+                                                       id="end_date"/>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
 
-                <div class="panel panel-info">
-                    <div class="panel-heading">Graph</div>
-                    <div class="panel-body">
-                        <div class="chart" id="chart1" style="width:100%; height:500px">
+                                <hr>
+                                <form class="form-inline">
+                                    <button type="button" class="btn btn-success" id="predict-cal">Calculate
+                                    </button>
+                                    <span id="produced-water-est-output">
+                                    </span>
+
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
     </div>
+
 {% endblock %}
 
 {% block footer %}
     <script type="text/javascript">
-        $(document).ready(function () {
+
+        function draw_line(chart_data, chart, xRange, yRange, data_name) {
+            var line1_func = d3.svg.line()
+                    .x(function (d) {return xRange(d.day); })
+                    .y(function (d) {return yRange(d[data_name]);})
+                    .interpolate("basis");
+            var line1 = chart.append("path")
+                    .style("stroke", color_picker(data_name))
+                    .style("stroke-width", "1.5")
+                    .style("fill", "transparent")
+                    .style("opacity", 0)
+                    .attr("class", "line")
+                    .attr("id", "line-" + data_name)
+                    .attr("data-legend", data_name)
+                    .attr("d", line1_func(chart_data));
+            line1.transition().duration(250).style("opacity", 1);
+        }
+
+        function color_picker(scheme) {
+            switch (scheme) {
+                case "produced_water":
+                    return "#A8383B";
+                case 2:
+                    return "#4A2D73";
+                case "fitted_produced_water":
+                    return "#338A2E";
+            }
+        }
+
+        $("#produced-water-btn-cal").click(function () {
             d3.json("{% url 'get-arp-model'%}", function (error, data) {
-                console.log(data);
+                $(".panel").removeClass("hide");
                 $("#table-Q0").html(data.Q0);
                 $("#table-D").html(data.D);
                 $("#table-b").html(data.b);
+                $("#table-accuracy").html((data.r2 * 100).toFixed(2) + "%");
 
                 var chart_data = data.data;
 
@@ -204,46 +277,57 @@
                             } else {
                                 $this.style("fill", $this.style("stroke"));
                                 var name = $this.attr("represent").split("-")[1];
-                                console.log(name);
                                 draw_line(chart_data, chart1, xRange, yRange, name, name);
                             }
                         })
             });
-
         });
-
-        function draw_line(chart_data, chart, xRange, yRange, data_name) {
-            var line1_func = d3.svg.line()
-                    .x(function (d) {return xRange(d.day); })
-                    .y(function (d) {return yRange(d[data_name]);})
-                    .interpolate("basis");
-            var line1 = chart.append("path")
-                    .style("stroke", color_picker(data_name))
-                    .style("stroke-width", "1.5")
-                    .style("fill", "transparent")
-                    .style("opacity", 0)
-                    .attr("class", "line")
-                    .attr("id", "line-" + data_name)
-                    .attr("data-legend", data_name)
-                    .attr("d", line1_func(chart_data));
-            line1.transition().duration(500).delay(300).style("opacity", 1);
-        }
-
-        function color_picker(scheme) {
-            switch (scheme) {
-                case "produced_water":
-                    return "#A8383B";
-                case 2:
-                    return "#4A2D73";
-                case "fitted_produced_water":
-                    return "#338A2E";
-            }
-        }
 
         $(document).ready(function () {
-            d3.json("{% url 'get-arp-prediction'%}", function (error, data) {
-                console.log(data);
+
+            $('.input-daterange').datepicker({
+                format: "mm-yyyy",
+                minViewMode: 1
             });
+
         });
+
+        $(window).on("resize", function () {
+            $("svg").each(function () {
+                var width = $(this).parent().width();
+                $(this).attr("width", width);
+            })
+        });
+
+        $("#predict-cal").click(function () {
+            var $this = $(this);
+            var wells_number = $this.closest('.panel-body').find('#well_number_input').val();
+            var startdate = $this.closest('.panel-body').find('#start_date').val();
+            var enddate = $this.closest('.panel-body').find('#end_date').val();
+
+            var output = $this.closest('.form-inline').find('#produced-water-est-output');
+            if (is_Int(wells_number)) {
+                output.removeClass('output-error');
+                output.addClass('output-valid');
+
+                var request = 'get-arp-prediction/' + wells_number + '/' + startdate + '/' + enddate;
+                console.log(request);
+
+                d3.json(request, function (error, data) {
+                    console.log(data);
+                    var total_volume = data["total_volume"];
+                    $("#produced-water-est-output").html("Total Volume (bbls) = " + total_volume);
+                });
+
+            } else {
+                output.removeClass('output-valid');
+                output.addClass('output-error');
+                output.text('Well number: Please input an integer number')
+            }
+        });
+
+        function is_Int(value) {
+            return !!((parseFloat(value) == parseInt(value)) && !isNaN(value));
+        }
     </script>
 {% endblock %}
