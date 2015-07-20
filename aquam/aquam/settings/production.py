@@ -52,7 +52,6 @@ EMAIL_USE_TLS = True
 
 SERVER_EMAIL = EMAIL_HOST_USER
 
-
 # DATABASE CONFIGURATION
 DATABASES = {
     'default': {
@@ -74,6 +73,12 @@ CACHES = {
     }
 }
 
-
 # SECRET CONFIGURATION
-SECRET_KEY = get_env_setting('SECRET_KEY')
+# SECRET_KEY = get_env_setting('SECRET_KEY')
+SECRET_KEY = "+-fp4+y!#6zgcgxsw3dz81)0*+%-7@%lfi=615uo&vyhkf+@k+"
+
+STATIC_ROOT = "/home/aquamuser/webapps/aquam_static"
+
+STATICFILES_DIRS = (
+    "/home/aquamuser/webapps/aquam/aquam/static"
+)
