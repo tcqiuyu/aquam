@@ -242,71 +242,87 @@
 
                     <hr>
 
-                    <div class="panel panel-info chart-panel" id="water-treatment-chart">
-                        <div class="panel-heading chart-heading">
+                    <div class="eq-c">
+                        <i>q</i>(t) =
+                        <div class="fraction">
+                            <span class="fup">Q<sub>0</sub></span>
+                            <span class="bar">/</span>
+                            <span class="fdn">( 1 + D * t ) <i><sup>1/b</sup></i></span>
+                        </div>
+                        *<i>recycle</i>%
+                    </div>
+                    <div class="row water-treatment-submit-panel">
+                        <form class="form-inline">
+                            <div class="col-md-5">
+                                <span class="label label-primary water-treatment-label">End day</span>
+                                <input id="water-treatment-slider"
+                                       type="text"
+                                       class="span2"/>
+                                <input type="text" class="input-sm form-control" name="end_day"
+                                       id="end-day-input" onkeypress="return isNumberKey(event)"
+                                       onkeydown="return updateSlider(event)"/>
+                            </div>
+                            <div class="col-md-2">
+                                <span class="label label-primary water-treatment-label">Stages</span>
+                                <input type="text" class="input-sm form-control" name="stage_number"
+                                       id="stages-input" onkeypress="return isNumberKey(event)"/>
+                            </div>
+                            <div class="col-md-2">
+                                <span class="label label-primary water-treatment-label">Recycle</span>
+                                <input type="text" class="input-sm form-control" name="recycle_input"
+                                       id="recycle-input" onkeypress="return isNumberKey(event)"
+                                       onkeydown="return validRecycle(event)"/>%
+                            </div>
+
+                            <div class="col-md-2 col-md-offset-1">
+                                <div class="dropdown">
+                                    <button type="button" class="btn btn-primary dropdown-toggle"
+                                            id="water-treatment-dp-btn" data-toggle="dropdown">
+                                        <span id="dp-constitutent-title">Consistutent</span>
+                                        <span class="caret"></span></button>
+                                    <ul class="dropdown-menu" id="dp-constitutent">
+                                        <li><a>TDS</a></li>
+                                        <li><a>Sodium</a></li>
+                                        <li><a>Chloride</a></li>
+                                        <li><a>Calcium</a></li>
+                                        <li><a>Iron</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </form>
+                        <div class="col-md-2 col-md-offset-5">
+                            <button type="button" class="btn btn-success dropdown-toggle"
+                                    id="water-treatment-cal-btn">Calculate
+                            </button>
+                        </div>
+                    </div>
+                    <hr>
+
+                    <div class="panel panel-primary chart-panel" id="water-treatment-chart">
+                        <div class="panel-heading chart-heading water-treatment-head">
+                            <div class="dropdown">
+                                <button type="button" class="btn btn-primary dropdown-toggle"
+                                        id="water-treatment-graph-dp" data-toggle="dropdown">
+                                    <span id="water-treatment-graph-dp-title"></span>
+                                    <span class="caret"></span></button>
+                                <ul class="dropdown-menu" id="water-treatment-graph-dp-content">
+                                    <li><a>Vfrac</a></li>
+                                    <li><a>WQfrac_iter_1</a></li>
+                                    <li><a>WQfrac_iter_2</a></li>
+                                    <li><a>WQfrac_iter_3</a></li>
+                                    <li><a>Ratio_iter_1</a></li>
+                                    <li><a>Ratio_iter_2</a></li>
+                                    <li><a>Ratio_iter_3</a></li>
+                                    <li><a>VFresh_iter_1</a></li>
+                                    <li><a>VFresh_iter_2</a></li>
+                                    <li><a>VFresh_iter_3</a></li>
+                                </ul>
+                            </div>
 
                         </div>
-
                         <div class="panel-body">
-                            <div class="eq-c">
-                                <i>q</i>(t) =
-                                <div class="fraction">
-                                    <span class="fup">Q<sub>0</sub></span>
-                                    <span class="bar">/</span>
-                                    <span class="fdn">( 1 + D * t ) <i><sup>1/b</sup></i></span>
-                                </div>
-                                *<i>recycle</i>%
-                            </div>
-                            <div class="row water-treatment-submit-panel">
-                                <form class="form-inline">
-                                    <div class="col-md-5">
-                                        <span class="label label-primary water-treatment-label">End day</span>
-                                        <input id="water-treatment-slider"
-                                               type="text"
-                                               class="span2"/>
-                                        <input type="text" class="input-sm form-control" name="end_day"
-                                               id="end-day-input" onkeypress="return isNumberKey(event)"
-                                               onkeydown="return updateSlider(event)"/>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <span class="label label-primary water-treatment-label">Stages</span>
-                                        <input type="text" class="input-sm form-control" name="stage_number"
-                                               id="stages-input" onkeypress="return isNumberKey(event)"/>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <span class="label label-primary water-treatment-label">Recycle</span>
-                                        <input type="text" class="input-sm form-control" name="recycle_input"
-                                               id="recycle-input" onkeypress="return isNumberKey(event)"
-                                               onkeydown="return validRecycle(event)"/>%
-                                    </div>
-
-                                    <div class="col-md-2 col-md-offset-1">
-                                        <div class="dropdown">
-                                            <button type="button" class="btn btn-primary dropdown-toggle"
-                                                    id="water-treatment-dp-btn" data-toggle="dropdown">
-                                                <span id="dp-constitutent-title">Consistutent</span>
-                                                <span class="caret"></span></button>
-                                            <ul class="dropdown-menu" id="dp-constitutent">
-                                                <li><a>TDS</a></li>
-                                                <li><a>Sodium</a></li>
-                                                <li><a>Chloride</a></li>
-                                                <li><a>Calcium</a></li>
-                                                <li><a>Iron</a></li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </form>
-                                <div class="col-md-2 col-md-offset-5">
-                                    <button type="button" class="btn btn-success dropdown-toggle"
-                                            id="water-treatment-cal-btn">Calculate
-                                    </button>
-                                </div>
-                            </div>
-                            <hr>
-
                             <div id="chart1" class="chart" style="width:100%; height:500px">
                             </div>
-
                         </div>
 
                         {#                        <div class="panel-footer chart-footer" id="chart1-footer">#}
@@ -402,7 +418,6 @@
         });
 
         $(document).ready(function () {
-
             var slider = $("#water-treatment-slider");
             slider.attr("data-slider-min", "1")
                     .attr("data-slider-max", 2000)
@@ -460,13 +475,14 @@
             var stages = $("#stages-input").val();
             var recycle = parseInt($("#recycle-input").val()) / 100;
             var constitutent = $("#dp-constitutent-title").html();
-            console.log(constitutent);
             if (endday != "" && stages != "" && recycle != "" && constitutent != "Constitutent") {
+                $("#water-treatment-graph-dp-title").html("");
                 var request = 'get-water-treatment-iteration-result/' + location + "/"
                         + constitutent + "/" + endday + "/" + stages + "/" + recycle;
                 d3.json(request, function (error, data) {
                     console.log(data);
-                    
+                    init_chart(constitutent, data);
+
                 });
             } else {
                 alert("Invalid input");
@@ -478,6 +494,148 @@
             var location = $(this).find("a").html();
             $("#dp-constitutent-title").html(location);
         });
+
+        function init_chart(constitutent, data) {
+            var margin = {top: 20, right: 120, bottom: 40, left: 100},
+                    width = $(".chart").width() - margin.left - margin.right,
+                    height = $(".chart").height() - margin.top - margin.bottom;
+            var init_xRange = d3.scale.linear()
+                    .domain(d3.extent([0, 0]))
+                    .range([0, width]);
+            var init_yRange = d3.scale.linear()
+                    .domain(d3.extent([0, 0]))
+                    .range([height, 0]);
+            var xAxis = d3.svg.axis()
+                    .scale(init_xRange)
+                    .orient("bottom");
+            var yAxis = d3.svg.axis()
+                    .scale(init_yRange)
+                    .orient("left");
+            var y2Axis = d3.svg.axis()
+                    .scale(init_yRange)
+                    .orient("right");
+            d3.select("#chart1").select("svg").remove();
+            var svg = d3.selectAll(".chart").append("svg")
+                    .attr("width", width + margin.left + margin.right)
+                    .attr("height", height + margin.top + margin.bottom)
+                    .append("g")
+                    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+            svg.append("g")
+                    .attr("class", "x axis")
+                    .attr("transform", "translate(0," + height + ")")
+                    .call(xAxis);
+            svg.append("g")
+                    .attr("class", "y axis")
+                    .attr("transform", "translate(0, 0)")
+                    .attr("id", "y1-axis")
+                    .call(yAxis);
+            svg.select("#y1-axis")
+                    .select("path")
+                    .attr("id", "y1-axis-path");
+            svg.append("g")
+                    .attr("class", "y axis")
+                    .attr("transform", "translate(" + width + ", 0)")
+                    .attr("id", "y2-axis")
+                    .call(y2Axis);
+            svg.select("#y2-axis")
+                    .select("path")
+                    .attr("id", "y2-axis-path");
+            var chart1 = d3.select("#chart1").select("g");
+            chart1.append("text")
+                    .attr("class", "xlabel")
+                    .attr("text-anchor", "middle")
+                    .attr("x", width / 2)
+                    .attr("y", height + margin.bottom - 5)
+                    .attr("font-size", 14)
+                    .text("Days");
+            chart1.append("text")
+                    .attr("class", "y1label")
+                    .attr("x", 0 - (height / 2))
+                    .attr("y", 0 - margin.left + 20)
+                    .attr("dy", "1em")
+                    .attr("transform", "rotate(-90)")
+                    .attr("text-anchor", "middle")
+                    .attr("font-size", 14)
+                    .attr("fill", "#337AB6")
+                    .text(constitutent + " (mg/L)");
+            chart1.append("text")
+                    .attr("class", "y2label")
+                    .attr("x", 0 - (height / 2))
+                    .attr("y", width + 50)
+                    .attr("dy", "1em")
+                    .attr("transform", "rotate(-90)")
+                    .attr("text-anchor", "middle")
+                    .attr("font-size", 14)
+                    .attr("fill", "red")
+                    .text("");
+
+            var xRange = d3.scale.linear()
+                    .domain([0, d3.max(data, function (d) { return d.day;})])
+                    .range([0, width]);
+            var y1Range = d3.scale.linear()
+                    .domain(d3.extent(data, function (d) { return d.quality * 1.1;}))
+                    .range([height, 0]);
+            var xAxis = d3.svg.axis()
+                    .scale(xRange)
+                    .orient("bottom");
+            var y1Axis = d3.svg.axis()
+                    .scale(y1Range)
+                    .orient("left");
+            svg.select(".x.axis").transition().duration(500)
+                    .call(xAxis);
+            svg.selectAll("#y1-axis").transition().duration(500)
+                    .attr("fill", "steelblue")
+                    .call(y1Axis);
+
+            var line1_func = d3.svg.line()
+                    .x(function (d) {return xRange(d.day);})
+                    .y(function (d) {return y1Range(d.quality);})
+                    .interpolate("basis");
+
+            var line1 = chart1.append("path")
+                    .style("stroke", "blue")
+                    .style("stroke-width", "1.5")
+                    .style("fill", "transparent")
+                    .style("opacity", 0)
+                    .attr("class", "line")
+                    .attr("id", "line1")
+                    .attr("d", line1_func(data));
+
+            line1.transition().duration(500).delay(300).style("opacity", 1);
+
+            $("#water-treatment-graph-dp-content").find("li").click(function () {
+                chart1.selectAll("#line2")
+                        .remove();
+                var y2 = $(this).find("a").html();
+                $("#water-treatment-graph-dp-title").html(y2);
+                var y2Range = d3.scale.linear()
+                        .domain(d3.extent(data, function (d) { return d[y2.toLowerCase()];}))
+                        .range([height, 0]);
+                console.log(d3.extent(data, function (d) { return d[y2.toLowerCase()];}));
+                var y2Axis = d3.svg.axis()
+                        .scale(y2Range)
+                        .orient("right");
+                svg.selectAll("#y2-axis").transition().duration(500)
+                        .attr("fill", "red")
+                        .call(y2Axis);
+                var line2_func = d3.svg.line()
+                        .x(function (d) {return xRange(d.day);})
+                        .y(function (d) {
+                            console.log(y2Range(d[y2.toLowerCase()]));
+                            return y2Range(d[y2.toLowerCase()]);
+                        })
+                        .interpolate("basis");
+                var line2 = chart1.append("path")
+                        .style("stroke", "red")
+                        .style("stroke-width", "1.5")
+                        .style("fill", "transparent")
+                        .style("opacity", 0)
+                        .attr("class", "line")
+                        .attr("id", "line2")
+                        .attr("d", line2_func(data));
+                line2.transition().duration(500).delay(300).style("opacity", 1);
+            });
+        }
 
         $(window).on("resize", function () {
             $("svg").each(function () {
