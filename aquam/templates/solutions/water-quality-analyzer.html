@@ -29,14 +29,18 @@
 
         <div class="chart-container" style="width:100%">
             <div class="panel panel-primary chart-panel" id="water-use-analytics">
-                <div class="panel-heading chart-heading">
-                    <div class="dropdown">
+                <div class="panel-heading">
+                    <span class="text-left">
+                        Select location here --->
+                    </span>
+
+                    <span class="dropdown">
                         <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
-                            <span id="dp-title">Locations</span>
+                            <span id="dp-title"></span>
                             <span class="caret"></span></button>
                         <ul class="dropdown-menu" id="dp-content">
                         </ul>
-                    </div>
+                    </span>
                 </div>
                 <div class="panel-body">
 
@@ -242,7 +246,6 @@
                     $("#iron-k").html(selected_coefficients["Iron"][0]);
                     $("#iron-d").html(selected_coefficients["Iron"][1]);
                     //parameters
-                    console.log(selected_parameters);
                     $("#q0-1").html(selected_parameters["Fracturing Flowback"]["Q0"]);
                     $("#q0-2").html(selected_parameters["Transition"]["Q0"]);
                     $("#q0-3").html(selected_parameters["Produced Water"]["Q0"]);
@@ -343,7 +346,6 @@
             var current_Location = $("#dp-title").html();
             var quality_request = 'get-water-quality-result/'.concat(current_Location);
             d3.json(quality_request, function (error, data) {
-                console.log(data);
                 var margin = {top: 20, right: 120, bottom: 40, left: 120},
                         width = $("#chart1").width() - margin.left - margin.right,
                         height = $("#chart1").height() - margin.top - margin.bottom;
@@ -371,7 +373,6 @@
             var current_Location = $("#dp-title").html();
             var quality_request = 'get-water-quality-result/'.concat(current_Location);
             d3.json(quality_request, function (error, data) {
-                console.log(data);
                 var margin = {top: 20, right: 120, bottom: 40, left: 120},
                         width = $("#chart1").width() - margin.left - margin.right,
                         height = $("#chart1").height() - margin.top - margin.bottom;
@@ -399,7 +400,6 @@
             var current_Location = $("#dp-title").html();
             var quality_request = 'get-water-quality-result/'.concat(current_Location);
             d3.json(quality_request, function (error, data) {
-                console.log(data);
                 var margin = {top: 20, right: 120, bottom: 40, left: 120},
                         width = $("#chart1").width() - margin.left - margin.right,
                         height = $("#chart1").height() - margin.top - margin.bottom;
@@ -427,7 +427,6 @@
             var current_Location = $("#dp-title").html();
             var quality_request = 'get-water-quality-result/'.concat(current_Location);
             d3.json(quality_request, function (error, data) {
-                console.log(data);
                 var margin = {top: 20, right: 120, bottom: 40, left: 120},
                         width = $("#chart1").width() - margin.left - margin.right,
                         height = $("#chart1").height() - margin.top - margin.bottom;
@@ -455,7 +454,6 @@
             var current_Location = $("#dp-title").html();
             var quality_request = 'get-water-quality-result/'.concat(current_Location);
             d3.json(quality_request, function (error, data) {
-                console.log(data);
                 var margin = {top: 20, right: 120, bottom: 40, left: 120},
                         width = $("#chart1").width() - margin.left - margin.right,
                         height = $("#chart1").height() - margin.top - margin.bottom;
@@ -538,7 +536,7 @@
                         .attr("class", "line")
                         .attr("id", "line1")
                         .attr("d", line1_func(data));
-                line1.transition().duration(500).delay(300).style("opacity", 1);
+                line1.transition().duration(500).style("opacity", 1);
             }
 
             if (chart.select(".bar").empty()) {
@@ -597,7 +595,7 @@
                     .attr("class", "line")
                     .attr("id", "line2")
                     .attr("d", line2_func(data));
-            line2.transition().duration(500).delay(300).style("opacity", 1);
+            line2.transition().duration(500).style("opacity", 1);
         }
 
         function parseDate(str) {

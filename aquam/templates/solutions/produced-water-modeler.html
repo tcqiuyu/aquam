@@ -311,10 +311,8 @@
                 output.addClass('output-valid');
 
                 var request = 'get-arp-prediction/' + wells_number + '/' + startdate + '/' + enddate;
-                console.log(request);
 
                 d3.json(request, function (error, data) {
-                    console.log(data);
                     var total_volume = data["total_volume"];
                     $("#produced-water-est-output").html("Total Volume (bbls) = " + total_volume);
                 });
