@@ -165,17 +165,29 @@ def water_treatment_analyzer(request):
     return render_to_response("solutions/water-treatment-analyzer.html", context,
                               context_instance=RequestContext(request))
 
+def get_water_treatment_general_settings(request):
+    analyzer = WaterTreatmentAnalyzer(request)
+    settings = analyzer.get_water_treatment_general_settings()
+    return HttpResponse(json.dumps(settings), content_type="application/json")
+
+def get_water_treatment_location_settings(request):
+    analyzer = WaterTreatmentAnalyzer(request)
+    settings = analyzer.get_water_treatment_location_settings()
+    return HttpResponse(json.dumps(settings), content_type="application/json")
+
 def get_treatment_iteration_result(request):
     analyzer = WaterTreatmentAnalyzer(WaterTreatment)
-    location_name = "Core"
-    constituent_name = "TDS"
-    end_day = 1000
-    stages = 20
+    input = request.__str__().split("get-water-treatment-iteration-result/")[1]
+    input = input.split("/")
+    location_name = input[0]
+    constitutent_name = input[1]
+    end_day = int(input[2])
+    stages = int(input[3])
+    percent = float(input[4].split("'")[0])
     coefficients = analyzer.coefficients
     methods = analyzer.methods
     constants = analyzer.constants
     parameters = analyzer.parameters
-    percent = 1.0
     result = analyzer.get_treatment_iteration_result(end_day, coefficients, methods, constants, parameters, stages,
-                                                     location_name, constituent_name, percent)
+                                                     location_name, constitutent_name, percent)
     return HttpResponse(json.dumps(result), content_type="application/json")

@@ -179,12 +179,12 @@ class ProducedWaterModeler():
 
     def __init__(self, model):
         self.model = model
-    
+
     def get_arp_model(self):
         # arp model
         def arp(x, D, b):
             return Q0 / (1 + D * x) ** (1 / b)
-        
+
         # fitting
         values_list = self.model.objects.values_list("days", "well_1", "well_2", "well_3", "well_4", "well_5", "well_6",
                                                      "well_7")
@@ -201,21 +201,21 @@ class ProducedWaterModeler():
         params = optimize.curve_fit(arp, days, produced_water)
         D, b = params[0]
         yfit = [arp(x, D, b) for x in days]
-        
+
         # results
         data = []
         for x, y, z in zip(days, produced_water, yfit):
             obj = {"day": x, "produced_water": y, "fitted_produced_water": z}
             data.append(obj)
-        
+
         # evaluation
         sstotal = (len(values_list) - 1) * np.var(produced_water)
         ssresid = np.sum(np.power(produced_water - yfit, 2))
         r2 = 1 - (ssresid / sstotal)
-        #rmse = np.std(produced_water)
-        result = {"data": data, "Q0": round(Q0, 3), "D": round(D, 3), "b": round(b, 3), "r2":round(r2,4)}
+        # rmse = np.std(produced_water)
+        result = {"data": data, "Q0": round(Q0, 3), "D": round(D, 3), "b": round(b, 3), "r2": round(r2, 4)}
         return result
-        
+
     def get_arp_prediction(self, arp_model, start_date, end_date, wells_num_per_month):
         # day arrays
         start_year = start_date.year
@@ -260,7 +260,7 @@ class ProducedWaterModeler():
                 if t > 0:
                     q = Q0 / (1 + D * t) ** (1 / b)
                 produced_water_arr[i][j] = round(q * wells_num_per_month, 3)
-        
+
         # prediction
         day_volume = np.zeros(day_range, dtype=float)
         for i in range(day_range):
@@ -274,7 +274,7 @@ class WaterQualityAnalyzer():
     """
     Used for providing the water quality results computed based on Water Quality Model
     """
-    
+
     def __init__(self, model):
         self.model = model
         self.unit = 158.987
@@ -500,6 +500,7 @@ class WaterTreatmentAnalyzer():
         self.model = model
         self.qfrac = 3571.428571
         self.unit = 158.987
+        self.locations = ['Core', 'Mustang', 'Greeley Crescent', 'East Pony', 'West Pony', 'Wells Ranch', 'Commins']
         self.coefficients = {
             "Core": {"TDS": (2982.1, 4312.1),
                      "Sodium": (927.91, 1804.4),
@@ -590,6 +591,21 @@ class WaterTreatmentAnalyzer():
                         "Produced Water": {"Q0": 0.0, "D": 0.0, "b": 0.0}
                         }
         }
+
+    def get_water_treatment_general_settings(self):
+        result = {
+            "locations": self.locations,
+            "methods": self.methods,
+            "parameters": self.constants,
+        }
+        return result
+
+    def get_water_treatment_location_settings(self):
+        result = {
+            "coefficients": self.coefficients,
+            "parameters": self.parameters,
+        }
+        return result
 
     def __calc_flowback_volume(self, end_day, parameter, percent):
 
@@ -703,7 +719,7 @@ class WaterTreatmentAnalyzer():
             obj.vfresh_iter_3 = result[8]
             obj.ratio_iter_3 = result[9]
             obj.save()
-    
+
     def get_treatment_iteration_result(self, end_day, coefficients, methods, constants, parameters, stages,
                                        location_name, constituent_name, percent):
         coefficient = coefficients[location_name][constituent_name]

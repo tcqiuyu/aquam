@@ -666,6 +666,10 @@ iframe {
 }
 
 /*Style in solutions pages*/
+.panel-heading {
+    font-weight: bold;
+}
+
 label.solution-radio {
     background-color: #dcdfd4;
     display: inline-block;
@@ -738,6 +742,10 @@ label.solution-radio.checked {
 }
 
 /*Style in water quality page*/
+.eq-c {
+    font-weight: bold;
+}
+
 .fraction {
     display: inline-block;
     vertical-align: middle;
@@ -777,6 +785,7 @@ label.water-quality-radio {
 }
 
 .col-body, .row-head {
+    font-size: 13px;
     text-align: right;
 }
 
@@ -823,10 +832,49 @@ label.water-quality-radio {
     margin-top: 5px
 }
 
-#produced-water-est-output{
+#produced-water-est-output {
     font-weight: bold;
 }
 
-.output-valid{
+.output-valid {
     color: steelblue;
+}
+
+.row-head-1 {
+    width: 6%;
+}
+
+.row-head-2 {
+    width: 28%;
+}
+
+.row-head-3 {
+    width: 18%;
+}
+
+#end-day-input, #stages-input, #recycle-input {
+    width: 50px;
+}
+
+.water-treatment-label {
+    font-size: 15px;
+    margin-right: 5px;
+}
+
+#water-treatment-dp-btn {
+    height: 30px;
+    padding-top: 4px;
+    font-weight: bold;
+
+}
+
+#water-treatment-cal-btn {
+    margin-top: 20%;
+    font-size: 16px;
+}
+
+.water-treatment-submit-panel {
+    margin: 1% 1% 1% 1%;
+    padding: 2% 0 2% 0;
+    background-color: #e5e5e5;
 }
