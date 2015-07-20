@@ -343,15 +343,15 @@ class WaterQualityAnalyzer():
                         }
         }
         self.parameters = {
-            "Core": {"Fracturing Flowback": {"Q0": 1043.04, "D": 0.721, "b": 0.0},
+            "Core": {"Fracturing Flowback": {"Q0": 1043.04, "D": -0.721, "b": 0.0},
                      "Transition": {"Q0": 90, "D": 0.0529, "b": 1.3},
                      "Produced Water": {"Q0": 19.4084, "D": 0.00715, "b": 1.7}
                      },
-            "Mustang": {"Fracturing Flowback": {"Q0": 1157.61, "D": 0.725, "b": 0.0},
+            "Mustang": {"Fracturing Flowback": {"Q0": 1157.61, "D": -0.725, "b": 0.0},
                         "Transition": {"Q0": 98.49, "D": 0.0693, "b": 1.533742331},
                         "Produced Water": {"Q0": 22.99, "D": 0.00119, "b": 1.46627566}
                         },
-            "Greeley Crescent": {"Fracturing Flowback": {"Q0": 1406.48, "D": 0.863, "b": 0.0},
+            "Greeley Crescent": {"Fracturing Flowback": {"Q0": 1406.48, "D": -0.863, "b": 0.0},
                                  "Transition": {"Q0": 74.65, "D": 0.011, "b": 0.480076812},
                                  "Produced Water": {"Q0": 12.93, "D": 0.0039, "b": 1.6}
                                  },
@@ -364,7 +364,7 @@ class WaterQualityAnalyzer():
                           "Produced Water": {"Q0": 0.0, "D": 0.0, "b": 0.0}
                           },
             "Wells Ranch": {"Fracturing Flowback": {"Q0": 1516, "D": 0.0614, "b": 0.478011472},
-                            "Transition": {"Q0": 176.33, "D": 0.0347, "b": 1.006},
+                            "Transition": {"Q0": 176.33, "D": 0.0374, "b": 0.994035785},
                             "Produced Water": {"Q0": 29.39, "D": 0.0034, "b": 0.899280576}
                             },
             "Commins": {"Fracturing Flowback": {"Q0": 0.0, "D": 0.0, "b": 0.0},
@@ -580,15 +580,15 @@ class WaterTreatmentAnalyzer():
                           "Iron": {"Critical Fracturing Fluids Quality": 75, "Fresh Water Quality": 0.1},
                           }
         self.parameters = {
-            "Core": {"Fracturing Flowback": {"Q0": 1043.04, "D": 0.721, "b": 0.0},
+            "Core": {"Fracturing Flowback": {"Q0": 1043.04, "D": -0.721, "b": 0.0},
                      "Transition": {"Q0": 90, "D": 0.0529, "b": 1.3},
                      "Produced Water": {"Q0": 19.4084, "D": 0.00715, "b": 1.7}
                      },
-            "Mustang": {"Fracturing Flowback": {"Q0": 1157.61, "D": 0.725, "b": 0.0},
+            "Mustang": {"Fracturing Flowback": {"Q0": 1157.61, "D": -0.725, "b": 0.0},
                         "Transition": {"Q0": 98.49, "D": 0.0693, "b": 1.533742331},
                         "Produced Water": {"Q0": 22.99, "D": 0.00119, "b": 1.46627566}
                         },
-            "Greeley Crescent": {"Fracturing Flowback": {"Q0": 1406.48, "D": 0.863, "b": 0.0},
+            "Greeley Crescent": {"Fracturing Flowback": {"Q0": 1406.48, "D": -0.863, "b": 0.0},
                                  "Transition": {"Q0": 74.65, "D": 0.011, "b": 0.480076812},
                                  "Produced Water": {"Q0": 12.93, "D": 0.0039, "b": 1.6}
                                  },
@@ -601,7 +601,7 @@ class WaterTreatmentAnalyzer():
                           "Produced Water": {"Q0": 0.0, "D": 0.0, "b": 0.0}
                           },
             "Wells Ranch": {"Fracturing Flowback": {"Q0": 1516, "D": 0.0614, "b": 0.478011472},
-                            "Transition": {"Q0": 176.33, "D": 0.0347, "b": 1.006},
+                            "Transition": {"Q0": 176.33, "D": 0.0374, "b": 0.994035785},
                             "Produced Water": {"Q0": 29.39, "D": 0.0034, "b": 0.899280576}
                             },
             "Commins": {"Fracturing Flowback": {"Q0": 0.0, "D": 0.0, "b": 0.0},
