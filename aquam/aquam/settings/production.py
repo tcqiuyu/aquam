@@ -35,7 +35,6 @@ ALLOWED_HOSTS = [
     "www.aquam.org"
 ]
 
-
 # EMAIL CONFIGURATION
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
@@ -66,9 +65,6 @@ DATABASES = {
     }
 }
 
-STATICFILES_DIRS = (
-    '/home/aquamuser/webapps/aquam_static/',
-)
 
 # CACHE CONFIGURATION
 CACHES = {

@@ -77,12 +77,12 @@ MEDIA_ROOT = normpath(join(SITE_ROOT, 'media'))
 
 MEDIA_URL = '/media/'
 
-
 # STATIC FILE CONFIGURATION
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
-
 #STATIC_ROOT = normpath(join(SITE_ROOT, 'static'))
+
 STATIC_URL = '/static/'
+
 STATICFILES_DIRS = (
     normpath(join(SITE_ROOT, 'static')),
 )
