@@ -12,10 +12,10 @@ class WaterUseAnalyzer():
     """
     Used for providing the results computed on the base of Water Use Model
     """
-
+    
     def __init__(self, model):
         self.model = model
-
+    
     def get_water_use(self):
         values_list = self.model.objects.values_list("water_use")
         water_use = np.empty(len(values_list), dtype=float)
@@ -50,8 +50,26 @@ class WaterUseAnalyzer():
         result = {"water_use_per_horizontal_foot": water_use_per_horizontal_foot.tolist(),
                   "water_use_per_horizontal_foot_mean": mean, "water_use_per_horizontal_foot_std": std}
         return result
-
+    
     def get_annual_water_use(self):
+        result = [{"std": 30826.271, "mean": 97878.095, "year": 2011}, 
+                  {"std": 40182.481, "mean": 96739.641, "year": 2012}, 
+                  {"std": 51830.207, "mean": 123998.292, "year": 2013}]
+        return result
+    
+    def get_annual_horizontal_feet_drilled(self):
+        result = [{"std": 925.782, "mean": 4922.505, "year": 2011}, 
+                  {"std": 1059.213, "mean": 4958.033, "year": 2012}, 
+                  {"std": 1166.977, "mean": 5332.258, "year": 2013}]
+        return result
+    
+    def get_annual_bbls_ft_metric(self):
+        result = [{"std": 6.395, "mean": 20.188, "year": 2011}, 
+                  {"std": 7.028, "mean": 19.598, "year": 2012}, 
+                  {"std": 8.951, "mean": 23.506, "year": 2013}]
+        return result
+    
+    def bug_get_annual_water_use(self):
         values_list = self.model.objects.values_list("frac_date", "water_use")
         frac_years = np.empty(len(values_list), dtype=int)
         water_use = np.empty(len(values_list), dtype=float)
@@ -71,7 +89,7 @@ class WaterUseAnalyzer():
             result.append(obj)
         return result
 
-    def get_annual_horizontal_feet_drilled(self):
+    def bug_get_annual_horizontal_feet_drilled(self):
         values_list = self.model.objects.values_list("frac_date", "horizontal_length")
         frac_years = np.empty(len(values_list), dtype=int)
         horizontal_length = np.empty(len(values_list), dtype=float)
@@ -91,7 +109,7 @@ class WaterUseAnalyzer():
             result.append(obj)
         return result
 
-    def get_annual_bbls_ft_metric(self):
+    def bug_get_annual_bbls_ft_metric(self):
         values_list = self.model.objects.values_list("frac_date", "water_use", "horizontal_length")
         frac_years = np.empty(len(values_list), dtype=int)
         water_use = np.empty(len(values_list), dtype=float)
@@ -653,7 +671,7 @@ class WaterTreatmentAnalyzer():
             day = i + 1
             water_quality[i] = water_quality_equation(day, alpha, beta)
         return water_quality
-
+    
     def __calc_water_treatment(self, end_day, coefficient, method, constant, parameter, stages, percent):
         # water quality fitting
         water_quality = self.__calc_water_quality(end_day, coefficient)
@@ -719,7 +737,7 @@ class WaterTreatmentAnalyzer():
             obj.vfresh_iter_3 = result[8]
             obj.ratio_iter_3 = result[9]
             obj.save()
-
+    
     def get_treatment_iteration_result(self, end_day, coefficients, methods, constants, parameters, stages,
                                        location_name, constituent_name, percent):
         coefficient = coefficients[location_name][constituent_name]

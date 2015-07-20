@@ -153,17 +153,17 @@ def get_water_quality_result(request):
 
 
 def water_treatment_analyzer(request):
-    analyzer = WaterTreatmentAnalyzer(WaterTreatment)
-    location_name = "Core"
-    constituent_name = "TDS"
-    end_day = 1000
-    stages = 20
-    coefficients = analyzer.coefficients
-    methods = analyzer.methods
-    constants = analyzer.constants
-    parameters = analyzer.parameters
-    percent = 1.0
-    # analyzer.set_database_result(end_day, coefficients, methods, constants, parameters, stages, location_name, constituent_name, percent)
+#     analyzer = WaterTreatmentAnalyzer(WaterTreatment)
+#     location_name = "Core"
+#     constituent_name = "TDS"
+#     end_day = 1000
+#     stages = 20
+#     coefficients = analyzer.coefficients
+#     methods = analyzer.methods
+#     constants = analyzer.constants
+#     parameters = analyzer.parameters
+#     percent = 1.0
+#     analyzer.set_database_result(end_day, coefficients, methods, constants, parameters, stages, location_name, constituent_name, percent)
     context = {"page_title": "AQUAM | Water Treatment Analyzer"}
     return render_to_response("solutions/water-treatment-analyzer.html", context,
                               context_instance=RequestContext(request))
