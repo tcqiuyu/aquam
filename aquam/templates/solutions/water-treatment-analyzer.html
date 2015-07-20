@@ -364,7 +364,7 @@
                         }
                     }
                 }
-
+                
                 //update location dropdown
                 var locations = data["locations"];
                 var dp_content = "";
@@ -377,7 +377,7 @@
                 }
                 var dp = $("#dp-content");
                 dp.html(dp_content);
-
+                
                 dp.find("li").click(function () {
                     var $this = $(this);
                     d3.json("{% url 'get-water-treatment-location-settings'%}", function (error, data) {

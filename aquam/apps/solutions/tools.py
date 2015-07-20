@@ -609,7 +609,7 @@ class WaterTreatmentAnalyzer():
                         "Produced Water": {"Q0": 0.0, "D": 0.0, "b": 0.0}
                         }
         }
-
+    
     def get_water_treatment_general_settings(self):
         result = {
             "locations": self.locations,
@@ -617,14 +617,14 @@ class WaterTreatmentAnalyzer():
             "parameters": self.constants,
         }
         return result
-
+    
     def get_water_treatment_location_settings(self):
         result = {
             "coefficients": self.coefficients,
             "parameters": self.parameters,
         }
         return result
-
+    
     def __calc_flowback_volume(self, end_day, parameter, percent):
 
         def arp_model(x, Q0, D, b):
@@ -635,7 +635,7 @@ class WaterTreatmentAnalyzer():
                 return Q0 * (x ** k)
             else:
                 return 0.0
-
+            
         flowback_volume = np.zeros(end_day, dtype=float)
         for i in range(end_day):
             day = i + 1
@@ -658,12 +658,12 @@ class WaterTreatmentAnalyzer():
                 flowback_volume[i] = 0.0
             flowback_volume = flowback_volume * percent
         return flowback_volume
-
+    
     def __calc_water_quality(self, end_day, coefficient):
 
         def water_quality_equation(x, alpha, beta):
             return alpha * math.log(x) + beta
-
+        
         alpha = coefficient[0]
         beta = coefficient[1]
         water_quality = np.zeros(end_day, dtype=float)
@@ -671,7 +671,7 @@ class WaterTreatmentAnalyzer():
             day = i + 1
             water_quality[i] = water_quality_equation(day, alpha, beta)
         return water_quality
-    
+        
     def __calc_water_treatment(self, end_day, coefficient, method, constant, parameter, stages, percent):
         # water quality fitting
         water_quality = self.__calc_water_quality(end_day, coefficient)
