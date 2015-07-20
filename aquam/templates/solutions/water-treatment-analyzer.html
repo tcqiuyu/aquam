@@ -651,7 +651,11 @@
                         .attr("id", "line2")
                         .attr("d", line2_func(data));
                 line2.transition().duration(500).style("opacity", 1);
-                $(".y2label").html(y2);
+                if (id.indexOf("ratio") > -1) {
+                    $(".y2label").html(y2);
+                } else {
+                    $(".y2label").html(y2 + " ( mg/L )");
+                }
                 svg.select(".y2label").transition().duration(500).style("opacity", "1");
             });
         }
