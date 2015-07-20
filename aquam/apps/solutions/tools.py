@@ -635,7 +635,7 @@ class WaterTreatmentAnalyzer():
                 return Q0 * (x ** k)
             else:
                 return 0.0
-            
+        
         flowback_volume = np.zeros(end_day, dtype=float)
         for i in range(end_day):
             day = i + 1
@@ -694,7 +694,7 @@ class WaterTreatmentAnalyzer():
             # calculate Vfresh (mg/L)
             vfresh = vfrac - vrec
             # claculate WQtreat (mg/L)
-            wqtreat = water_quantity / vrec;
+            wqtreat = water_quantity / vrec
             for idx, val in enumerate(["Coagulation/Filtration", "Softening/Clarification", "Reverse Osmosis"]):
                 wqtreat = wqtreat * (1 - method[val])
                 wqfrac = (vfresh * wqfresh + vrec * wqtreat) / vfrac
@@ -702,6 +702,7 @@ class WaterTreatmentAnalyzer():
                     result_matrix[3 * idx + 1][i] = wqfrac
                 else:
                     result_matrix[3 * idx + 1][i] = float("nan")
+                
                 vfresh_quality = (vfrac * wqcritical - vrec * wqtreat) / wqfresh
                 if vfresh <= vfresh_quality and vfresh > 0:
                     result_matrix[3 * idx + 2][i] = vfresh / self.unit
@@ -710,7 +711,7 @@ class WaterTreatmentAnalyzer():
                     result_matrix[3 * idx + 2][i] = float("nan")
                     result_matrix[3 * idx + 3][i] = float("nan")
         return result_matrix
-
+    
     def set_result_to_database(self, end_day, coefficients, methods, constants, parameters, stages, location_name,
                                constituent_name, percent):
         coefficient = coefficients[location_name][constituent_name]
