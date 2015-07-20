@@ -253,7 +253,12 @@
                             <span class="bar">/</span>
                             <span class="fdn">( 1 + D * t ) <i><sup>1/b</sup></i></span>
                         </div>
-                        *<i>recycle</i>%
+                        * <i>recycle</i>%&nbsp;&nbsp;&nbsp;( b > 0 )
+                        <span class="text-center" style="margin-left: 20%">
+                            <i>q</i>(t) = Q<sub>0</sub> * t<sup>D</sup>
+                            %&nbsp;&nbsp;&nbsp;( b = 0 )
+                        </span>
+
                     </div>
                     <div class="row water-treatment-submit-panel">
                         <form class="form-inline">
@@ -620,7 +625,7 @@
                         .remove();
                 var id = $(this).find("a").attr("id");
                 var y2 = $(this).find("a").html();
-                $("#water-treatment-graph-dp-title").html(id);
+                $("#water-treatment-graph-dp-title").html(y2);
                 var y2Range = d3.scale.linear()
                         .domain(d3.extent(data, function (d) { return d[id];}))
                         .range([height, 0]);
