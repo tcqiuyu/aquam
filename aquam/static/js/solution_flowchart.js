@@ -339,7 +339,7 @@ $(".label > rect").each(function () {
 		})
 });
 
-$("#v-33").data('powertipjq', $([
+$("#v-30").data('powertipjq', $([
 	'<b>Water Use Analyzer</b>'
 ].join('\n')))
 	.powerTip({
@@ -347,7 +347,7 @@ $("#v-33").data('powertipjq', $([
 		mouseOnToPopup: true
 	});
 
-$("#v-42").data('powertipjq', $([
+$("#v-39").data('powertipjq', $([
 	'<b>Water Quality Analyzer</b>'
 ].join('\n')))
 	.powerTip({
@@ -355,7 +355,7 @@ $("#v-42").data('powertipjq', $([
 		mouseOnToPopup: true
 	});
 
-$("#v-60").data('powertipjq', $([
+$("#v-57").data('powertipjq', $([
 	'<b>Produced Water Modeler</b>'
 ].join('\n')))
 	.powerTip({
@@ -363,7 +363,7 @@ $("#v-60").data('powertipjq', $([
 		mouseOnToPopup: true
 	});
 
-$("#v-68").data('powertipjq', $([
+$("#v-66").data('powertipjq', $([
 	'<b>Water Treatment Analyzer</b>'
 ].join('\n')))
 	.powerTip({

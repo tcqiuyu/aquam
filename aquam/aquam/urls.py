@@ -66,13 +66,20 @@ urlpatterns = [
     # Water Treatment Analyzer
     url(r"^solutions/water-treatment-analyzer/$", solutions_views.water_treatment_analyzer,
         name="water-treatment-analyzer"),
-    url(r"^solutions/water-treatment-analyzer/water-treatment-iteration-result/$",
-        solutions_views.get_treatment_iteration_result, name="water-treatment-iteration-result"),
+    url(r"^solutions/water-treatment-analyzer/get-water-treatment-iteration-result/.*$",
+        solutions_views.get_treatment_iteration_result, name="get-water-treatment-iteration-result"),
+    url(r"^solutions/water-treatment-analyzer/get-water-treatment-general-settings/$",
+        solutions_views.get_water_treatment_general_settings, name="get-water-treatment-general-settings"),
+    url(r"^solutions/water-treatment-analyzer/get-water-treatment-location-settings/$",
+        solutions_views.get_water_treatment_location_settings, name="get-water-treatment-location-settings"),
 
     # Water Use Geoanalyzer
-    url(r"^geoanalytics/water-use-geoanalyzer/$", geoanalytics_views.water_use_geoanalyzer, name="water-use-geoanalyzer"),
-    url(r"^geoanalytics/water-use-geoanalyzer/get-geo-water-use/$", geoanalytics_views.get_geo_water_use, name="get-geo-water-use"),
-    
+    url(r"^geoanalytics/water-use-geoanalyzer/$", geoanalytics_views.water_use_geoanalyzer,
+        name="water-use-geoanalyzer"),
+    url(r"^geoanalytics/water-use-geoanalyzer/get-geo-water-use/$", geoanalytics_views.get_geo_water_use,
+        name="get-geo-water-use"),
+
     # Transportation & Cost Optimizer
-    url(r"^geoanalytics/transportation-cost-optimizer/$", geoanalytics_views.transportation_cost_optimizer, name="transportation-cost-optimizer")
+    url(r"^geoanalytics/transportation-cost-optimizer/$", geoanalytics_views.transportation_cost_optimizer,
+        name="transportation-cost-optimizer")
 ]
