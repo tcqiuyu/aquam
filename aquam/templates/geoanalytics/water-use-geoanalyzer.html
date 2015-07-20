@@ -10,11 +10,7 @@
             width:100%;
             height:600px;
         }
-        #map-1, #map-2{
-            width:100%;
-            height:100%;
-        }
-        .legend{
+        .map-legend{
             position:absolute;
             height:200px;
             width:110px;
@@ -47,7 +43,7 @@
         <hr class="featurette-divider">
         <div class="map">
             <div id="map-1"></div>
-            <div class="legend">
+            <div class="map-legend">
                 <div id="legend-1"></div>
             </div>
         </div>
@@ -56,9 +52,6 @@
         
         <div class="map">
             <div id="map-2"></div>
-            <div class="legend">
-                <div id="legend-2"></div>
-            </div>
         </div>
     </div>
 {% endblock %}
@@ -239,10 +232,12 @@
             ]
         });
         map.addLayers([featureLayer]);
+
         var legend = new Legend({
             map: map,
         }, "legend-1");
         legend.startup();
+        
         var scalebar = new Scalebar({
             map: map,
             // "dual" displays both miles and kilmometers
@@ -250,7 +245,6 @@
             // use "metric" for kilometers
             scalebarUnit: "dual"
           });
-
     });
 </script>
 
