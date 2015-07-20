@@ -30,7 +30,10 @@ def get_env_setting(setting):
         raise ImproperlyConfigured(error_msg)
 
 # HOST CONFIGURATION
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "aquam.org",
+    "www.aquam.org"
+]
 
 
 # EMAIL CONFIGURATION
@@ -52,11 +55,28 @@ SERVER_EMAIL = EMAIL_HOST_USER
 
 
 # DATABASE CONFIGURATION
-DATABASES = {}
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'NAME': 'aquamdb',
+        'USER': 'aquam',
+        'PASSWORD': 'aquam2015$',
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
+    }
+}
 
+STATICFILES_DIRS = (
+    '/home/aquamuser/webapps/aquam_static/',
+)
 
 # CACHE CONFIGURATION
-CACHES = {}
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'LOCATION': 'unix:/home/aquamuser/memcached.sock',
+    }
+}
 
 
 # SECRET CONFIGURATION

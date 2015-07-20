@@ -80,8 +80,8 @@ MEDIA_URL = '/media/'
 
 # STATIC FILE CONFIGURATION
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
-# STATIC_ROOT = normpath(join(SITE_ROOT, 'assets'))
 
+STATIC_ROOT = normpath(join(SITE_ROOT, 'static'))
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     normpath(join(SITE_ROOT, 'static')),
@@ -92,12 +92,9 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 )
 
-
 # SECRET CONFIGURATION
 # Note: This key should only be used for development and testing.
-# SECRET_KEY = r"{{ secret_key }}"
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '+-fp4+y!#6zgcgxsw3dz81)0*+%-7@%lfi=615uo&vyhkf+@k+'
+SECRET_KEY = r"{{ secret_key }}"
 
 
 # SITE CONFIGURATION
@@ -167,7 +164,7 @@ ROOT_URLCONF = '%s.urls' % SITE_NAME
 
 
 # APP CONFIGURATION
-DJANGO_APPS = (
+INSTALLED_APPS = (
     # Default Django apps:
     'django.contrib.admin',
     'django.contrib.auth',
@@ -176,23 +173,11 @@ DJANGO_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.gis',
-)
-
-# Apps specific for this project go here.
-LOCAL_APPS = (
-    # Local Django apps:
     'apps.accounts',
     'apps.geoanalytics',
     'apps.solutions',
     'apps.warehouse',
 )
-
-# Other open source apps
-OTHER_APPS = (
-    #'bootstrap_toolkit',
-)
-
-INSTALLED_APPS = DJANGO_APPS + LOCAL_APPS + OTHER_APPS
 
 
 # LOGGING CONFIGURATION
