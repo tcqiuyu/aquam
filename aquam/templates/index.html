@@ -17,7 +17,7 @@
                 <li data-target="#carousel-2" data-slide-to="4">
                 </li>
             </ol>
-            <div class="carousel-inner" style="height:400px; width:100%">
+            <div class="carousel-inner" style="max-height:500px; width:100%">
                 <div class="item active">
                     <img class="slider-img" src="{% static 'img/slider-1-1.jpg' %}" alt=''/>
     
@@ -86,20 +86,25 @@
                 <div class="col-md-6 portfolio-item">
                     <img class="img-responsive" src="{% static 'img/home-solutions.jpg' %}" alt="">
                     <h3>
-                        <a href="{% url 'solutions'%}">Math and Statistics based Solutions</a>
+                        <a href="{% url 'solutions'%}">Mathematics and Statistics based Solutions</a>
                     </h3>
                     <p>
-                        Statistical analysis, mathematical modeling are based on powerful scientific computation packages 
-                        - <a href="http://www.scipy.org/" style="text-decoration: underline; color: blue">Scipy</a> 
-                        and <a href="http://www.numpy.org/" style="text-decoration: underline; color: blue">Numpy</a>.
+                        Here we design many statistical and mathematical methods used for oilfield water management.
+                        Statistical analysis, mathematical modeling are based on powerful scientific computation packages
+                        - <a href="http://www.scipy.org/" style="text-decoration: underline; color: blue" target="_blank">Scipy</a> 
+                        and <a href="http://www.numpy.org/" style="text-decoration: underline; color: blue" target="_blank">Numpy</a>.
                     </p>
                 </div>
                 <div class="col-md-6 portfolio-item">
                     <img class="img-responsive" src="{% static 'img/home-geoanalytics.jpg' %}" alt="">
                     <h3>
-                        <a href="{% url 'geoanalytics'%}">GIS based Solutions</a>
+                        <a href="{% url 'geoanalytics'%}">Geographic Information Science based Solutions</a>
                     </h3>
-                    <p>GIS provides an new way to mine the story behind the spatial data.</p>
+                    <p>GIS provides an new way to tell the story behind the spatial data. It also help to visualize the data.
+                    Here we use <a href="https://developers.arcgis.com/javascript/" style="text-decoration: underline; color: blue" target="_blank">
+                    Arcgis API for javascript</a>
+                    and <a href="https://docs.djangoproject.com/en/1.8/ref/contrib/gis/" style="text-decoration: underline; color: blue" target="_blank">
+                    GeoDjango</a> to support the geospatial analysis</p>
                 </div>
             </div>
             <hr class="featurette-divider">
