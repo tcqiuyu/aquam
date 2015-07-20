@@ -356,7 +356,6 @@
 {% block footer %}
     <script type="text/javascript">
         $(document).ready(function () {
-
             d3.json("{% url 'get-water-treatment-general-settings'%}", function (error, data) {
                 //update methods & parameters panel
                 for (var table in data) {
@@ -373,7 +372,6 @@
                         }
                     }
                 }
-                
                 //update location dropdown
                 var locations = data["locations"];
                 var dp_content = "";
@@ -395,8 +393,9 @@
                     updateData(init_location, data);
                     dp.find("li").click(function () {
                         var $this = $(this);
-
                         var selected_location = $this.find("a").html();
+                        d3.select("#chart1").select("svg").remove();
+                        $("#water-treatment-chart").addClass("hide");
                         updateData(selected_location, data);
                     });
                 });
@@ -493,7 +492,7 @@
             var constitutent = $("#dp-constitutent-title").html();
             if (endday != "" && stages != "" && recycle != "" && constitutent != "Constitutent") {
                 $("#water-treatment-graph-dp-title").html("Select Water Treatment Result");
-                $("#y2label").attr("text", "");
+                $(".y2label").css("opacity", "0");
                 var request = 'get-water-treatment-iteration-result/' + location + "/"
                         + constitutent + "/" + endday + "/" + stages + "/" + recycle;
                 d3.json(request, function (error, data) {
@@ -584,7 +583,9 @@
                     .attr("text-anchor", "middle")
                     .attr("font-size", 14)
                     .attr("fill", "red")
-                    .text("");
+                    .text("abcd");
+
+            $(".y2label").css("opacity", "0");
 
             var xRange = d3.scale.linear()
                     .domain([0, d3.max(data, function (d) { return d.day;})])
@@ -650,7 +651,8 @@
                         .attr("id", "line2")
                         .attr("d", line2_func(data));
                 line2.transition().duration(500).style("opacity", 1);
-                $("#y2label").html(y2);
+                $(".y2label").html(y2);
+                svg.select(".y2label").transition().duration(500).style("opacity", "1");
             });
         }
 
