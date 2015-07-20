@@ -124,14 +124,18 @@
 
         <div class="chart-container" style="width:100%">
             <div class="panel panel-primary chart-panel" id="water-treatment-analytics">
-                <div class="panel-heading chart-heading">
-                    <div class="dropdown">
+                <div class="panel-heading">
+                    <span class="text-left">
+                        Select location here --->
+                    </span>
+
+                    <span class="dropdown">
                         <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
-                            <span id="dp-title">Locations</span>
+                            <span id="dp-title">Core</span>
                             <span class="caret"></span></button>
                         <ul class="dropdown-menu" id="dp-content">
                         </ul>
-                    </div>
+                    </span>
                 </div>
                 <div class="panel-body">
 
@@ -265,7 +269,7 @@
                             <div class="col-md-2">
                                 <span class="label label-primary water-treatment-label">Stages</span>
                                 <input type="text" class="input-sm form-control" name="stage_number"
-                                       id="stages-input" onkeypress="return isNumberKey(event)"/>
+                                       id="stages-input" onkeypress="return isNumberKey(event)">
                             </div>
                             <div class="col-md-2">
                                 <span class="label label-primary water-treatment-label">Recycle</span>
@@ -274,11 +278,15 @@
                                        onkeydown="return validRecycle(event)"/>%
                             </div>
 
-                            <div class="col-md-2 col-md-offset-1">
-                                <div class="dropdown">
+                            <div class="col-md-3">
+                                <span>
+                                Select Constitutent:
+                                </span>
+
+                                <span class="dropdown">
                                     <button type="button" class="btn btn-primary dropdown-toggle"
                                             id="water-treatment-dp-btn" data-toggle="dropdown">
-                                        <span id="dp-constitutent-title">Consistutent</span>
+                                        <span id="dp-constitutent-title">TDS</span>
                                         <span class="caret"></span></button>
                                     <ul class="dropdown-menu" id="dp-constitutent">
                                         <li><a>TDS</a></li>
@@ -287,7 +295,7 @@
                                         <li><a>Calcium</a></li>
                                         <li><a>Iron</a></li>
                                     </ul>
-                                </div>
+                                </span>
                             </div>
                         </form>
                         <div class="col-md-2 col-md-offset-5">
@@ -298,24 +306,23 @@
                     </div>
                     <hr>
 
-                    <div class="panel panel-primary chart-panel" id="water-treatment-chart">
+                    <div class="panel panel-primary chart-panel hide" id="water-treatment-chart">
                         <div class="panel-heading chart-heading water-treatment-head">
                             <div class="dropdown">
                                 <button type="button" class="btn btn-primary dropdown-toggle"
                                         id="water-treatment-graph-dp" data-toggle="dropdown">
-                                    <span id="water-treatment-graph-dp-title"></span>
+                                    <span id="water-treatment-graph-dp-title">Select Water Treatment Result</span>
                                     <span class="caret"></span></button>
                                 <ul class="dropdown-menu" id="water-treatment-graph-dp-content">
-                                    <li><a>Vfrac</a></li>
-                                    <li><a>WQfrac_iter_1</a></li>
-                                    <li><a>WQfrac_iter_2</a></li>
-                                    <li><a>WQfrac_iter_3</a></li>
-                                    <li><a>Ratio_iter_1</a></li>
-                                    <li><a>Ratio_iter_2</a></li>
-                                    <li><a>Ratio_iter_3</a></li>
-                                    <li><a>VFresh_iter_1</a></li>
-                                    <li><a>VFresh_iter_2</a></li>
-                                    <li><a>VFresh_iter_3</a></li>
+                                    <li><a id="wqfrac_iter_1">WQfrac_iter_1</a></li>
+                                    <li><a id="wqfrac_iter_2">WQfrac_iter_2</a></li>
+                                    <li><a id="wqfrac_iter_3">WQfrac_iter_3</a></li>
+                                    <li><a id="ratio_iter_1">VFresh1/Vrec</a></li>
+                                    <li><a id="ratio_iter_2">VFresh2/Vrec</a></li>
+                                    <li><a id="ratio_iter_3">VFresh3/Vrec</a></li>
+                                    <li><a id="vfresh_iter_1">VFresh_iter_1</a></li>
+                                    <li><a id="vfresh_iter_2">VFresh_iter_2</a></li>
+                                    <li><a id="vfresh_iter_3">VFresh_iter_3</a></li>
                                 </ul>
                             </div>
 
@@ -344,9 +351,6 @@
 {% block footer %}
     <script type="text/javascript">
         $(document).ready(function () {
-            {#            d3.json("{% url 'water-treatment-iteration-result'%}", function (error, data) {#}
-            {#                console.log(data);#}
-            {#            });#}
 
             d3.json("{% url 'get-water-treatment-general-settings'%}", function (error, data) {
                 //update methods & parameters panel
@@ -369,6 +373,9 @@
                 var locations = data["locations"];
                 var dp_content = "";
                 for (i = 0; i < locations.length; i++) {
+                    if (locations[i] == "West Pony" || locations[i] == "Commins") {
+                        continue;
+                    }
                     dp_content = dp_content.concat("<li id=\"dp-")
                             .concat(locations[i])
                             .concat("\"><a>")
@@ -377,46 +384,46 @@
                 }
                 var dp = $("#dp-content");
                 dp.html(dp_content);
-
-                dp.find("li").click(function () {
-                    var $this = $(this);
-                    d3.json("{% url 'get-water-treatment-location-settings'%}", function (error, data) {
-                        var coefficients = data["coefficients"];
-                        var parameters = data["parameters"];
+                d3.json("{% url 'get-water-treatment-location-settings'%}", function (error, data) {
+                    var init_location = $("#dp-title").html();
+                    updateData(init_location, data);
+                    dp.find("li").click(function () {
+                        var $this = $(this);
                         var selected_location = $this.find("a").html();
-                        var selected_coefficients = coefficients[selected_location];
-                        var selected_parameters = parameters[selected_location];
-                        console.log(selected_coefficients);
-                        $("#dp-title").html(selected_location);
-                        //coefficients
-                        $("#tds-k").html(selected_coefficients["TDS"][0]);
-                        $("#tds-d").html(selected_coefficients["TDS"][1]);
-                        $("#sodium-k").html(selected_coefficients["Sodium"][0]);
-                        $("#sodium-d").html(selected_coefficients["Sodium"][1]);
-                        $("#chloride-k").html(selected_coefficients["Chloride"][0]);
-                        $("#chloride-d").html(selected_coefficients["Chloride"][1]);
-                        $("#calcium-k").html(selected_coefficients["Calcium"][0]);
-                        $("#calcium-d").html(selected_coefficients["Calcium"][1]);
-                        $("#iron-k").html(selected_coefficients["Iron"][0]);
-                        $("#iron-d").html(selected_coefficients["Iron"][1]);
-                        //parameters
-                        console.log(selected_parameters);
-                        $("#q0-1").html(selected_parameters["Fracturing Flowback"]["Q0"]);
-                        $("#q0-2").html(selected_parameters["Transition"]["Q0"]);
-                        $("#q0-3").html(selected_parameters["Produced Water"]["Q0"]);
-                        $("#d-1").html(selected_parameters["Fracturing Flowback"]["D"]);
-                        $("#d-2").html(selected_parameters["Transition"]["D"]);
-                        $("#d-3").html(selected_parameters["Produced Water"]["D"]);
-                        $("#b-1").html(selected_parameters["Fracturing Flowback"]["b"]);
-                        $("#b-2").html(selected_parameters["Transition"]["b"]);
-                        $("#b-3").html(selected_parameters["Produced Water"]["b"]);
-
-                        $("#water-treatment-chart").removeClass("hide");
-                    })
+                        updateData(selected_location, data);
+                    });
                 });
             });
         });
 
+        function updateData(selected_location, data) {
+            var coefficients = data["coefficients"];
+            var parameters = data["parameters"];
+            var selected_coefficients = coefficients[selected_location];
+            var selected_parameters = parameters[selected_location];
+            $("#dp-title").html(selected_location);
+            //coefficients
+            $("#tds-k").html(selected_coefficients["TDS"][0]);
+            $("#tds-d").html(selected_coefficients["TDS"][1]);
+            $("#sodium-k").html(selected_coefficients["Sodium"][0]);
+            $("#sodium-d").html(selected_coefficients["Sodium"][1]);
+            $("#chloride-k").html(selected_coefficients["Chloride"][0]);
+            $("#chloride-d").html(selected_coefficients["Chloride"][1]);
+            $("#calcium-k").html(selected_coefficients["Calcium"][0]);
+            $("#calcium-d").html(selected_coefficients["Calcium"][1]);
+            $("#iron-k").html(selected_coefficients["Iron"][0]);
+            $("#iron-d").html(selected_coefficients["Iron"][1]);
+            //parameters
+            $("#q0-1").html(selected_parameters["Fracturing Flowback"]["Q0"]);
+            $("#q0-2").html(selected_parameters["Transition"]["Q0"]);
+            $("#q0-3").html(selected_parameters["Produced Water"]["Q0"]);
+            $("#d-1").html(selected_parameters["Fracturing Flowback"]["D"]);
+            $("#d-2").html(selected_parameters["Transition"]["D"]);
+            $("#d-3").html(selected_parameters["Produced Water"]["D"]);
+            $("#b-1").html(selected_parameters["Fracturing Flowback"]["b"]);
+            $("#b-2").html(selected_parameters["Transition"]["b"]);
+            $("#b-3").html(selected_parameters["Produced Water"]["b"]);
+        }
         $(document).ready(function () {
             var slider = $("#water-treatment-slider");
             slider.attr("data-slider-min", "1")
@@ -427,7 +434,9 @@
             sliderinput.val(1000);
             slider.on("slide", function (slideEvt) {
                 sliderinput.val(slideEvt.value);
-            })
+            });
+            $("#stages-input").val(20);
+            $("#recycle-input").val(100);
         });
 
         function col_to_number(col) {
@@ -476,13 +485,13 @@
             var recycle = parseInt($("#recycle-input").val()) / 100;
             var constitutent = $("#dp-constitutent-title").html();
             if (endday != "" && stages != "" && recycle != "" && constitutent != "Constitutent") {
-                $("#water-treatment-graph-dp-title").html("");
+                $("#water-treatment-graph-dp-title").html("Select Water Treatment Result");
+                $("#y2label").attr("text", "");
                 var request = 'get-water-treatment-iteration-result/' + location + "/"
                         + constitutent + "/" + endday + "/" + stages + "/" + recycle;
                 d3.json(request, function (error, data) {
-                    console.log(data);
+                    $("#water-treatment-chart").removeClass("hide");
                     init_chart(constitutent, data);
-
                 });
             } else {
                 alert("Invalid input");
@@ -496,6 +505,7 @@
         });
 
         function init_chart(constitutent, data) {
+
             var margin = {top: 20, right: 120, bottom: 40, left: 100},
                     width = $(".chart").width() - margin.left - margin.right,
                     height = $(".chart").height() - margin.top - margin.bottom;
@@ -573,7 +583,7 @@
                     .domain([0, d3.max(data, function (d) { return d.day;})])
                     .range([0, width]);
             var y1Range = d3.scale.linear()
-                    .domain(d3.extent(data, function (d) { return d.quality * 1.1;}))
+                    .domain(d3.extent(data, function (d) { return d.quality;}))
                     .range([height, 0]);
             var xAxis = d3.svg.axis()
                     .scale(xRange)
@@ -601,17 +611,17 @@
                     .attr("id", "line1")
                     .attr("d", line1_func(data));
 
-            line1.transition().duration(500).delay(300).style("opacity", 1);
+            line1.transition().duration(500).style("opacity", 1);
 
             $("#water-treatment-graph-dp-content").find("li").click(function () {
                 chart1.selectAll("#line2")
                         .remove();
+                var id = $(this).find("a").attr("id");
                 var y2 = $(this).find("a").html();
-                $("#water-treatment-graph-dp-title").html(y2);
+                $("#water-treatment-graph-dp-title").html(id);
                 var y2Range = d3.scale.linear()
-                        .domain(d3.extent(data, function (d) { return d[y2.toLowerCase()];}))
+                        .domain(d3.extent(data, function (d) { return d[id];}))
                         .range([height, 0]);
-                console.log(d3.extent(data, function (d) { return d[y2.toLowerCase()];}));
                 var y2Axis = d3.svg.axis()
                         .scale(y2Range)
                         .orient("right");
@@ -621,8 +631,7 @@
                 var line2_func = d3.svg.line()
                         .x(function (d) {return xRange(d.day);})
                         .y(function (d) {
-                            console.log(y2Range(d[y2.toLowerCase()]));
-                            return y2Range(d[y2.toLowerCase()]);
+                            return y2Range(d[id]);
                         })
                         .interpolate("basis");
                 var line2 = chart1.append("path")
@@ -633,7 +642,8 @@
                         .attr("class", "line")
                         .attr("id", "line2")
                         .attr("d", line2_func(data));
-                line2.transition().duration(500).delay(300).style("opacity", 1);
+                line2.transition().duration(500).style("opacity", 1);
+                $("#y2label").html(y2);
             });
         }
 

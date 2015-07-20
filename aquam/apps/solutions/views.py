@@ -185,7 +185,7 @@ def get_treatment_iteration_result(request):
     analyzer = WaterTreatmentAnalyzer(WaterTreatment)
     input = request.__str__().split("get-water-treatment-iteration-result/")[1]
     input = input.split("/")
-    location_name = input[0]
+    location_name = input[0].replace("%20", " ")
     constitutent_name = input[1]
     end_day = int(input[2])
     stages = int(input[3])

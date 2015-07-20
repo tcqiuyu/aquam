@@ -492,7 +492,7 @@
                         .attr("std", data[i].std);
                 line.transition()
                         .duration(500)
-                        .delay(500)
+                        .delay(350)
                         .attr("y1", yRange(data[i].mean - data[i].std))
                         .attr("y2", yRange(data[i].mean + data[i].std));
             }
@@ -579,7 +579,7 @@
                         .attr("y1", yRange(d3.min(vals, function (d) {return d.fitted_water_use;})))
                         .attr("x2", xRange(d3.max(vals, function (d) {return d.horizontal_length;})))
                         .attr("y2", yRange(d3.max(vals, function (d) {return d.fitted_water_use;})));
-                line.transition().duration(500).delay(300).style("opacity", "1");
+                line.transition().duration(500).style("opacity", "1");
             } else {
                 var line_func = d3.svg.line()
                         .x(function (d) {return xRange(d.horizontal_length);})
@@ -596,7 +596,7 @@
                         .style("opacity", 0)
                         .attr("class", "line")
                         .attr("d", line_func(vals));
-                line2.transition().duration(500).delay(300).style("opacity", 1);
+                line2.transition().duration(500).style("opacity", 1);
             }
         }
         $("#water-use-relationships-radio1").click(function () {
