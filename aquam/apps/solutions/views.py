@@ -120,8 +120,8 @@ def get_arp_prediction(request):
     # end_date = datetime.date(2014, 6, 1)
     start_date_str = input[1].split("-")
     end_date_str = input[2].split("'")[0].split("-")
-    start_date=datetime.date(int(start_date_str[1]), int(start_date_str[0]), 1)
-    end_date=datetime.date(int(end_date_str[1]), int(end_date_str[0]), 1)
+    start_date = datetime.date(int(start_date_str[1]), int(start_date_str[0]), 1)
+    end_date = datetime.date(int(end_date_str[1]), int(end_date_str[0]), 1)
     arp_model = {"Q0": 549.7142, "b": 0.9380, "D": 0.1299}
     result = modeler.get_arp_prediction(arp_model, start_date, end_date, wells_num_per_month)
     return JsonResponse(result)
@@ -129,15 +129,17 @@ def get_arp_prediction(request):
 
 # Water Quality Analyzer Views & JSON APIs
 def water_quality_analyzer(request):
-    #analyzer.set_database(location)
+    # analyzer.set_database(location)
     context = {"page_title": "AQUAM | Water Quality Analyzer"}
-    return render_to_response("solutions/water-quality-analyzer.html", context, context_instance=RequestContext(request))
+    return render_to_response("solutions/water-quality-analyzer.html", context,
+                              context_instance=RequestContext(request))
 
 
 def get_water_quality_settings(request):
     analyzer = WaterQualityAnalyzer(WaterQuality)
     result = analyzer.get_water_quality_settings()
     return HttpResponse(json.dumps(result), content_type="application/json")
+
 
 def get_water_quality_result(request):
     location = request.__str__().split("/")[4].split("'")[0]
@@ -148,6 +150,7 @@ def get_water_quality_result(request):
     coefficient = analyzer.coefficients[location_name]
     result = analyzer.get_water_quality_result(parameter, coefficient, location_name)
     return HttpResponse(json.dumps(result), content_type="application/json")
+
 
 def water_treatment_analyzer(request):
     analyzer = WaterTreatmentAnalyzer(WaterTreatment)
@@ -165,15 +168,18 @@ def water_treatment_analyzer(request):
     return render_to_response("solutions/water-treatment-analyzer.html", context,
                               context_instance=RequestContext(request))
 
+
 def get_water_treatment_general_settings(request):
     analyzer = WaterTreatmentAnalyzer(request)
     settings = analyzer.get_water_treatment_general_settings()
     return HttpResponse(json.dumps(settings), content_type="application/json")
 
+
 def get_water_treatment_location_settings(request):
     analyzer = WaterTreatmentAnalyzer(request)
     settings = analyzer.get_water_treatment_location_settings()
     return HttpResponse(json.dumps(settings), content_type="application/json")
+
 
 def get_treatment_iteration_result(request):
     analyzer = WaterTreatmentAnalyzer(WaterTreatment)
@@ -184,6 +190,11 @@ def get_treatment_iteration_result(request):
     end_day = int(input[2])
     stages = int(input[3])
     percent = float(input[4].split("'")[0])
+    # location_name = "Core"
+    # constitutent_name = "TDS"
+    # end_day = 1000
+    # stages = 20
+    # percent=1.0
     coefficients = analyzer.coefficients
     methods = analyzer.methods
     constants = analyzer.constants
