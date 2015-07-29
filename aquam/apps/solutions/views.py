@@ -24,7 +24,7 @@ def water_use_analyzer(request):
         records = paginator.page(1)
     except EmptyPage:
         records = paginator.page(paginator.num_pages)
-    context = {"page_title": "AQUAM | Water Use Analyzer", "records": records, }
+    context = {"page_title": "VODA | Water Use Analyzer", "records": records, }
     if request.is_ajax():
         target_template = "solutions/partial/water-use-table.html"
     else:
@@ -97,7 +97,7 @@ def produced_water_modeler(request):
         records = paginator.page(1)
     except EmptyPage:
         records = paginator.page(paginator.num_pages)
-    context = {"page_title": "AQUAM | Produced Water Modeler", "records": records, }
+    context = {"page_title": "VODA | Produced Water Modeler", "records": records, }
     if request.is_ajax():
         target_template = "solutions/partial/produced-water-table.html"
     else:
@@ -130,7 +130,7 @@ def get_arp_prediction(request):
 # Water Quality Analyzer Views & JSON APIs
 def water_quality_analyzer(request):
     # analyzer.set_database(location)
-    context = {"page_title": "AQUAM | Water Quality Analyzer"}
+    context = {"page_title": "VODA | Water Quality Analyzer"}
     return render_to_response("solutions/water-quality-analyzer.html", context,
                               context_instance=RequestContext(request))
 
@@ -164,7 +164,7 @@ def water_treatment_analyzer(request):
 #     parameters = analyzer.parameters
 #     percent = 1.0
 #     analyzer.set_database_result(end_day, coefficients, methods, constants, parameters, stages, location_name, constituent_name, percent)
-    context = {"page_title": "AQUAM | Water Treatment Analyzer"}
+    context = {"page_title": "VODA | Water Treatment Analyzer"}
     return render_to_response("solutions/water-treatment-analyzer.html", context,
                               context_instance=RequestContext(request))
 

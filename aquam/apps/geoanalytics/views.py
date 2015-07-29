@@ -13,7 +13,7 @@ from apps.geoanalytics.tools import WaterUseGeoanalyzer
 
 # Create your views here.
 def water_use_geoanalyzer(request):
-    context = {"page_title": "AQUAM | Water Use Geoanalyzer"}
+    context = {"page_title": "VODA | Water Use Geoanalyzer"}
     return render_to_response("geoanalytics/water-use-geoanalyzer.html", context, context_instance=RequestContext(request))
 
 def get_geo_water_use(request):
@@ -23,5 +23,5 @@ def get_geo_water_use(request):
 
 
 def transportation_cost_optimizer(request):
-    context = {"page_title": "AQUAM | Transportation Cost Optimizer"}
+    context = {"page_title": "VODA | Transportation Cost Optimizer"}
     return render_to_response("geoanalytics/transportation-cost-optimizer.html", context, context_instance=RequestContext(request))
