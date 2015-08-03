@@ -51,7 +51,7 @@ var node_1 = new joint.shapes.custom.ElementLink({
 	size: {width: 160, height: 80},
 	attrs: {
 		rect: {fill: '#2D69A6'},
-		a: {'xlink:href': 'water-use-analyzer/', 'xlink:show': 'new', cursor: 'pointer'},
+		a: {'xlink:href': 'water-use-analyzer/', 'xlink:show': 'new', cursor: 'pointer', target: '_self'},
 		text: {text: 'Fresh Water\n    Source', fill: 'white', 'font-size': 21}
 	}
 });
@@ -59,7 +59,7 @@ var node_1 = new joint.shapes.custom.ElementLink({
 var node_2 = node_1.clone();
 node_2.translate(240, 160);
 node_2.attr({
-	a: {'xlink:href': 'water-quality-analyzer/'},
+	a: {'xlink:href': 'water-quality-analyzer/', target: '_self'},
 	text: {text: '  Drilling/\nFracturing'}
 });
 
@@ -75,7 +75,7 @@ node_3.attr({
 var node_4 = node_2.clone();
 node_4.translate(340);
 node_4.attr({
-	a: {'xlink:href': 'produced-water-modeler/'},
+	a: {'xlink:href': 'produced-water-modeler/', target: '_self'},
 	text: {text: '    Produced\nWater Storage'}
 });
 
@@ -83,7 +83,7 @@ var node_5 = node_3.clone();
 node_5.translate(420);
 node_5.attr({
 	rect: {fill: '#2D69A6'},
-	a: {'xlink:href': 'water-treatment-analyzer/', 'cursor': 'pointer'},
+	a: {'xlink:href': 'water-treatment-analyzer/', 'cursor': 'pointer', target: '_self'},
 	text: {text: 'Treatment'}
 });
 

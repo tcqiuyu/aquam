@@ -79,12 +79,12 @@
 		if (!this.length) {
 			return this;
 		}
-
+		
 		// handle api method calls on the plugin, e.g. powerTip('hide')
 		if ($.type(opts) === 'string' && $.powerTip[opts]) {
 			return $.powerTip[opts].call(this, this, arg);
 		}
-
+		
 		// extend options and instantiate TooltipController
 		var options = $.extend({}, $.fn.powerTip.defaults, opts),
 			tipController = new TooltipController(options);

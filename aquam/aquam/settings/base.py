@@ -175,8 +175,7 @@ INSTALLED_APPS = (
     'django.contrib.gis',
     'apps.accounts',
     'apps.geoanalytics',
-    'apps.solutions',
-    'apps.warehouse',
+    'apps.solutions'
 )
 
 

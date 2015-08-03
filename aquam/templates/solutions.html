@@ -21,7 +21,7 @@
                     involved in an upstream process. There is input, output, treatment, and reuse which can all 
                     be done more crucially with an ever helpful oversight. This way the wastes involved, costs 
                     involved and the footprint can be reduced even more. The graphic below explains why and what 
-                    our solution provides the operator with. 
+                    our solution provides the operator with.
                 </p>
             </div>
         </div>
@@ -41,7 +41,7 @@
             <div class="row">
                 <div class="col-sm-6">
                     <h3 class="mg-md">
-                        <a href="{% url 'water-use-analyzer' %}" target="_blank">Water Use Analyzer</a>
+                        <a href="{% url 'water-use-analyzer' %}" target="_self">Water Use Analyzer</a>
                     </h3>
                     <p style="text-align: justify">
                         The Water Use modeler is an interactive  tool designed to fit the user, in this case, an operator 
@@ -51,7 +51,7 @@
                         water used per well and bbls water used per horizontal foot, on an annual comparison basis. 
                     </p>
                     <p>
-                        <a class="btn btn-default" href="{% url 'water-use-analyzer' %}" role="button" target="_blank">Try the demo &raquo;</a>
+                        <a class="btn btn-default" href="{% url 'water-use-analyzer' %}" role="button" target="_self">Try the demo &raquo;</a>
                     </p>
                 </div>
                 <div class="col-sm-6">
@@ -63,11 +63,8 @@
             
             <div class="row">
                 <div class="col-sm-6">
-                    <img src="{% static 'img/water_quality_screenshot.png' %}" class="img-responsive" alt=''/>
-                </div>
-                <div class="col-sm-6">
                     <h3 class="mg-md">
-                        <a href="{% url 'water-quality-analyzer' %}" target="_blank">Water Quality Analyzer</a>
+                        <a href="{% url 'water-quality-analyzer' %}" target="_self">Water Quality Analyzer</a>
                     </h3>
                     <p style="text-align: justify">
                         Water Quality is a paramount part of estimating the pertinent treatment required to reuse the produced water 
@@ -78,8 +75,11 @@
                         specific dataset. 
                     </p>
                     <p>
-                        <a class="btn btn-default" href="{% url 'water-quality-analyzer' %}" role="button" target="_blank">Try the demo &raquo;</a>
+                        <a class="btn btn-default" href="{% url 'water-quality-analyzer' %}" role="button" target="_self">Try the demo &raquo;</a>
                     </p>
+                </div>
+                <div class="col-sm-6">
+                    <img src="{% static 'img/water_quality_screenshot.png' %}" class="img-responsive" alt=''/>
                 </div>
             </div>
             
@@ -88,7 +88,7 @@
             <div class="row">
                 <div class="col-sm-6">
                     <h3 class="mg-md">
-                        <a href="{% url 'produced-water-modeler' %}" target="_blank">Produced Water Modeler</a>
+                        <a href="{% url 'produced-water-modeler' %}" target="_self">Produced Water Modeler</a>
                     </h3>
                     <p style="text-align: justify">
                         The Produced Water Modeler is an interactive tool designed to model water production trends 
@@ -102,7 +102,7 @@
                         
                     </p>
                     <p>
-                        <a class="btn btn-default" href="{% url 'produced-water-modeler' %}" role="button" target="_blank">Try the demo &raquo;</a>
+                        <a class="btn btn-default" href="{% url 'produced-water-modeler' %}" role="button" target="_self">Try the demo &raquo;</a>
                     </p>
                 </div>
                 <div class="col-sm-6">
@@ -114,11 +114,8 @@
             
             <div class="row">
                 <div class="col-sm-6">
-                    <img src="{% static 'img/water_treatment_screenshot.png' %}" class="img-responsive" alt=''/>
-                </div>
-                <div class="col-sm-6">
                     <h3 class="mg-md">
-                        <a href="{% url 'water-treatment-analyzer' %}" target="_blank">Water Treatment Analyzer</a>
+                        <a href="{% url 'water-treatment-analyzer' %}" target="_self">Water Treatment Analyzer</a>
                     </h3>
                     <p style="text-align: justify">
                         This Water Treatment Analyzer is an interactive tool designed for the produced water treatment. 
@@ -128,8 +125,11 @@
                         the cost for produced water treatment.
                     </p>
                     <p>
-                        <a class="btn btn-default" href="{% url 'water-treatment-analyzer' %}" role="button" target="_blank">Try the demo &raquo;</a>
+                        <a class="btn btn-default" href="{% url 'water-treatment-analyzer' %}" role="button" target="_self">Try the demo &raquo;</a>
                     </p>
+                </div>
+                <div class="col-sm-6">
+                    <img src="{% static 'img/water_treatment_screenshot.png' %}" class="img-responsive" alt=''/>
                 </div>
             </div>
             
