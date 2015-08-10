@@ -11,12 +11,18 @@
         }
         .map-legend{
             position:absolute;
-            height:200px;
-            width:110px;
             right:10px;
             bottom:40px;
             background-color:white;
             border-radius:5px;
+        }
+        #legend-1{
+            height:200px;
+            width:110px;
+        }
+        #legend-2{
+            height:400px;
+            width:150px;
         }
     </style>
 {% endblock %}
@@ -50,7 +56,11 @@
         <hr>
         <div class="map">
             <div id="map-2"></div>
+            <div class="map-legend">
+                <div id="legend-2"></div>
+            </div>
         </div>
+        
     </div>
 {% endblock %}
 
@@ -59,40 +69,161 @@
 <script type="text/javascript">
     require([
     "esri/arcgis/utils",
+    "esri/Color",
     "esri/dijit/Legend",
     "esri/dijit/Scalebar",
+    "esri/dijit/PopupTemplate",
+    "esri/layers/FeatureLayer",
+    "esri/map",
+    "esri/renderers/SimpleRenderer",
+    "dojo/domReady!"
+    ], function(
+        arcgisUtils,
+        Color,
+        Legend,
+        Scalebar,
+        PopupTemplate,
+        FeatureLayer,
+        Map,
+        SimpleRenderer
+    ){
+        var map = new Map("map-1", {
+            basemap: "topo",
+            center: [-98.88, 28.5],
+            zoom: 10
+        });
+        var template = new PopupTemplate({
+            title: "Attributes",
+            fieldInfos:[
+                {
+                    fieldName:"api",
+                    label:"API", 
+                    visible:true
+                }, 
+                {
+                    fieldName:"well_name", 
+                    label:"WellName", 
+                    visible:true
+                },
+                {
+                    fieldName:"fracture_d", 
+                    label:"Fracture Date", 
+                    visible:true,
+                    format:{ dateFormat:"shortDate" }
+                },
+                {
+                    fieldName:"state", 
+                    label:"State", 
+                    visible:true
+                },
+                {
+                    fieldName:"county", 
+                    label:"County", 
+                    visible:true
+                },
+                {
+                    fieldName:"horizontal", 
+                    label:"Horizontal Length", 
+                    visible:true
+                },
+                {
+                    fieldName:"water_use", 
+                    label:"Water Use", 
+                    visible:true
+                },
+                {
+                    fieldName:"wu_per_foo", 
+                    label:"Water Use Per Foot", 
+                    visible:true
+                }
+            ]
+        });
+        var renderer = new SimpleRenderer({
+            symbol: {
+                type: "esriSMS",
+                style: "esriSMSCircle",
+                outline:{
+                    width: 0.5,
+                    color: [160, 160,160, 70],
+                }
+            },
+            sizeInfo: {
+                field: "water_use",
+                valueUnit: "inches",
+                valueRepresentation: "diameter"
+            },
+            colorInfo: {
+                field: "water_use",
+                minDataValue: 20000,
+                maxDataValue: 260000,
+                colors: [
+                    new Color([0, 0, 255]), 
+                    new Color([0, 255, 0]), 
+                    new Color([255, 255, 0]), 
+                    new Color([255, 0, 0])
+                ]
+            }
+        });
+        serviceUrl = "http://services1.arcgis.com/KNdRU5cN6ENqCTjk/arcgis/rest/services/WaterUsePoint/FeatureServer/0";
+        pointLayer = new FeatureLayer(serviceUrl, {
+            mode: FeatureLayer.MODE_SNAPSHOT,
+            infoTemplate: template,
+            outFields: ["*"]
+        });
+        pointLayer.setRenderer(renderer);
+        map.addLayer(pointLayer);
+        
+        var legend = new Legend({
+                map: map
+            }, "legend-1");
+        legend.startup();
+        legend.refresh([{
+            layer: pointLayer,
+            title: " "
+        }])
+        
+        var scalebar = new Scalebar({
+            map: map,
+            // "dual" displays both miles and kilmometers
+            // "english" is the default, which displays miles
+            // use "metric" for kilometers
+            scalebarUnit: "dual"
+        });
+    });
+</script>
+
+<script type="text/javascript">
+    require([
+    "esri/arcgis/utils",
+    "esri/dijit/Legend",
+    "esri/dijit/Scalebar",
+    "esri/layers/FeatureLayer",
     "dojo/domReady!"
     ], function(
         arcgisUtils,
         Legend,
-        Scalebar
+        Scalebar,
+        FeatureLayer
     ) {
-        //var agoId = "4778fee6371d4e83a22786029f30c7e1";
-        var agoId = "3474bb4747ac4dfb91307ecd2e27ea8d";
-        arcgisUtils.createMap(agoId, "map-1").then(function(response) {
+        var serviceID = "1e4a0319e4ff4284b4e7bad92551006b";
+        arcgisUtils.createMap(serviceID, "map-2").then(function(response) {
             
             // map
             var map = response.map;
             
-            // layers
-            var optionalLayers = response.itemInfo.itemData.operationalLayers;
-            layer = optionalLayers[0]
-            layer.layerObject.setVisibility(true);
-            
-            //add the scalebar 
+            //add the scalebar
             var scalebar = new Scalebar({
               map: map,
-              scalebarUnit: "english"
-            });
+              scalebarUnit: "dual"
+            }); 
             
-            //add the legend. Note that we use the utility method getLegendLayers to get 
-            //the layers to display in the legend from the createMap response.
-            var legendLayers = arcgisUtils.getLegendLayers(response); 
-            var legendDijit = new Legend({
+            //add the legend.
+            var legendLayers = arcgisUtils.getLegendLayers(response);
+            var legend = new Legend({
                     map: map,
                     layerInfos: legendLayers
-                },"legend-1");
-            legendDijit.startup();
+                },"legend-2");
+            legend.startup();
         });
     });
 </script>
