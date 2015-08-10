@@ -42,7 +42,7 @@
     </div>
     
     <div class="container">
-        <h3>Water Use Query</h3>
+        <h3>Query</h3>
         <hr>
         <p>**click the circle to show the attributes</p>
         <div class="map">
@@ -52,7 +52,7 @@
             </div>
         </div>
         
-        <h3 style="padding-top:30px">Heatmap Based on Wells Desity</h3>
+        <h3 style="padding-top:30px">Interpolation</h3>
         <hr>
         <div class="map">
             <div id="map-2"></div>
@@ -60,7 +60,18 @@
                 <div id="legend-2"></div>
             </div>
         </div>
+                
+        <h3 style="padding-top:30px">Heatmap</h3>
+        <hr>
+        <div class="map">
+            <div id="map-3"></div>
+        </div>
         
+        <h3 style="padding-top:30px">Statistics</h3>
+        <hr>
+        <div class="map">
+            <div id="map-4"></div>
+        </div>
     </div>
 {% endblock %}
 
@@ -226,5 +237,119 @@
             legend.startup();
         });
     });
+</script>
+
+<script type="text/javascript">
+    require([
+    "esri/arcgis/utils",
+    "esri/dijit/Legend",
+    "esri/dijit/Scalebar",
+    "esri/layers/FeatureLayer",
+    "dojo/domReady!"
+    ], function(
+        arcgisUtils,
+        Legend,
+        Scalebar,
+        FeatureLayer
+    ) {
+        var serviceID = "397c436b3f8547eea7dd800f51624e2d";
+        arcgisUtils.createMap(serviceID, "map-3").then(function(response) {
+            
+            // map
+            var map = response.map;
+            
+            //add the scalebar
+            var scalebar = new Scalebar({
+              map: map,
+              scalebarUnit: "dual"
+            });
+        });
+    });
+</script>
+
+<script type="text/javascript">
+    require([
+    "esri/arcgis/utils",
+    "esri/dijit/Legend",
+    "esri/dijit/Scalebar",
+    "esri/layers/FeatureLayer",
+    "dojo/domReady!"
+    ], function(
+        arcgisUtils,
+        Legend,
+        Scalebar,
+        FeatureLayer
+    ) {
+        var serviceID = "397c436b3f8547eea7dd800f51624e2d";
+        arcgisUtils.createMap(serviceID, "map-3").then(function(response) {
+            
+            // map
+            var map = response.map;
+            
+            //add the scalebar
+            var scalebar = new Scalebar({
+              map: map,
+              scalebarUnit: "dual"
+            });
+        });
+    });
+</script>
+
+<script type="text/javascript">
+require([
+         "esri/arcgis/utils",
+         "esri/Color",
+         "esri/dijit/Legend",
+         "esri/dijit/Scalebar",
+         "esri/dijit/PopupTemplate",
+         "esri/layers/FeatureLayer",
+         "esri/map",
+         "esri/renderers/SimpleRenderer",
+         "dojo/domReady!"
+         ], function(
+             arcgisUtils,
+             Color,
+             Legend,
+             Scalebar,
+             PopupTemplate,
+             FeatureLayer,
+             Map,
+             SimpleRenderer
+         ){
+             var map = new Map("map-4", {
+                 basemap: "topo",
+                 center: [-98.88, 28.5],
+                 zoom: 10
+             });
+             var renderer = new SimpleRenderer({
+                 symbol: {
+                     type: "esriSMS",
+                     style: "esriSMSCircle",
+                     outline:{
+                         width: 0.5,
+                         color: [160, 160,160, 70],
+                     },
+                     size: 5
+                 },
+                 colorInfo: {
+                     field: "water_use",
+                     minDataValue: 20000,
+                     maxDataValue: 260000,
+                     colors: [
+                         new Color([0, 0, 255]), 
+                         new Color([0, 255, 0]), 
+                         new Color([255, 255, 0]), 
+                         new Color([255, 0, 0])
+                     ]
+                 }
+             });
+             serviceUrl = "http://services1.arcgis.com/KNdRU5cN6ENqCTjk/arcgis/rest/services/WaterUsePoint/FeatureServer/0";
+             pointLayer = new FeatureLayer(serviceUrl, {
+                 mode: FeatureLayer.MODE_SNAPSHOT,
+                 outFields: ["*"]
+             });
+             pointLayer.setRenderer(renderer);
+             map.addLayer(pointLayer);
+         });
 </script>
 {% endblock %}
