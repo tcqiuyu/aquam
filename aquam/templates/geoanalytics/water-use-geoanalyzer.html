@@ -60,7 +60,7 @@
                 <div id="legend-2"></div>
             </div>
         </div>
-                
+        
         <h3 style="padding-top:30px">Heatmap</h3>
         <hr>
         <div class="map">
@@ -69,6 +69,12 @@
         
         <h3 style="padding-top:30px">Statistics</h3>
         <hr>
+        <div id="toolbar">
+            <button id="polygon" class="btn btn-default">Polygon</button>
+            <button id="circle" class="btn btn-default">Circle</button>
+            <button id="rectangle" class="btn btn-default">Rectangle</button>
+            <button id="clear" class="btn btn-default">Clear</button>
+        </div>
         <div class="map">
             <div id="map-4"></div>
         </div>
@@ -297,30 +303,39 @@
 
 <script type="text/javascript">
 require([
-         "esri/arcgis/utils",
          "esri/Color",
-         "esri/dijit/Legend",
-         "esri/dijit/Scalebar",
-         "esri/dijit/PopupTemplate",
+         "esri/graphic",
          "esri/layers/FeatureLayer",
          "esri/map",
          "esri/renderers/SimpleRenderer",
+         "esri/symbols/SimpleMarkerSymbol",
+         "esri/symbols/SimpleFillSymbol",
+         "esri/tasks/query",
+         "esri/toolbars/draw",
+         "dojo/dom",
+         "dojo/on",
          "dojo/domReady!"
          ], function(
-             arcgisUtils,
              Color,
-             Legend,
-             Scalebar,
-             PopupTemplate,
+             Graphic,
              FeatureLayer,
              Map,
-             SimpleRenderer
+             SimpleRenderer,
+             SimpleMarkerSymbol,
+             SimpleFillSymbol,
+             Query,
+             Draw,
+             dom,
+             on
          ){
              var map = new Map("map-4", {
                  basemap: "topo",
                  center: [-98.88, 28.5],
                  zoom: 10
              });
+             map.on("load", activateToolbar);
+             
+             //renderer
              var renderer = new SimpleRenderer({
                  symbol: {
                      type: "esriSMS",
@@ -343,13 +358,54 @@ require([
                      ]
                  }
              });
+             // selection symbol
+             var selectionSymbol = new SimpleMarkerSymbol({
+                 type: "esriSMS",
+                 style: "esriSMSCircle",
+                 size: 8,
+                 color: new Color([207, 34, 171, 0.5])
+             });
+             //featureLayer
              serviceUrl = "http://services1.arcgis.com/KNdRU5cN6ENqCTjk/arcgis/rest/services/WaterUsePoint/FeatureServer/0";
-             pointLayer = new FeatureLayer(serviceUrl, {
+             var pointLayer = new FeatureLayer(serviceUrl, {
                  mode: FeatureLayer.MODE_SNAPSHOT,
                  outFields: ["*"]
              });
              pointLayer.setRenderer(renderer);
+             pointLayer.setSelectionSymbol(selectionSymbol); 
              map.addLayer(pointLayer);
+             
+             //draw
+             var fillSymbol = new SimpleFillSymbol()
+             function activateToolbar(event){
+                 var toolbar = new Draw(event.map);
+                 //tool
+                 on(dom.byId("toolbar"), "click", function(event){
+                     if ( event.target.id === "toolbar" ) {
+                         return;
+                     }
+                     if ( event.target.id === "clear" ) {
+                         map.graphics.clear();
+                         pointLayer.clearSelection();
+                         return;
+                     }
+                     var tool = event.target.id.toLowerCase();
+                     map.disableMapNavigation();
+                     toolbar.activate(tool);
+                 });
+                 //events
+                 toolbar.on("draw-end", function(event){
+                     toolbar.deactivate();
+                     map.enableMapNavigation();
+                     // graphic
+                     myGraphic = new Graphic(event.geometry, fillSymbol);
+                     map.graphics.add(myGraphic);
+                     // query
+                     var myQuery = new Query();
+                     myQuery.geometry = event.geometry;
+                     pointLayer.selectFeatures(myQuery, FeatureLayer.SELECTION_NEW);
+                 });
+             }
          });
 </script>
 {% endblock %}
