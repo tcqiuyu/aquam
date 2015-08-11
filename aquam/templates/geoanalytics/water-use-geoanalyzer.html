@@ -182,20 +182,20 @@
             }
         });
         serviceUrl = "http://services1.arcgis.com/KNdRU5cN6ENqCTjk/arcgis/rest/services/WaterUsePoint/FeatureServer/0";
-        pointLayer = new FeatureLayer(serviceUrl, {
+        featureLayer = new FeatureLayer(serviceUrl, {
             mode: FeatureLayer.MODE_SNAPSHOT,
             infoTemplate: template,
             outFields: ["*"]
         });
-        pointLayer.setRenderer(renderer);
-        map.addLayer(pointLayer);
+        featureLayer.setRenderer(renderer);
+        map.addLayer(featureLayer);
         
         var legend = new Legend({
                 map: map
             }, "legend-1");
         legend.startup();
         legend.refresh([{
-            layer: pointLayer,
+            layer: featureLayer,
             title: " "
         }])
         
@@ -304,6 +304,7 @@
 <script type="text/javascript">
 require([
          "esri/Color",
+         "esri/dijit/PopupTemplate",
          "esri/graphic",
          "esri/layers/FeatureLayer",
          "esri/map",
@@ -314,9 +315,11 @@ require([
          "esri/toolbars/draw",
          "dojo/dom",
          "dojo/on",
+         "dojo/_base/array",
          "dojo/domReady!"
          ], function(
              Color,
+             PopupTemplate,
              Graphic,
              FeatureLayer,
              Map,
@@ -326,7 +329,8 @@ require([
              Query,
              Draw,
              dom,
-             on
+             on,
+             arrayUtil
          ){
              var map = new Map("map-4", {
                  basemap: "topo",
@@ -367,26 +371,26 @@ require([
              });
              //featureLayer
              serviceUrl = "http://services1.arcgis.com/KNdRU5cN6ENqCTjk/arcgis/rest/services/WaterUsePoint/FeatureServer/0";
-             var pointLayer = new FeatureLayer(serviceUrl, {
+             var featureLayer = new FeatureLayer(serviceUrl, {
                  mode: FeatureLayer.MODE_SNAPSHOT,
                  outFields: ["*"]
              });
-             pointLayer.setRenderer(renderer);
-             pointLayer.setSelectionSymbol(selectionSymbol); 
-             map.addLayer(pointLayer);
+             featureLayer.setRenderer(renderer);
+             featureLayer.setSelectionSymbol(selectionSymbol); 
+             map.addLayer(featureLayer);
              
-             //draw
-             var fillSymbol = new SimpleFillSymbol()
+             //draw graphic
+             var graphic = new Graphic(); 
              function activateToolbar(event){
                  var toolbar = new Draw(event.map);
-                 //tool
+                 //toolbar
                  on(dom.byId("toolbar"), "click", function(event){
                      if ( event.target.id === "toolbar" ) {
                          return;
                      }
                      if ( event.target.id === "clear" ) {
                          map.graphics.clear();
-                         pointLayer.clearSelection();
+                         featureLayer.clearSelection();
                          return;
                      }
                      var tool = event.target.id.toLowerCase();
@@ -398,13 +402,41 @@ require([
                      toolbar.deactivate();
                      map.enableMapNavigation();
                      // graphic
-                     myGraphic = new Graphic(event.geometry, fillSymbol);
-                     map.graphics.add(myGraphic);
+                     graphic.setGeometry(event.geometry);
+                     graphic.setSymbol(new SimpleFillSymbol());
+                     map.graphics.add(graphic);
                      // query
-                     var myQuery = new Query();
-                     myQuery.geometry = event.geometry;
-                     pointLayer.selectFeatures(myQuery, FeatureLayer.SELECTION_NEW);
+                     var query = new Query();
+                     query.geometry = event.geometry;
+                     featureLayer.selectFeatures(query, FeatureLayer.SELECTION_NEW);
                  });
+                 featureLayer.on("selection-complete", summerize);
+             }
+             function summerize(event){
+                 // water use
+                 var totalWaterUse = 0.0;
+                 var featuresNumber = event.features.length;
+                 arrayUtil.forEach(event.features, function (feature) {
+                     totalWaterUse += feature.attributes.water_use;
+                 });
+                 var meanWaterUse = totalWaterUse/featuresNumber;
+                 // graphic
+                 var attr = {"Total": Math.round(totalWaterUse), "Mean": Math.round(meanWaterUse)};
+                 graphic.setAttributes(attr);
+                 var template = new PopupTemplate({
+                     title:"Water Use Summerization",
+                     fieldInfos: [
+                         {
+                             fieldName:"Total",
+                             visible:true
+                         },
+                         {
+                             fieldName:"Mean",
+                             visible:true
+                         }
+                     ]
+                 });
+                 graphic.setInfoTemplate(template);
              }
          });
 </script>
