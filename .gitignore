@@ -15,3 +15,13 @@ aquam/templates/test/
 
 # Others
 *.xml
+
+aquam/static/css/font-awesome.min.css
+
+aquam/static/css/bootstrap.css
+
+aquam/static/js/bootstrap.js
+
+aquam/static/js/d3.js
+
+aquam/static/js/jquery-2.1.0.min.js

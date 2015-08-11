@@ -1,208 +1,192 @@
-{% extends "base.html" %}
+{% extends "solutions/solutions-base.html" %}
 {% load staticfiles %}
 
-{% block header %}
-    <link rel="stylesheet" type="text/css" href="{% static 'css/chart.css' %}"/>
-    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+{% block solutions-header %}
     <!-- Jquery tipsy -->
     <script src="{% static 'js/jquery.tipsy.js' %}"></script>
     <link rel="stylesheet" type="text/css" href="{% static 'css/tipsy.css' %}"/>
 {% endblock %}
 
-{% block mainbody %}
-    <div class="container">
-        <div class="jumbotron">
-            <h2>Water Use Analyzer</h2>
+{% block jumbotron-header %}<h2>Water Use Analyzer</h2>{% endblock %}
 
-            <p style="text-align: justify">
-                This analyzer is an interactive tool designed to fit the user, in this case,
-                an operator or a water management company to anlayze their statistics of water,
-                current and historical to establish a baseline and a trend to improve their water
-                use scenarios significantly. This tool also provides the user to look at
-                Key Performance Indicators (KPIs) such as average horizontal length drilled,
-                average water used per well and bbls water used per horizontal foot,
-                on an annual comparison basis. </p>
-        </div>
+{% block jumbotron-body %}
+    This analyzer is an interactive tool designed to fit the user, in this case,
+    an operator or a water management company to anlayze their statistics of water,
+    current and historical to establish a baseline and a trend to improve their water
+    use scenarios significantly. This tool also provides the user to look at
+    Key Performance Indicators (KPIs) such as average horizontal length drilled,
+    average water used per well and bbls water used per horizontal foot,
+    on an annual comparison basis.
+{% endblock %}
 
-        <h3>Horizontal Wells</h3>
+{% block solutions-body %}
+    <h3>Horizontal Wells</h3>
 
-        <div id="table-container">
-            {% include 'solutions/partial/water-use-table.html' %}
-        </div>
+    <div id="table-container">
+        {% include 'solutions/partial/water-use-table.html' %}
+    </div>
 
-        <hr>
+    <hr>
 
-        <div>
-            {{ data }}
-        </div>
+    <div>
+        {{ data }}
+    </div>
 
-        <div class="chart-container" style="width:100%">
-            <div class="panel panel-primary chart-panel" id="water-use-analytics">
-                <div class="panel-heading chart-heading">
-                    Analytics
-                </div>
-                <div class="panel-body">
-                    <form class="radio-group">
-                        <div class="col-md-3">
-                            <label class="radio-inline solution-radio additional-info-button">
-                                <input type="radio" name="inlineRadioOptions" id="water-use-analytics-radio-1"
-                                       value="Water used per well">
-                                Water used per well
-                            </label>
-                        </div>
-                        <div class="col-md-5">
-                            <label class="radio-inline solution-radio">
-                                <input type="radio" name="inlineRadioOptions" id="water-use-analytics-radio-2"
-                                       value="Horizontal Length per Well">
-                                Horizontal Length per Well
-                            </label>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="radio-inline solution-radio">
-                                <input type="radio" name="inlineRadioOptions" id="water-use-analytics-radio-3"
-                                       value="Water Used per horizontal Foot">
-                                Water Used per horizontal Foot
-                            </label>
-                        </div>
-                    </form>
-
-
-                    <div id="chart1" class="chart" style="width:100%; height:500px">
+    <div class="chart-container" style="width:100%">
+        <div class="panel panel-primary chart-panel" id="water-use-analytics">
+            <div class="panel-heading chart-heading">
+                Analytics
+            </div>
+            <div class="panel-body">
+                <form class="radio-group">
+                    <div class="col-md-3">
+                        <label class="radio-inline solution-radio additional-info-button">
+                            <input type="radio" name="inlineRadioOptions" id="water-use-analytics-radio-1"
+                                   value="Water used per well">
+                            Water used per well
+                        </label>
                     </div>
-
-
-                </div>
-                <div class="panel-footer chart-footer">
-                    Statistics & Estimation:
-                    <div>
-                        <div class="col-md-2 label label-primary ">
-                            Mean (bbls):
-                        </div>
-                        <div class="col-md-1 output output-mean">
-                        </div>
-                        <div class="col-md-3"></div>
-                        <div class="col-md-2 label label-primary">
-                            Standard Deviation:
-                        </div>
-                        <div class="col-md-4 output output-std">
-                        </div>
+                    <div class="col-md-5">
+                        <label class="radio-inline solution-radio">
+                            <input type="radio" name="inlineRadioOptions" id="water-use-analytics-radio-2"
+                                   value="Horizontal Length per Well">
+                            Horizontal Length per Well
+                        </label>
                     </div>
-                    <br>
+                    <div class="col-md-4">
+                        <label class="radio-inline solution-radio">
+                            <input type="radio" name="inlineRadioOptions" id="water-use-analytics-radio-3"
+                                   value="Water Used per horizontal Foot">
+                            Water Used per horizontal Foot
+                        </label>
+                    </div>
+                </form>
 
-                    <form class="form-inline additional-info hide" id="chart1-form">
+
+                <div id="chart1" class="chart" style="width:100%; height:500px">
+                </div>
+
+
+            </div>
+            <div class="panel-footer chart-footer">
+                Statistics & Estimation:
+                <div>
+                    <div class="col-md-2 label label-primary ">
+                        Mean (bbls):
+                    </div>
+                    <div class="col-md-1 output output-mean">
+                    </div>
+                    <div class="col-md-3"></div>
+                    <div class="col-md-2 label label-primary">
+                        Standard Deviation:
+                    </div>
+                    <div class="col-md-4 output output-std">
+                    </div>
+                </div>
+                <br>
+
+                <form class="form-inline additional-info hide" id="chart1-form">
                             <span class="label label-primary label-form">
                                 Water Used per Well Mean (bbls):
                             </span>
                         <span class="output output-mean">
                         </span>
-                        &nbsp;X&nbsp;
-                        <input type="text" id="Well_number" name="Well_number"
-                               placeholder="Well Number"
-                               class="form-control">
-                        <button type="button" class="btn cal-button btn-sm" id="chart1-cal-button">
-                            <span class="glyphicon glyphicon-arrow-right" aria-hidden="false"></span>
-                        </button>
+                    &nbsp;X&nbsp;
+                    <input type="text" id="Well_number" name="Well_number"
+                           placeholder="Well Number"
+                           class="form-control">
+                    <button type="button" class="btn cal-button btn-sm" id="chart1-cal-button">
+                        <span class="glyphicon glyphicon-arrow-right" aria-hidden="false"></span>
+                    </button>
                         <span class="output output-result">
                         </span>
-                    </form>
-                </div>
-
+                </form>
             </div>
 
-            <div class="panel panel-primary chart-panel" id="water-use-kpis">
-                <div class="panel-heading chart-heading">
-                    KPIs
-                </div>
-                <div class="panel-body">
-                    <form class="radio-group">
-                        <div class="col-md-4">
-                            <label class="radio-inline solution-radio additional-info-button">
-                                <input type="radio" name="inlineRadioOptions" id="water-use-kpis-radio1"
-                                       value="Water used per well">
-                                Annual Average Water Use per Well
-                            </label>
-                        </div>
-                        <div class="col-md-5">
-                            <label class="radio-inline solution-radio">
-                                <input type="radio" name="inlineRadioOptions" id="water-use-kpis-radio2"
-                                       value="Horizontal Length per Well">
-                                Annual Average Horizontal Feet Drilled
-                            </label>
-                        </div>
-                        <div class="col-md-3">
-                            <label class="radio-inline solution-radio">
-                                <input type="radio" name="inlineRadioOptions" id="water-use-kpis-radio3"
-                                       value="Water Used per horizontal Foot">
-                                Annual bbls/ft Metric
-                            </label>
-                        </div>
-                    </form>
-
-                    <div id="chart2" class="chart" style="width:100%; height:500px">
-                    </div>
-
-                </div>
-
-            </div>
-
-            <div class="panel panel-primary chart-panel" id="water-use-relationships">
-                <div class="panel-heading chart-heading">
-                    Relationships
-                </div>
-                <div class="panel-body">
-                    <form class="radio-group">
-                        <div class="col-md-4">
-                            <label class="radio-inline solution-radio additional-info-button">
-                                <input type="radio" name="inlineRadioOptions" id="water-use-relationships-radio1"
-                                       value="Water used per well">
-                                Linear
-                            </label>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="radio-inline solution-radio">
-                                <input type="radio" name="inlineRadioOptions" id="water-use-relationships-radio2"
-                                       value="Horizontal Length per Well">
-                                Quadratic
-                            </label>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="radio-inline solution-radio">
-                                <input type="radio" name="inlineRadioOptions" id="water-use-relationships-radio3"
-                                       value="Water Used per horizontal Foot">
-                                Qubic
-                            </label>
-                        </div>
-                    </form>
-
-                    <div id="chart3" class="chart" style="width:100%; height:500px">
-                    </div>
-
-                </div>
-{#                <div class="panel-footer chart-footer">#}
-{#                    Coefficients & Function:#}
-{#                    <span class="chart-footer info">&nbsp;&nbsp;Accuracy: {{ accuracy }}, RMSE: {{ RMSE }}, {{ conclusion }}</span>#}
-{##}
-{#                    <div>#}
-{#                        <div class="label label-primary ">#}
-{#                            Function: {{ Mean }}#}
-{#                        </div>#}
-{#                    </div>#}
-{##}
-{#                </div>#}
-            </div>
-
-            <hr/>
         </div>
 
+        <div class="panel panel-primary chart-panel" id="water-use-kpis">
+            <div class="panel-heading chart-heading">
+                KPIs
+            </div>
+            <div class="panel-body">
+                <form class="radio-group">
+                    <div class="col-md-4">
+                        <label class="radio-inline solution-radio additional-info-button">
+                            <input type="radio" name="inlineRadioOptions" id="water-use-kpis-radio1"
+                                   value="Water used per well">
+                            Annual Average Water Use per Well
+                        </label>
+                    </div>
+                    <div class="col-md-5">
+                        <label class="radio-inline solution-radio">
+                            <input type="radio" name="inlineRadioOptions" id="water-use-kpis-radio2"
+                                   value="Horizontal Length per Well">
+                            Annual Average Horizontal Feet Drilled
+                        </label>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="radio-inline solution-radio">
+                            <input type="radio" name="inlineRadioOptions" id="water-use-kpis-radio3"
+                                   value="Water Used per horizontal Foot">
+                            Annual bbls/ft Metric
+                        </label>
+                    </div>
+                </form>
+
+                <div id="chart2" class="chart" style="width:100%; height:500px">
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="panel panel-primary chart-panel" id="water-use-relationships">
+            <div class="panel-heading chart-heading">
+                Relationships
+            </div>
+            <div class="panel-body">
+                <form class="radio-group">
+                    <div class="col-md-4">
+                        <label class="radio-inline solution-radio additional-info-button">
+                            <input type="radio" name="inlineRadioOptions" id="water-use-relationships-radio1"
+                                   value="Water used per well">
+                            Linear
+                        </label>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="radio-inline solution-radio">
+                            <input type="radio" name="inlineRadioOptions" id="water-use-relationships-radio2"
+                                   value="Horizontal Length per Well">
+                            Quadratic
+                        </label>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="radio-inline solution-radio">
+                            <input type="radio" name="inlineRadioOptions" id="water-use-relationships-radio3"
+                                   value="Water Used per horizontal Foot">
+                            Qubic
+                        </label>
+                    </div>
+                </form>
+
+                <div id="chart3" class="chart" style="width:100%; height:500px">
+                </div>
+
+            </div>
+        </div>
+
+        <hr/>
     </div>
 {% endblock %}
 
 {% block footer %}
     <script type="text/javascript">
+        var margin = {top: 20, right: 30, bottom: 40, left: 70};
+
         // draw the base graph first, then load data when needed
         $(document).ready(function () {
-            var margin = {top: 20, right: 30, bottom: 40, left: 70},
-                    width = $(".chart").width() - margin.left - margin.right,
+            var width = $(".chart").width() - margin.left - margin.right,
                     height = $(".chart").height() - margin.top - margin.bottom;
             var init_xRange = d3.scale.linear()
                     .domain(d3.extent([0, 0]))
@@ -292,11 +276,10 @@
         }
 
         function draw_chart1(data, data_name, xlabel, scheme) {
-            var margin = {top: 20, right: 30, bottom: 40, left: 50},
-                    width = $("#chart1").width() - margin.left - margin.right,
+            var width = $("#chart1").width() - margin.left - margin.right,
                     height = $("#chart1").height() - margin.top - margin.bottom;
             // data
-            values = data[data_name];
+            var values = data[data_name];
             //chart
             var xRange = d3.scale.linear()
                     .domain(d3.extent(values, function (d) { return d; }))
@@ -355,13 +338,14 @@
                     .duration(500)
                     .attr("y", function (d) {return yRange(d.y) - 10;})
         }
+
         function update_chart1_footer(data, mean_str, std_str) {
             var mean = data[mean_str];
             var std = data[std_str];
             $(".output-mean").text(mean);
             $(".output-std").text(std);
         }
-        
+
         // histogram-1
         $("#water-use-analytics-radio-1").click(function () {
             // if the button is already in clicked status, do nothing
@@ -405,7 +389,7 @@
                 $(this).attr("width", width);
             })
         });
-        
+
         function is_Int(value) {
             return !!((parseFloat(value) == parseInt(value)) && !isNaN(value));
         }
@@ -423,8 +407,7 @@
             }
         });
         function draw_chart2(data, ylabel, scheme) {
-            var margin = {top: 20, right: 30, bottom: 40, left: 50},
-                    width = $("#chart2").width() - margin.left - margin.right,
+            var width = $("#chart2").width() - margin.left - margin.right,
                     height = $("#chart2").height() - margin.top - margin.bottom;
             var xRange = d3.scale.ordinal()
                     .domain(data.map(function (d) {return d.year;}))
@@ -506,6 +489,7 @@
                 }
             });
         }
+
         $("#water-use-kpis-radio1").click(function () {
             if ($(this).parent().hasClass("checked")) {
                 return;
@@ -514,6 +498,7 @@
                 draw_chart2(data, "Annual Average Water User per Well(bbls)", 1);
             });
         });
+
         $("#water-use-kpis-radio2").click(function () {
             if ($(this).parent().hasClass("checked")) {
                 return;
@@ -522,6 +507,7 @@
                 draw_chart2(data, "Annual Average Horizontal Feet Drilled(ft)", 2);
             });
         });
+
         $("#water-use-kpis-radio3").click(function () {
             if ($(this).parent().hasClass("checked")) {
                 return;
@@ -530,10 +516,10 @@
                 draw_chart2(data, "Annual bbls/ft Metric", 3);
             });
         });
+
         function draw_chart3(data, option) {
             var vals = data["data"];
-            var margin = {top: 20, right: 30, bottom: 40, left: 70},
-                    width = $("#chart3").width() - margin.left - margin.right,
+            var width = $("#chart3").width() - margin.left - margin.right,
                     height = $("#chart3").height() - margin.top - margin.bottom;
             var xRange = d3.scale.linear()
                     .domain([0, d3.max(vals, function (d) { return d.horizontal_length;})])

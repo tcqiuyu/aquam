@@ -1,139 +1,136 @@
-{% extends "base.html" %}
+{% extends "solutions/solutions-base.html" %}
 {% load staticfiles %}
 
-{% block header %}
-    <link rel="stylesheet" type="text/css" href="{% static 'css/chart.css' %}"/>
-    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+{% block solutions-header %}
     <script src="{% static 'js/bootstrap-slider.min.js' %}"></script>
     <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-slider.css' %}"/>
     <link rel="stylesheet" type="text/css" href="{% static 'css/custom-slider.css' %}"/>
 {% endblock %}
 
-{% block mainbody %}
-    <div class="container">
-        <div class="jumbotron">
-            <h2>Water Treatment Analyzer</h2>
-            
-            <p style="text-align: justify">
-                This Water Treatment Analyzer is an interactive tool designed for the produced water treatment. 
-                This treatment will estimate the quality of water being produced, simultaneously addressing the 
-                temporal aspects of the changing water quality. Then it supplies three methods for treatment with
-                an iteration, then gives results in three different aspects. This will help the enterprises minimize
-                the cost for produced water treatment.
-            </p>
+{% block jumbotron-header %}Water Treatment Analyzer{% endblock %}
+
+{% block jumbotron-body %}
+    This Water Treatment Analyzer is an interactive tool designed for the produced water treatment.
+    This treatment will estimate the quality of water being produced, simultaneously addressing the
+    temporal aspects of the changing water quality. Then it supplies three methods for treatment with
+    an iteration, then gives results in three different aspects. This will help the enterprises minimize
+    the cost for produced water treatment.
+{% endblock %}
+
+{% block solutions-body %}
+    <h3>Produced Water Treatment Flowchart</h3>
+    <hr>
+    <div class="bloc  l-bloc" id="bloc-2">
+        <div class="container bloc-lg text-center">
+            <img src="{% static 'img/water-treatment-flowchart.jpg' %}"
+                 style="height:600px; width:70%; max-height:100%; max-width:100%"/>
         </div>
-        <h3>Produced Water Treatment Flowchart</h3>
+    </div>
+
+    <div class="row">
+        <h3>Water Treatment Implementation</h3>
         <hr>
-        <div class="bloc  l-bloc" id="bloc-2">
-            <div class="container bloc-lg text-center">
-                <img src="{% static 'img/water-treatment-flowchart.jpg' %}" style="height:600px; width:70%; max-height:100%; max-width:100%"/>
-            </div>
-        </div>
-                
-        <div class="row">
-            <h3>Water Treatment Implementation</h3>
-            <hr>
-            <div class="col-md-6">
-                <div class="panel panel-info">
-                    <!-- Default panel contents -->
-                    <div class="panel-heading">Methods</div>
-                    <div class="panel-body">
-                        <table class="table table-bordered table-striped">
-                            <thead>
-                            <tr>
-                                <th class="col-md-2"></th>
-                                <th class="col-md-3 row-head"><i>Coagulation/Filtration</i></th>
-                                <th class="col-md-3 row-head"><i>Softening/Clarification</i></th>
-                                <th class="col-md-3 row-head"><i>Reverse Osmosis</i></th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr>
-                                <td class="col-head">TDS</td>
-                                <td class="col-body" id="methods-tds-1"></td>
-                                <td class="col-body" id="methods-tds-2"></td>
-                                <td class="col-body" id="methods-tds-3"></td>
-                            </tr>
-                            <tr>
-                                <td class="col-head">Sodium</td>
-                                <td class="col-body" id="methods-sodium-1"></td>
-                                <td class="col-body" id="methods-sodium-2"></td>
-                                <td class="col-body" id="methods-sodium-3"></td>
-                            </tr>
-                            <tr>
-                                <td class="col-head">Chloride</td>
-                                <td class="col-body" id="methods-chloride-1"></td>
-                                <td class="col-body" id="methods-chloride-2"></td>
-                                <td class="col-body" id="methods-chloride-3"></td>
-                            </tr>
-                            <tr>
-                                <td class="col-head">Calcium</td>
-                                <td class="col-body" id="methods-calcium-1"></td>
-                                <td class="col-body" id="methods-calcium-2"></td>
-                                <td class="col-body" id="methods-calcium-3"></td>
-                            </tr>
-                            <tr>
-                                <td class="col-head">Iron</td>
-                                <td class="col-body" id="methods-iron-1"></td>
-                                <td class="col-body" id="methods-iron-2"></td>
-                                <td class="col-body" id="methods-iron-3"></td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-
-            <div class="col-md-6">
-                <div class="panel panel-info">
-                    <!-- Default panel contents -->
-                    <div class="panel-heading">Parameters</div>
-                    <div class="panel-body">
-                        <table class="table table-bordered table-striped" id="water-treatment-table-2">
-                            <thead>
-                            <tr>
-                                <th class="row-head row-head-1"></th>
-                                <th class="row-head row-head-2"><i>Critical Fracturing Fluids Quality</i></th>
-                                <th class="row-head row-head-3"><i>Fresh Water Quality</i></th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr>
-                                <td class="col-head">TDS</td>
-                                <td class="col-body" id="parameters-tds-1"></td>
-                                <td class="col-body" id="parameters-tds-2"></td>
-                            </tr>
-                            <tr>
-                                <td class="col-head">Sodium</td>
-                                <td class="col-body" id="parameters-sodium-1"></td>
-                                <td class="col-body" id="parameters-sodium-2"></td>
-                            </tr>
-                            <tr>
-                                <td class="col-head">Chloride</td>
-                                <td class="col-body" id="parameters-chloride-1"></td>
-                                <td class="col-body" id="parameters-chloride-2"></td>
-                            </tr>
-                            <tr>
-                                <td class="col-head">Calcium</td>
-                                <td class="col-body" id="parameters-calcium-1"></td>
-                                <td class="col-body" id="parameters-calcium-2"></td>
-                            </tr>
-                            <tr>
-                                <td class="col-head">Iron</td>
-                                <td class="col-body" id="parameters-iron-1"></td>
-                                <td class="col-body" id="parameters-iron-2"></td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
+        <div class="col-md-6">
+            <div class="panel panel-info">
+                <!-- Default panel contents -->
+                <div class="panel-heading">Methods</div>
+                <div class="panel-body">
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                        <tr>
+                            <th class="col-md-2"></th>
+                            <th class="col-md-3 row-head"><i>Coagulation/Filtration</i></th>
+                            <th class="col-md-3 row-head"><i>Softening/Clarification</i></th>
+                            <th class="col-md-3 row-head"><i>Reverse Osmosis</i></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td class="col-head">TDS</td>
+                            <td class="col-body" id="methods-tds-1"></td>
+                            <td class="col-body" id="methods-tds-2"></td>
+                            <td class="col-body" id="methods-tds-3"></td>
+                        </tr>
+                        <tr>
+                            <td class="col-head">Sodium</td>
+                            <td class="col-body" id="methods-sodium-1"></td>
+                            <td class="col-body" id="methods-sodium-2"></td>
+                            <td class="col-body" id="methods-sodium-3"></td>
+                        </tr>
+                        <tr>
+                            <td class="col-head">Chloride</td>
+                            <td class="col-body" id="methods-chloride-1"></td>
+                            <td class="col-body" id="methods-chloride-2"></td>
+                            <td class="col-body" id="methods-chloride-3"></td>
+                        </tr>
+                        <tr>
+                            <td class="col-head">Calcium</td>
+                            <td class="col-body" id="methods-calcium-1"></td>
+                            <td class="col-body" id="methods-calcium-2"></td>
+                            <td class="col-body" id="methods-calcium-3"></td>
+                        </tr>
+                        <tr>
+                            <td class="col-head">Iron</td>
+                            <td class="col-body" id="methods-iron-1"></td>
+                            <td class="col-body" id="methods-iron-2"></td>
+                            <td class="col-body" id="methods-iron-3"></td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
 
-        <div class="chart-container" style="width:100%">
-            <div class="panel panel-primary chart-panel" id="water-treatment-analytics">
-                <div class="panel-heading">
+
+        <div class="col-md-6">
+            <div class="panel panel-info">
+                <!-- Default panel contents -->
+                <div class="panel-heading">Parameters</div>
+                <div class="panel-body">
+                    <table class="table table-bordered table-striped" id="water-treatment-table-2">
+                        <thead>
+                        <tr>
+                            <th class="row-head row-head-1"></th>
+                            <th class="row-head row-head-2"><i>Critical Fracturing Fluids Quality</i></th>
+                            <th class="row-head row-head-3"><i>Fresh Water Quality</i></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td class="col-head">TDS</td>
+                            <td class="col-body" id="parameters-tds-1"></td>
+                            <td class="col-body" id="parameters-tds-2"></td>
+                        </tr>
+                        <tr>
+                            <td class="col-head">Sodium</td>
+                            <td class="col-body" id="parameters-sodium-1"></td>
+                            <td class="col-body" id="parameters-sodium-2"></td>
+                        </tr>
+                        <tr>
+                            <td class="col-head">Chloride</td>
+                            <td class="col-body" id="parameters-chloride-1"></td>
+                            <td class="col-body" id="parameters-chloride-2"></td>
+                        </tr>
+                        <tr>
+                            <td class="col-head">Calcium</td>
+                            <td class="col-body" id="parameters-calcium-1"></td>
+                            <td class="col-body" id="parameters-calcium-2"></td>
+                        </tr>
+                        <tr>
+                            <td class="col-head">Iron</td>
+                            <td class="col-body" id="parameters-iron-1"></td>
+                            <td class="col-body" id="parameters-iron-2"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="chart-container" style="width:100%">
+        <div class="panel panel-primary chart-panel" id="water-treatment-analytics">
+            <div class="panel-heading">
                     <span class="text-left">
                         Select location here --->
                     </span>
@@ -145,154 +142,154 @@
                         <ul class="dropdown-menu" id="dp-content">
                         </ul>
                     </span>
-                </div>
-                <div class="panel-body">
+            </div>
+            <div class="panel-body">
 
-                    <div class="row">
-                        <div class="col-md-3">
-                            <div class="panel panel-info">
-                                <!-- Default panel contents -->
-                                <div class="panel-heading">Fitting Equation</div>
-                                <div class="panel-body">
-                                    <p>
-                                        <b><i>WQ = &alpha; * ln(t) + &beta;</i></b>
-                                    </p>
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="panel panel-info">
+                            <!-- Default panel contents -->
+                            <div class="panel-heading">Fitting Equation</div>
+                            <div class="panel-body">
+                                <p>
+                                    <b><i>WQ = &alpha; * ln(t) + &beta;</i></b>
+                                </p>
 
-                                    <hr>
+                                <hr>
 
-                                    <table class="table table-bordered table-striped">
-                                        <thead>
-                                        <tr>
-                                            <th class="col-md-2"></th>
-                                            <th class="col-md-3 row-head"><i>&alpha;</i></th>
-                                            <th class="col-md-3 row-head"><i>&beta;</i></th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        <tr>
-                                            <td class="col-head">TDS</td>
-                                            <td class="col-body" id="tds-k"></td>
-                                            <td class="col-body" id="tds-d"></td>
-                                        </tr>
-                                        <tr>
-                                            <td class="col-head">Sodium</td>
-                                            <td class="col-body" id="sodium-k"></td>
-                                            <td class="col-body" id="sodium-d"></td>
-                                        </tr>
-                                        <tr>
-                                            <td class="col-head">Chloride</td>
-                                            <td class="col-body" id="chloride-k"></td>
-                                            <td class="col-body" id="chloride-d"></td>
-                                        </tr>
-                                        <tr>
-                                            <td class="col-head">Calcium</td>
-                                            <td class="col-body" id="calcium-k"></td>
-                                            <td class="col-body" id="calcium-d"></td>
-                                        </tr>
-                                        <tr>
-                                            <td class="col-head">Iron</td>
-                                            <td class="col-body" id="iron-k"></td>
-                                            <td class="col-body" id="iron-d"></td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
+                                <table class="table table-bordered table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th class="col-md-2"></th>
+                                        <th class="col-md-3 row-head"><i>&alpha;</i></th>
+                                        <th class="col-md-3 row-head"><i>&beta;</i></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td class="col-head">TDS</td>
+                                        <td class="col-body" id="tds-k"></td>
+                                        <td class="col-body" id="tds-d"></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="col-head">Sodium</td>
+                                        <td class="col-body" id="sodium-k"></td>
+                                        <td class="col-body" id="sodium-d"></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="col-head">Chloride</td>
+                                        <td class="col-body" id="chloride-k"></td>
+                                        <td class="col-body" id="chloride-d"></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="col-head">Calcium</td>
+                                        <td class="col-body" id="calcium-k"></td>
+                                        <td class="col-body" id="calcium-d"></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="col-head">Iron</td>
+                                        <td class="col-body" id="iron-k"></td>
+                                        <td class="col-body" id="iron-d"></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
-
-                        <div class="col-md-9">
-                            <div class="panel panel-info">
-                                <!-- Default panel contents -->
-                                <div class="panel-heading">Arp's Model</div>
-                                <div class="panel-body">
-                                    <div class="eq-c">
-                                        <i>q</i>(t) =
-                                        <div class="fraction">
-                                            <span class="fup">Q<sub>0</sub></span>
-                                            <span class="bar">/</span>
-                                            <span class="fdn">( 1 + D * t ) <i><sup>1/b</sup></i></span>
-                                        </div>
-                                    </div>
-
-                                    <hr>
-
-                                    <table class="table table-bordered table-striped">
-                                        <thead>
-                                        <tr>
-                                            <th></th>
-                                            <th class="row-head">Fracturing Flowback (1 month)</th>
-                                            <th class="row-head">Transition (4 months)</th>
-                                            <th class="row-head">Produced Water (after 5 months)</th>
-
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        <tr>
-                                            <td class="col-head">Q<sub>0</sub></td>
-                                            <td class="col-body" id="q0-1"></td>
-                                            <td class="col-body" id="q0-2"></td>
-                                            <td class="col-body" id="q0-3"></td>
-                                        </tr>
-                                        <tr>
-                                            <td class="col-head">D</td>
-                                            <td class="col-body" id="d-1"></td>
-                                            <td class="col-body" id="d-2"></td>
-                                            <td class="col-body" id="d-3"></td>
-                                        </tr>
-                                        <tr>
-                                            <td class="col-head">b</td>
-                                            <td class="col-body" id="b-1"></td>
-                                            <td class="col-body" id="b-2"></td>
-                                            <td class="col-body" id="b-3"></td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-
                     </div>
 
-                    <hr>
+                    <div class="col-md-9">
+                        <div class="panel panel-info">
+                            <!-- Default panel contents -->
+                            <div class="panel-heading">Arp's Model</div>
+                            <div class="panel-body">
+                                <div class="eq-c">
+                                    <i>q</i>(t) =
+                                    <div class="fraction">
+                                        <span class="fup">Q<sub>0</sub></span>
+                                        <span class="bar">/</span>
+                                        <span class="fdn">( 1 + D * t ) <i><sup>1/b</sup></i></span>
+                                    </div>
+                                </div>
 
-                    <div class="eq-c">
-                        <i>q</i>(t) =
-                        <div class="fraction">
-                            <span class="fup">Q<sub>0</sub></span>
-                            <span class="bar">/</span>
-                            <span class="fdn">( 1 + D * t ) <i><sup>1/b</sup></i></span>
+                                <hr>
+
+                                <table class="table table-bordered table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th class="row-head">Fracturing Flowback (1 month)</th>
+                                        <th class="row-head">Transition (4 months)</th>
+                                        <th class="row-head">Produced Water (after 5 months)</th>
+
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td class="col-head">Q<sub>0</sub></td>
+                                        <td class="col-body" id="q0-1"></td>
+                                        <td class="col-body" id="q0-2"></td>
+                                        <td class="col-body" id="q0-3"></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="col-head">D</td>
+                                        <td class="col-body" id="d-1"></td>
+                                        <td class="col-body" id="d-2"></td>
+                                        <td class="col-body" id="d-3"></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="col-head">b</td>
+                                        <td class="col-body" id="b-1"></td>
+                                        <td class="col-body" id="b-2"></td>
+                                        <td class="col-body" id="b-3"></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
-                        * <i>recycle</i>%&nbsp;&nbsp;&nbsp;( b > 0 )
+                    </div>
+
+                </div>
+
+                <hr>
+
+                <div class="eq-c">
+                    <i>q</i>(t) =
+                    <div class="fraction">
+                        <span class="fup">Q<sub>0</sub></span>
+                        <span class="bar">/</span>
+                        <span class="fdn">( 1 + D * t ) <i><sup>1/b</sup></i></span>
+                    </div>
+                    * <i>recycle</i>%&nbsp;&nbsp;&nbsp;( b > 0 )
                         <span class="text-center" style="margin-left: 20%">
                             <i>q</i>(t) = Q<sub>0</sub> * t<sup>D</sup>
                             %&nbsp;&nbsp;&nbsp;( b = 0 )
                         </span>
 
-                    </div>
-                    <div class="row water-treatment-submit-panel">
-                        <form class="form-inline">
-                            <div class="col-md-5">
-                                <span class="label label-primary water-treatment-label">End day</span>
-                                <input id="water-treatment-slider"
-                                       type="text"
-                                       class="span2"/>
-                                <input type="text" class="input-sm form-control" name="end_day"
-                                       id="end-day-input" onkeypress="return isNumberKey(event)"
-                                       onkeydown="return updateSlider(event)"/>
-                            </div>
-                            <div class="col-md-2">
-                                <span class="label label-primary water-treatment-label">Stages</span>
-                                <input type="text" class="input-sm form-control" name="stage_number"
-                                       id="stages-input" onkeypress="return isNumberKey(event)">
-                            </div>
-                            <div class="col-md-2">
-                                <span class="label label-primary water-treatment-label">Recycle</span>
-                                <input type="text" class="input-sm form-control" name="recycle_input"
-                                       id="recycle-input" onkeypress="return isNumberKey(event)"
-                                       onkeydown="return validRecycle(event)"/>%
-                            </div>
+                </div>
+                <div class="row water-treatment-submit-panel">
+                    <form class="form-inline">
+                        <div class="col-md-5">
+                            <span class="label label-primary water-treatment-label">End day</span>
+                            <input id="water-treatment-slider"
+                                   type="text"
+                                   class="span2"/>
+                            <input type="text" class="input-sm form-control" name="end_day"
+                                   id="end-day-input" onkeypress="return isNumberKey(event)"
+                                   onkeydown="return updateSlider(event)"/>
+                        </div>
+                        <div class="col-md-2">
+                            <span class="label label-primary water-treatment-label">Stages</span>
+                            <input type="text" class="input-sm form-control" name="stage_number"
+                                   id="stages-input" onkeypress="return isNumberKey(event)">
+                        </div>
+                        <div class="col-md-2">
+                            <span class="label label-primary water-treatment-label">Recycle</span>
+                            <input type="text" class="input-sm form-control" name="recycle_input"
+                                   id="recycle-input" onkeypress="return isNumberKey(event)"
+                                   onkeydown="return validRecycle(event)"/>%
+                        </div>
 
-                            <div class="col-md-3">
+                        <div class="col-md-3">
                                 <span>
                                 Select Constitutent:
                                 </span>
@@ -310,54 +307,44 @@
                                         <li><a>Iron</a></li>
                                     </ul>
                                 </span>
-                            </div>
-                        </form>
-                        <div class="col-md-2 col-md-offset-5">
-                            <button type="button" class="btn btn-success dropdown-toggle"
-                                    id="water-treatment-cal-btn">Calculate
-                            </button>
                         </div>
+                    </form>
+                    <div class="col-md-2 col-md-offset-5">
+                        <button type="button" class="btn btn-success dropdown-toggle"
+                                id="water-treatment-cal-btn">Calculate
+                        </button>
                     </div>
-                    <hr>
+                </div>
+                <hr>
 
-                    <div class="panel panel-primary chart-panel hide" id="water-treatment-chart">
-                        <div class="panel-heading chart-heading water-treatment-head">
-                            <div class="dropdown">
-                                <button type="button" class="btn btn-primary dropdown-toggle"
-                                        id="water-treatment-graph-dp" data-toggle="dropdown">
-                                    <span id="water-treatment-graph-dp-title">Select Water Treatment Result</span>
-                                    <span class="caret"></span></button>
-                                <ul class="dropdown-menu" id="water-treatment-graph-dp-content">
-                                    <li><a id="wqfrac_iter_1">WQfrac_iter_1</a></li>
-                                    <li><a id="wqfrac_iter_2">WQfrac_iter_2</a></li>
-                                    <li><a id="wqfrac_iter_3">WQfrac_iter_3</a></li>
-                                    <li><a id="ratio_iter_1">VFresh1/Vrec</a></li>
-                                    <li><a id="ratio_iter_2">VFresh2/Vrec</a></li>
-                                    <li><a id="ratio_iter_3">VFresh3/Vrec</a></li>
-                                    <li><a id="vfresh_iter_1">VFresh_iter_1</a></li>
-                                    <li><a id="vfresh_iter_2">VFresh_iter_2</a></li>
-                                    <li><a id="vfresh_iter_3">VFresh_iter_3</a></li>
-                                </ul>
-                            </div>
-
-                        </div>
-                        <div class="panel-body">
-                            <div id="chart1" class="chart" style="width:100%; height:500px">
-                            </div>
+                <div class="panel panel-primary chart-panel hide" id="water-treatment-chart">
+                    <div class="panel-heading chart-heading water-treatment-head">
+                        <div class="dropdown">
+                            <button type="button" class="btn btn-primary dropdown-toggle"
+                                    id="water-treatment-graph-dp" data-toggle="dropdown">
+                                <span id="water-treatment-graph-dp-title">Select Water Treatment Result</span>
+                                <span class="caret"></span></button>
+                            <ul class="dropdown-menu" id="water-treatment-graph-dp-content">
+                                <li><a id="wqfrac_iter_1">WQfrac_iter_1</a></li>
+                                <li><a id="wqfrac_iter_2">WQfrac_iter_2</a></li>
+                                <li><a id="wqfrac_iter_3">WQfrac_iter_3</a></li>
+                                <li><a id="ratio_iter_1">VFresh1/Vrec</a></li>
+                                <li><a id="ratio_iter_2">VFresh2/Vrec</a></li>
+                                <li><a id="ratio_iter_3">VFresh3/Vrec</a></li>
+                                <li><a id="vfresh_iter_1">VFresh_iter_1</a></li>
+                                <li><a id="vfresh_iter_2">VFresh_iter_2</a></li>
+                                <li><a id="vfresh_iter_3">VFresh_iter_3</a></li>
+                            </ul>
                         </div>
 
-                        {#                        <div class="panel-footer chart-footer" id="chart1-footer">#}
-                        {#                        Filter by days interval: <b id="slider-day-start"></b> <input id="water-quality-slider"#}
-                        {#                                                                                      type="text"#}
-                        {#                                                                                      class="span2"/>#}
-                        {#                        <b id="slider-day-end"></b>#}
-                        {##}
-                        {#                        </div>#}
+                    </div>
+                    <div class="panel-body">
+                        <div id="chart1" class="chart" style="width:100%; height:500px">
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-
     </div>
 {% endblock %}
 
@@ -468,7 +455,7 @@
         }
 
         function isNumberKey(evt) {
-            var charCode = (evt.which) ? evt.which : event.keyCode
+            var charCode = (evt.which) ? evt.which : event.keyCode;
             return !(charCode > 31 && (charCode < 48 || charCode > 57));
 
         }
@@ -511,7 +498,6 @@
             } else {
                 alert("Invalid input");
             }
-
         });
 
         $("#dp-constitutent").find("li").click(function () {
