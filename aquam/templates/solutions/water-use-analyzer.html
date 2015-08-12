@@ -102,9 +102,9 @@
                         </span>
                 </form>
             </div>
-
+        
         </div>
-
+        
         <div class="panel panel-primary chart-panel" id="water-use-kpis">
             <div class="panel-heading chart-heading">
                 KPIs
@@ -183,7 +183,7 @@
 {% block footer %}
     <script type="text/javascript">
         var margin = {top: 20, right: 30, bottom: 40, left: 70};
-
+        
         // draw the base graph first, then load data when needed
         $(document).ready(function () {
             var width = $(".chart").width() - margin.left - margin.right,
@@ -387,7 +387,7 @@
             $("svg").each(function () {
                 var width = $(this).parent().width();
                 $(this).attr("width", width);
-            })
+            });
         });
 
         function is_Int(value) {
