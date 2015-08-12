@@ -42,6 +42,9 @@
             height: 400px;
             width: 100%;
         }
+        #well-number, #total, #mean{
+            color: blue;
+        }
     </style>
 {% endblock %}
 
@@ -102,6 +105,11 @@
         <div id="charts">
             <div id="chart1" class="chart"></div>
         </div>
+        <div id="stat">
+            <p>Wells Number: <span id="well-number">________</span></p>
+            <p>Total Water Use: <span id="total">________</span> (bbls)</p>
+            <p>Average Water Use: <span id="mean">________</span> (bbls)</p>
+        </div>
     </div>
 {% endblock %}
 
@@ -158,8 +166,8 @@
                     format:{ dateFormat:"shortDate" }
                 },
                 {
-                    fieldName:"state", 
-                    label:"State", 
+                    fieldName:"state",
+                    label:"State",
                     visible:true
                 },
                 {
@@ -256,7 +264,6 @@
             // map
             var map = response.map;
             map.disableScrollWheelZoom();
-            console.log(map);
             
             //add the scalebar
             var scalebar = new Scalebar({
@@ -314,13 +321,17 @@ require([
          "esri/layers/FeatureLayer",
          "esri/map",
          "esri/renderers/SimpleRenderer",
+         "esri/SpatialReference",
          "esri/symbols/SimpleMarkerSymbol",
          "esri/symbols/SimpleFillSymbol",
+         "esri/tasks/AreasAndLengthsParameters",
+         "esri/tasks/GeometryService",
          "esri/tasks/query",
          "esri/toolbars/draw",
          "dojo/dom",
          "dojo/on",
          "dojo/_base/array",
+         "dojo/_base/lang",
          "dojo/domReady!"
          ], function(
              Color,
@@ -331,13 +342,17 @@ require([
              FeatureLayer,
              Map,
              SimpleRenderer,
+             SpatialReference,
              SimpleMarkerSymbol,
              SimpleFillSymbol,
+             AreasAndLengthsParameters,
+             GeometryService,
              Query,
              Draw,
              dom,
              on,
-             arrayUtil
+             arrayUtil,
+             lang
          ){
              var map = new Map("map4", {
                  basemap: "topo",
@@ -406,6 +421,10 @@ require([
              //draw graphic
              var graphic = new Graphic(); 
              function activateToolbar(event){
+                 // map
+                 map.disableScrollWheelZoom();
+                 
+                 
                  var toolbar = new Draw(event.map);
                  // toolbar
                  on(dom.byId("toolbar"), "click", function(event){
@@ -414,6 +433,7 @@ require([
                      }
                      if ( event.target.id === "clear" ) {
                          map.graphics.clear();
+                         map.disableScrollWheelZoom();
                          featureLayer.clearSelection();
                          return;
                      }
@@ -421,21 +441,36 @@ require([
                      var tool = event.target.id.toLowerCase();
                      map.disableMapNavigation();
                      toolbar.activate(tool);
+                     // events
+                     toolbar.on("draw-end", function(event){
+                         toolbar.deactivate();
+                         map.enableMapNavigation();
+                         map.disableScrollWheelZoom();
+                         // graphic & attr
+                         graphic.setGeometry(event.geometry);
+                         graphic.setSymbol(new SimpleFillSymbol());
+                         map.graphics.add(graphic);
+                         var attr = {"Area":null, "Perimeter":null};
+                         var areasAndLengthParams = new AreasAndLengthsParameters();
+                         areasAndLengthParams.lengthUnit = GeometryService.UNIT_FOOT;
+                         areasAndLengthParams.areaUnit = GeometryService.UNIT_SQUARE_MILES;
+                         areasAndLengthParams.calculationType = "planar";
+                         areasAndLengthParams.polygons = [event.geometry];
+                         var geometryService = new GeometryService("http://sampleserver6.arcgisonline.com/arcgis/rest/services/Utilities/Geometry/GeometryServer");
+                         geometryService.areasAndLengths(areasAndLengthParams);
+                         geometryService.on("areas-and-lengths-complete", function(eventObj){
+                             result = eventObj.result;
+                             attr.Area = result.areas[0].toFixed(3);
+                             attr.Perimeter = result.lengths[0].toFixed(3);
+                         });
+                         graphic.setAttributes(attr);
+                         // query
+                         var query = new Query();
+                         query.geometry = event.geometry;
+                         featureLayer.selectFeatures(query, FeatureLayer.SELECTION_NEW);
+                         featureLayer.on("selection-complete", summerize);
+                     });
                  });
-                 // events
-                 toolbar.on("draw-end", function(event){
-                     toolbar.deactivate();
-                     map.enableMapNavigation();
-                     // graphic
-                     graphic.setGeometry(event.geometry);
-                     graphic.setSymbol(new SimpleFillSymbol());
-                     map.graphics.add(graphic);
-                     // query
-                     var query = new Query();
-                     query.geometry = event.geometry;
-                     featureLayer.selectFeatures(query, FeatureLayer.SELECTION_NEW);
-                 });
-                 featureLayer.on("selection-complete", summerize);
              }
              function summerize(event){
                  // water use
@@ -447,29 +482,33 @@ require([
                      waterUseArray.push(parseInt(feature.attributes.water_use));
                  });
                  var meanWaterUse = totalWaterUse/featuresNumber;
+                 //stat
+                 $("#well-number").text(featuresNumber);
+                 $("#total").text(Math.round(totalWaterUse));
+                 $("#mean").text(Math.round(meanWaterUse));
                  // graphic
-                 var attr = {"Total": Math.round(totalWaterUse), "Mean": Math.round(meanWaterUse)};
-                 graphic.setAttributes(attr);
                  var template = new PopupTemplate({
-                     title:"Water Use Summerization",
+                     title:"Graphic Info",
                      fieldInfos: [
                          {
-                             fieldName:"Total",
+                             fieldName:"Area",
+                             label: "Area (square miles):",
                              visible:true
                          },
                          {
-                             fieldName:"Mean",
+                             fieldName:"Perimeter",
+                             label: "Perimeter (foot):",
                              visible:true
                          }
                      ],
                  });
                  graphic.setInfoTemplate(template);
+                 
                  // chart
                  var margin = {top: 20, right: 30, bottom: 40, left: 70};
                  var width = $("#chart1").width() - margin.left - margin.right, 
                      height = $("#chart1").height() - margin.top - margin.bottom;
                  var values = waterUseArray;
-                 console.log(values);
                  var xRange = d3.scale.linear()
                          .domain(d3.extent(values, function (d) { return d; }))
                          .range([0, width]);
@@ -524,7 +563,7 @@ require([
                  bar.selectAll("text")
                          .transition()
                          .duration(500)
-                         .attr("y", function (d) {return yRange(d.y) - 10;})
+                         .attr("y", function (d) {return yRange(d.y) - 10;});
              }
          });
 </script>
