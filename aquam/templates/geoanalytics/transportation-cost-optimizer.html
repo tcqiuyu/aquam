@@ -3,13 +3,21 @@
 
 {% block header %}
     <link rel="stylesheet" href="http://js.arcgis.com/3.13/esri/css/esri.css">
-    <script src="http://js.arcgis.com/3.13/"></script>
+    <style type="text/css">
+        .map{
+            position:relative;
+            width:100%;
+            height:600px;
+            border: 1px solid #A4A4A4;
+            border-radius: 3px;
+        }
+    </style>
 {% endblock %}
 
 {% block mainbody %}
     <div class="jumbotron">
         <div class="container">
-            <h2>Transportantion & Cost Optimizer - Coming Soon...</h2>
+            <h2>Transportantion & Cost Optimizer</h2>
             <p style="text-align: justify">
                 This optimizer is an interactive tool designed to optimize the route for produced water transportation.
                 An optimized route will help to minimize the cost and save time.
@@ -19,19 +27,104 @@
     
     <div class="bloc  l-bloc" id="bloc-2">
         <div class="container bloc-lg">
-            <img src="{% static 'img/slide-1.png' %}" style="height:600px; width:100%; max-height:100%; max-width:100%"/>
-            <hr class="featurette-divider">
-            <img src="{% static 'img/slide-2.png' %}" style="height:600px; width:100%; max-height:100%; max-width:100%"/>
-            <hr class="featurette-divider">
-            <img src="{% static 'img/slide-3.png' %}" style="height:600px; width:100%; max-height:100%; max-width:100%"/>
-            <hr class="featurette-divider">
-            <img src="{% static 'img/slide-4.png' %}" style="height:600px; width:100%; max-height:100%; max-width:100%"/>
+            <div class="map">
+                <div id="map1"></div>
+            </div>
         </div>
     </div>
 {% endblock %}
 
 {% block footer %}
+<script src="http://js.arcgis.com/3.13/"></script>
 <script type="text/javascript">
-
+    require([
+    "esri/dijit/Scalebar",
+    "esri/graphic",
+    "esri/map",
+    "esri/symbols/SimpleMarkerSymbol",
+    "esri/symbols/SimpleLineSymbol",
+    "esri/tasks/FeatureSet",
+    "esri/tasks/RouteParameters",
+    "esri/tasks/RouteTask",
+    "esri/urlUtils",
+    "dojo/on",
+    "dojo/domReady!"
+    ], function(
+        Scalebar,
+        Graphic,
+        Map,
+        SimpleMarkerSymbol,
+        SimpleLineSymbol,
+        FeatureSet,
+        RouteParameters,
+        RouteTask,
+        urlUtils,
+        on
+    ){
+        //map
+        var map = new Map("map1", {
+            basemap: "streets",
+            center: [-98.88, 28.5],
+            zoom: 10
+        });
+        map.on("load", function() {
+            map.disableScrollWheelZoom();
+        });
+        var scalebar = new Scalebar({
+            map: map,
+            scalebarUnit: "dual"
+        });
+        //sproxy
+        urlUtils.addProxyRule({
+            urlPrefix: "route.arcgis.com",  
+            proxyUrl: "/sproxy/"
+        });
+        //add stops
+        map.on("click", addStop);
+        
+        //routing
+        routingServiceUrl = "http://utility.arcgis.com/usrsvcs/servers/cc83495aa68841219353131cf078a2ea/rest/services/World/Route/NAServer/Route_World"
+        var routeTask = new RouteTask(routingServiceUrl);
+        var routeParams = new RouteParameters();
+        routeParams.stops = new FeatureSet();
+        routeParams.outSpatialReference = {
+            "wkid" : 102100
+        };
+        routeTask.on("solve-complete", showRoute);
+        //routeTask.on("error", errorHandler);
+        
+        //functions
+        //Adds a graphic when the user clicks the map. If 2 or more points exist, route is solved.
+        function addStop(event){
+            var stopSymbol = new SimpleMarkerSymbol({
+                type: "esriSMS",
+                style: "esriSMSCircle",
+                color: [255, 40, 40, 100],
+                size: 12,
+                outline: {
+                    width: 0.5,
+                    color: [160, 160,160, 70]
+                }
+            });
+            var grahic = new Graphic(event.mapPoint, stopSymbol);
+            var stop = map.graphics.add(grahic);
+            routeParams.stops.features.push(stop);
+            if (routeParams.stops.features.length >= 3) {
+                routeTask.solve(routeParams);
+                lastStop = routeParams.stops.features.splice(0, 1)[0];
+            }
+        }
+        //Adds the solved route to the map as a graphic
+        function showRoute(evt) {
+            var routeSymbol = new SimpleLineSymbol();
+            map.graphics.add(evt.result.routeResults[0].route.setSymbol(routeSymbol));
+        }
+        //Displays any error returned by the Route Task
+        function errorHandler(err) {
+            alert("An error occured\n" + err.message + "\n" + err.details.join("\n"));
+            routeParams.stops.features.splice(0, 0, lastStop);
+            map.graphics.remove(routeParams.stops.features.splice(1, 1)[0]);
+        }
+    });
 </script>
 {% endblock %}
