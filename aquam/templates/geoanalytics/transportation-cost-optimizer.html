@@ -3,11 +3,42 @@
 
 {% block header %}
     <link rel="stylesheet" href="http://js.arcgis.com/3.13/esri/css/esri.css">
+    <link rel="stylesheet" href="http://js.arcgis.com/3.14/dgrid/css/dgrid.css">
     <style type="text/css">
         .map{
             position:relative;
             width:100%;
             height:600px;
+            border: 1px solid #A4A4A4;
+            border-radius: 3px;
+        }
+        #direction-details{
+            height: 400px;
+            width: 100%;
+            border: 1px solid #A4A4A4;
+            border-radius: 3px;
+        }
+        #grid{
+            height: 100%;
+        }
+        .dgrid-row{
+            padding:5px;
+            margin-bottom:5px;
+            min-height:50px;
+            border-bottom: solid 1px #C0C0C0;
+        }
+        .dgrid-row .detail div {
+            cursor: pointer;
+        }
+        .dgrid-row .detail div:hover{
+            text-decoration:underline;
+        }
+        .distance{
+            float:right;
+            color:#C0C0C0;
+            font-style:italic;
+        }
+        #cost{
             border: 1px solid #A4A4A4;
             border-radius: 3px;
         }
@@ -27,8 +58,18 @@
     
     <div class="bloc  l-bloc" id="bloc-2">
         <div class="container bloc-lg">
+            <p>** Click the map to add 2 points</p>
             <div class="map">
                 <div id="map1"></div>
+            </div>
+            <h4>Route Details</h4>
+            <div id="direction-details">
+                <div id="grid"></div>
+            </div>
+            <h4>Cost Calculation</h4>
+            <div id="cost">
+                <p>Total Distance: <span id="total-distance">______</span> miles</p>
+                <p>Total Drive Time: <span id="total-time">______</span> minutes</p>
             </div>
         </div>
     </div>
@@ -38,93 +79,149 @@
 <script src="http://js.arcgis.com/3.13/"></script>
 <script type="text/javascript">
     require([
-    "esri/dijit/Scalebar",
-    "esri/graphic",
-    "esri/map",
-    "esri/symbols/SimpleMarkerSymbol",
-    "esri/symbols/SimpleLineSymbol",
-    "esri/tasks/FeatureSet",
-    "esri/tasks/RouteParameters",
-    "esri/tasks/RouteTask",
-    "esri/urlUtils",
-    "dojo/on",
-    "dojo/domReady!"
-    ], function(
-        Scalebar,
-        Graphic,
-        Map,
-        SimpleMarkerSymbol,
-        SimpleLineSymbol,
-        FeatureSet,
-        RouteParameters,
-        RouteTask,
-        urlUtils,
-        on
-    ){
-        //map
-        var map = new Map("map1", {
-            basemap: "streets",
-            center: [-98.88, 28.5],
-            zoom: 10
-        });
-        map.on("load", function() {
-            map.disableScrollWheelZoom();
-        });
-        var scalebar = new Scalebar({
-            map: map,
-            scalebarUnit: "dual"
-        });
-        //sproxy
-        urlUtils.addProxyRule({
-            urlPrefix: "route.arcgis.com",  
-            proxyUrl: "/sproxy/"
-        });
-        //add stops
-        map.on("click", addStop);
-        
-        //routing
-        routingServiceUrl = "http://utility.arcgis.com/usrsvcs/servers/cc83495aa68841219353131cf078a2ea/rest/services/World/Route/NAServer/Route_World"
-        var routeTask = new RouteTask(routingServiceUrl);
-        var routeParams = new RouteParameters();
-        routeParams.stops = new FeatureSet();
-        routeParams.outSpatialReference = {
-            "wkid" : 102100
-        };
-        routeTask.on("solve-complete", showRoute);
-        //routeTask.on("error", errorHandler);
-        
-        //functions
-        //Adds a graphic when the user clicks the map. If 2 or more points exist, route is solved.
-        function addStop(event){
-            var stopSymbol = new SimpleMarkerSymbol({
-                type: "esriSMS",
-                style: "esriSMSCircle",
-                color: [255, 40, 40, 100],
-                size: 12,
-                outline: {
-                    width: 0.5,
-                    color: [160, 160,160, 70]
-                }
+        "esri/Color",
+        "esri/dijit/Scalebar",
+        "esri/graphic",
+        "esri/lang",
+        "esri/map",
+        "esri/symbols/SimpleMarkerSymbol",
+        "esri/symbols/SimpleLineSymbol",
+        "esri/tasks/FeatureSet",
+        "esri/tasks/RouteParameters",
+        "esri/tasks/RouteTask",
+        "dojo/_base/array",
+        "dojo/dom-construct",
+        "dgrid/Grid",
+        "dojo/on",
+        "dojo/domReady!"
+        ], function(
+            Color,
+            Scalebar,
+            Graphic,
+            esriLang,
+            Map,
+            SimpleMarkerSymbol,
+            SimpleLineSymbol,
+            FeatureSet,
+            RouteParameters,
+            RouteTask,
+            arrayUtils,
+            domConstruct,
+            Grid,
+            on
+        ){
+            //global varible
+            var directionFeatures;
+            var segmentGraphic;
+            
+            //map
+            var map = new Map("map1", {
+                basemap: "streets",
+                center: [-98.88, 28.5],
+                zoom: 10
             });
-            var grahic = new Graphic(event.mapPoint, stopSymbol);
-            var stop = map.graphics.add(grahic);
-            routeParams.stops.features.push(stop);
-            if (routeParams.stops.features.length >= 3) {
-                routeTask.solve(routeParams);
-                lastStop = routeParams.stops.features.splice(0, 1)[0];
+            map.on("load", function() {
+                map.disableScrollWheelZoom();
+            });
+            var scalebar = new Scalebar({
+                map: map,
+                scalebarUnit: "dual"
+            });
+            
+            //add stops
+            map.on("click", addStop);
+                        
+            //routing
+            routingServiceUrl = "http://utility.arcgis.com/usrsvcs/servers/cc83495aa68841219353131cf078a2ea/rest/services/World/Route/NAServer/Route_World"
+            var routeTask = new RouteTask(routingServiceUrl);
+            var routeParams = new RouteParameters();
+            routeParams.stops = new FeatureSet();
+            routeParams.outSpatialReference = {
+                "wkid" : 102100
+            };
+            routeParams.returnDirections = true;
+            routeTask.on("solve-complete", showRoute);
+            //routeTask.on("error", errorHandler);
+            
+            //Adds a graphic when the user clicks the map. If 2 or more points exist, route is solved.
+            function addStop(event){
+                var stopSymbol = new SimpleMarkerSymbol({
+                    type: "esriSMS",
+                    style: "esriSMSCircle",
+                    color: new Color([255, 40, 40]),
+                    size: 12,
+                    outline: {
+                        width: 0.5,
+                        color: new Color([180, 20, 160])
+                    }
+                });
+                var grahic = new Graphic(event.mapPoint, stopSymbol);
+                var stop = map.graphics.add(grahic);
+                routeParams.stops.features.push(stop);
+                if (routeParams.stops.features.length >= 2) {
+                    routeTask.solve(routeParams);
+                    lastStop = routeParams.stops.features.splice(0, 1)[0];
+                }
             }
-        }
-        //Adds the solved route to the map as a graphic
-        function showRoute(evt) {
-            var routeSymbol = new SimpleLineSymbol();
-            map.graphics.add(evt.result.routeResults[0].route.setSymbol(routeSymbol));
-        }
-        //Displays any error returned by the Route Task
-        function errorHandler(err) {
-            alert("An error occured\n" + err.message + "\n" + err.details.join("\n"));
-            routeParams.stops.features.splice(0, 0, lastStop);
-            map.graphics.remove(routeParams.stops.features.splice(1, 1)[0]);
-        }
+            
+            //Adds the solved route to the map as a graphic
+            function showRoute(event) {
+                var gridData = [];
+                var routeSymbol = new SimpleLineSymbol({
+                    color: new Color([30, 220, 70]),
+                    style: "STYLE_SOLID",
+                    width: 2
+                });
+                map.graphics.add(event.result.routeResults[0].route.setSymbol(routeSymbol));
+                
+                //Display the route details
+                var directions = event.result.routeResults[0].directions;
+                directionFeatures = directions.features;
+                var directionsInfo = event.result.routeResults[0].directions.features;
+                var totalDistance = Math.round(directions.totalLength, 2);
+                var totalTime = Math.round(directions.totalTime, 2);
+                $("#total-distance").text(totalDistance);
+                $("#total-time").text(totalTime)
+                gridData = arrayUtils.map(directionsInfo,function(feature,index){
+                    return {
+                        "detail": feature.attributes.text,
+                        "distance": Math.round(feature.attributes.length, 2),
+                        "index": index
+                    };
+                });
+                grid = new Grid({
+                    renderRow: renderList,
+                    showHeader:false
+                }, "grid");
+                grid.renderArray(gridData);
+                grid.on(".dgrid-row:click", zoomToSegment);
+            }
+            
+            function renderList(obj,options){
+                var template = "<div class='detail'><div style='max-width:70%;float:left;'>${detail}</div><span style='float:right;' class='distance'>${distance} miles</span></div>";       
+                return domConstruct.create("div", { innerHTML: esriLang.substitute(obj, template) });
+            }
+            
+            function zoomToSegment(event) {
+                //Grid row id corresponds to the segment to highlight
+                var index = grid.row(event).id;
+                var segment = directionFeatures[index];
+                var segmentSymbol = new SimpleLineSymbol().setColor(new Color([255,0,0,0.5])).setWidth(8);
+                
+                map.setExtent(segment.geometry.getExtent(), true);
+                if ( !segmentGraphic ) {
+                    segmentGraphic = map.graphics.add(new Graphic(segment.geometry, segmentSymbol));
+                } else {
+                    segmentGraphic.setGeometry(segment.geometry);
+                }
+            }
+            
+            //Displays any error returned by the Route Task
+            function errorHandler(err) {
+                alert("An error occured\n" + err.message + "\n" + err.details.join("\n"));
+                routeParams.stops.features.splice(0, 0, lastStop);
+                map.graphics.remove(routeParams.stops.features.splice(1, 1)[0]);
+            }
     });
 </script>
 {% endblock %}
