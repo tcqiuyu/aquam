@@ -14,7 +14,6 @@
             border: 1px solid #A4A4A4;
             border-radius: 3px;
         }
-
         .map-legend {
             position: absolute;
             right: 10px;
@@ -22,34 +21,28 @@
             background-color: white;
             border-radius: 5px;
         }
-
         #legend1 {
             height: 200px;
             width: 110px;
         }
-
         #legend2 {
             height: 400px;
             width: 150px;
         }
-
         #legend4 {
             height: 200px;
             width: 110px;
         }
-
         #charts {
             height: 410px;
             width: 100%;
             border: 1px solid #A4A4A4;
             border-radius: 3px;
         }
-
         .chart {
             height: 400px;
             width: 100%;
         }
-
         #well-number, #total, #mean {
             color: blue;
         }
@@ -161,8 +154,8 @@
                      SimpleRenderer,
                      on) {
             var map = new Map("map1", {
-                basemap: "topo",
-                center: [-98.88, 28.5],
+                basemap: "dark-gray",
+                center: [-98.88, 28.6],
                 zoom: 10
             });
             map.on("load", function () {
@@ -248,7 +241,6 @@
             });
             featureLayer.setRenderer(renderer);
             map.addLayer(featureLayer);
-
             var legend = new Legend({
                 map: map
             }, "legend1");
@@ -257,7 +249,6 @@
                 layer: featureLayer,
                 title: " "
             }]);
-
             var scalebar = new Scalebar({
                 map: map,
                 // "dual" displays both miles and kilmometers
@@ -285,13 +276,11 @@
                         // map
                         var map = response.map;
                         map.disableScrollWheelZoom();
-
                         //add the scalebar
                         var scalebar = new Scalebar({
                             map: map,
                             scalebarUnit: "dual"
                         });
-
                         //add the legend.
                         var legendLayers = arcgisUtils.getLegendLayers(response);
                         var legend = new Legend({
@@ -320,11 +309,9 @@
                              FeatureLayer) {
                     var serviceID = "397c436b3f8547eea7dd800f51624e2d";
                     arcgisUtils.createMap(serviceID, "map3").then(function (response) {
-
                         // map
                         var map = response.map;
                         map.disableScrollWheelZoom();
-
                         //add the scalebar
                         var scalebar = new Scalebar({
                             map: map,
@@ -385,9 +372,7 @@
                         zoom: 10
                     });
                     map.on("load", activateToolbar);
-
                     var margin = {top: 20, right: 30, bottom: 40, left: 70};
-
                     var width = $(".chart").width() - margin.left - margin.right,
                             height = $(".chart").height() - margin.top - margin.bottom;
                     var init_xRange = d3.scale.linear()
@@ -488,14 +473,11 @@
                         // use "metric" for kilometers
                         scalebarUnit: "dual"
                     });
-
                     //draw graphic
                     var graphic = new Graphic();
-
                     function activateToolbar(event) {
                         // map
                         map.disableScrollWheelZoom();
-
                         var toolbar = new Draw(event.map);
                         // toolbar
                         on(dom.byId("toolbar"), "click", function (event) {
@@ -508,7 +490,6 @@
                                 featureLayer.clearSelection();
                                 return;
                             }
-
                             var tool = event.target.id.toLowerCase();
                             map.disableMapNavigation();
                             toolbar.activate(tool);
@@ -543,7 +524,6 @@
                             });
                         });
                     }
-
                     function summerize(event) {
                         // water use
                         var totalWaterUse = 0.0;
