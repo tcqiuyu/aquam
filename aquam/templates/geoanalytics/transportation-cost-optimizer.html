@@ -130,7 +130,7 @@
             
             //add stops
             map.on("click", addStop);
-                        
+            
             //routing
             routingServiceUrl = "http://utility.arcgis.com/usrsvcs/servers/cc83495aa68841219353131cf078a2ea/rest/services/World/Route/NAServer/Route_World"
             var routeTask = new RouteTask(routingServiceUrl);
@@ -167,6 +167,9 @@
             //Adds the solved route to the map as a graphic
             function showRoute(event) {
                 var gridData = [];
+                if (grid){
+                    $("grid").empty();
+                }
                 var routeSymbol = new SimpleLineSymbol({
                     color: new Color([30, 220, 70]),
                     style: "STYLE_SOLID",
