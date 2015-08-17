@@ -4,45 +4,53 @@
 {% block header %}
     <link rel="stylesheet" href="http://js.arcgis.com/3.13/esri/css/esri.css">
     <link rel="stylesheet" type="text/css" href="{% static 'css/chart.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/geoanalytics.css' %}"/>
     <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
     <style type="text/css">
-        .map{
-            position:relative;
-            width:100%;
-            height:600px;
+        .map {
+            position: relative;
+            width: 100%;
+            height: 600px;
             border: 1px solid #A4A4A4;
             border-radius: 3px;
         }
-        .map-legend{
-            position:absolute;
-            right:10px;
-            bottom:40px;
-            background-color:white;
-            border-radius:5px;
+
+        .map-legend {
+            position: absolute;
+            right: 10px;
+            bottom: 40px;
+            background-color: white;
+            border-radius: 5px;
         }
-        #legend1{
-            height:200px;
-            width:110px;
+
+        #legend1 {
+            height: 200px;
+            width: 110px;
         }
-        #legend2{
-            height:400px;
-            width:150px;
+
+        #legend2 {
+            height: 400px;
+            width: 150px;
         }
-        #legend4{
-            height:200px;
-            width:110px;
+
+        #legend4 {
+            height: 200px;
+            width: 110px;
         }
-        #charts{
+
+        #charts {
             height: 410px;
             width: 100%;
             border: 1px solid #A4A4A4;
             border-radius: 3px;
         }
-        .chart{
+
+        .chart {
             height: 400px;
             width: 100%;
         }
-        #well-number, #total, #mean{
+
+        #well-number, #total, #mean {
             color: blue;
         }
     </style>
@@ -52,569 +60,588 @@
     <div class="jumbotron">
         <div class="container">
             <h2>Water Use Geoanalyzer</h2>
-            
+
             <p style="text-align: justify">
                 This analyzer is an tool based on GIS techniques, which provides a new way to see the traditional data.
-                Right now, it helps to visualize the water use data of different fractured wells, as well as create a 
-                heatmap based on the well density. People can look into the the well distribution and the attribute of the
+                Right now, it helps to visualize the water use data of different fractured wells, as well as create a
+                heatmap based on the well density. People can look into the the well distribution and the attribute of
+                the
                 wells directly on map.
             </p>
         </div>
     </div>
-    
+
     <div class="container">
-        <h3>Query</h3>
-        <hr>
-        <p>**click the circle to show the attributes</p>
-        <div class="map">
-            <div id="map1"></div>
-            <div class="map-legend">
-                <div id="legend1"></div>
+
+        <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="active"><a data-toggle="tab" href="#query">Query</a></li>
+            <li role="presentation"><a data-toggle="tab" href="#interpolation" onclick="map2()">Interpolation</a></li>
+            <li role="presentation"><a data-toggle="tab" href="#heatmap" onclick="map3()">Heatmap</a></li>
+            <li role="presentation"><a data-toggle="tab" href="#statistics" onclick="map4()">Statistics</a></li>
+        </ul>
+
+        <div class="tab-content">
+            <div id="query" role="tabpanel" class="tab-pane active">
+                <p>**click the circle to show the attributes</p>
+
+                <div class="map" onload="myFunction()">
+                    <div id="map1"></div>
+                    <div class="map-legend">
+                        <div id="legend1"></div>
+                    </div>
+                </div>
             </div>
-        </div>
-        
-        <h3 style="padding-top:30px">Interpolation</h3>
-        <hr>
-        <div class="map">
-            <div id="map2"></div>
-            <div class="map-legend">
-                <div id="legend2"></div>
+
+            <div id="interpolation" role="tabpanel" class="tab-pane">
+                <div class="map">
+                    <div id="map2"></div>
+                    <div class="map-legend">
+                        <div id="legend2"></div>
+                    </div>
+                </div>
             </div>
-        </div>
-        
-        <h3 style="padding-top:30px">Heatmap</h3>
-        <hr>
-        <div class="map">
-            <div id="map3"></div>
-        </div>
-        
-        <h3 style="padding-top:30px">Statistics</h3>
-        <hr>
-        <div id="toolbar">
-            <button id="freehandPolygon" class="btn btn-default">Polygon</button>
-            <button id="circle" class="btn btn-default">Circle</button>
-            <button id="rectangle" class="btn btn-default">Rectangle</button>
-            <button id="clear" class="btn btn-default">Clear</button>
-        </div>
-        <div class="map">
-            <div id="map4"></div>
-            <div class="map-legend">
-                <div id="legend4"></div>
+
+            <div id="heatmap" role="tabpanel" class="tab-pane">
+                <div class="map">
+                    <div id="map3"></div>
+                </div>
             </div>
-        </div>
-        <div id="charts">
-            <div id="chart1" class="chart"></div>
-        </div>
-        <div id="stat">
-            <p>Wells Number: <span id="well-number">________</span></p>
-            <p>Total Water Use: <span id="total">________</span> (bbls)</p>
-            <p>Average Water Use: <span id="mean">________</span> (bbls)</p>
+
+            <div id="statistics" role="tabpanel" class="tab-pane">
+                <div id="toolbar">
+                    <button id="freehandPolygon" class="btn btn-default">Polygon</button>
+                    <button id="circle" class="btn btn-default">Circle</button>
+                    <button id="rectangle" class="btn btn-default">Rectangle</button>
+                    <button id="clear" class="btn btn-default">Clear</button>
+                </div>
+                <div class="map">
+                    <div id="map4"></div>
+                    <div class="map-legend">
+                        <div id="legend4"></div>
+                    </div>
+                </div>
+                <div id="stat_panel">
+                    <div id="charts">
+                        <div id="chart1" class="chart"></div>
+                    </div>
+                    <div id="stat">
+                        <p>Wells Number: <span id="well-number">________</span></p>
+
+                        <p>Total Water Use: <span id="total">________</span> (bbls)</p>
+
+                        <p>Average Water Use: <span id="mean">________</span> (bbls)</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}
 
 {% block footer %}
-<script src="http://js.arcgis.com/3.13/"></script>
-<script type="text/javascript">
-    require([
-    "esri/arcgis/utils",
-    "esri/Color",
-    "esri/dijit/Legend",
-    "esri/dijit/Scalebar",
-    "esri/dijit/PopupTemplate",
-    "esri/layers/FeatureLayer",
-    "esri/map",
-    "esri/renderers/SimpleRenderer",
-    "dojo/on",
-    "dojo/domReady!"
-    ], function(
-        arcgisUtils,
-        Color,
-        Legend,
-        Scalebar,
-        PopupTemplate,
-        FeatureLayer,
-        Map,
-        SimpleRenderer,
-        on
-    ){
-        var map = new Map("map1", {
-            basemap: "topo",
-            center: [-98.88, 28.5],
-            zoom: 10
-        });
-        map.on("load", function(){
-            map.disableScrollWheelZoom();
-        });
-        var template = new PopupTemplate({
-            title: "Attributes",
-            fieldInfos:[
-                {
-                    fieldName:"api",
-                    label:"API", 
-                    visible:true
-                }, 
-                {
-                    fieldName:"well_name", 
-                    label:"WellName", 
-                    visible:true
-                },
-                {
-                    fieldName:"fracture_d", 
-                    label:"Fracture Date", 
-                    visible:true,
-                    format:{ dateFormat:"shortDate" }
-                },
-                {
-                    fieldName:"state",
-                    label:"State",
-                    visible:true
-                },
-                {
-                    fieldName:"county", 
-                    label:"County", 
-                    visible:true
-                },
-                {
-                    fieldName:"horizontal", 
-                    label:"Horizontal Length", 
-                    visible:true
-                },
-                {
-                    fieldName:"water_use", 
-                    label:"Water Use", 
-                    visible:true
-                },
-                {
-                    fieldName:"wu_per_foo", 
-                    label:"Water Use Per Foot", 
-                    visible:true
-                }
-            ]
-        });
-        var renderer = new SimpleRenderer({
-            symbol: {
-                type: "esriSMS",
-                style: "esriSMSCircle",
-                outline:{
-                    width: 0.5,
-                    color: [160, 160,160, 70],
-                }
-            },
-            sizeInfo: {
-                field: "water_use",
-                valueUnit: "inches",
-                valueRepresentation: "diameter"
-            },
-            colorInfo: {
-                field: "water_use",
-                minDataValue: 20000,
-                maxDataValue: 260000,
-                colors: [
-                    new Color([0, 0, 255]), 
-                    new Color([0, 255, 0]), 
-                    new Color([255, 255, 0]), 
-                    new Color([255, 0, 0])
+    <script src="http://js.arcgis.com/3.13/"></script>
+    <script type="text/javascript">
+
+        require([
+            "esri/arcgis/utils",
+            "esri/Color",
+            "esri/dijit/Legend",
+            "esri/dijit/Scalebar",
+            "esri/dijit/PopupTemplate",
+            "esri/layers/FeatureLayer",
+            "esri/map",
+            "esri/renderers/SimpleRenderer",
+            "dojo/on",
+            "dojo/domReady!"
+        ], function (arcgisUtils,
+                     Color,
+                     Legend,
+                     Scalebar,
+                     PopupTemplate,
+                     FeatureLayer,
+                     Map,
+                     SimpleRenderer,
+                     on) {
+            var map = new Map("map1", {
+                basemap: "topo",
+                center: [-98.88, 28.5],
+                zoom: 10
+            });
+            map.on("load", function () {
+                map.disableScrollWheelZoom();
+            });
+            var template = new PopupTemplate({
+                title: "Attributes",
+                fieldInfos: [
+                    {
+                        fieldName: "api",
+                        label: "API",
+                        visible: true
+                    },
+                    {
+                        fieldName: "well_name",
+                        label: "WellName",
+                        visible: true
+                    },
+                    {
+                        fieldName: "fracture_d",
+                        label: "Fracture Date",
+                        visible: true,
+                        format: {dateFormat: "shortDate"}
+                    },
+                    {
+                        fieldName: "state",
+                        label: "State",
+                        visible: true
+                    },
+                    {
+                        fieldName: "county",
+                        label: "County",
+                        visible: true
+                    },
+                    {
+                        fieldName: "horizontal",
+                        label: "Horizontal Length",
+                        visible: true
+                    },
+                    {
+                        fieldName: "water_use",
+                        label: "Water Use",
+                        visible: true
+                    },
+                    {
+                        fieldName: "wu_per_foo",
+                        label: "Water Use Per Foot",
+                        visible: true
+                    }
                 ]
-            }
-        });
-        serviceUrl = "http://services1.arcgis.com/KNdRU5cN6ENqCTjk/arcgis/rest/services/WaterUsePoint/FeatureServer/0";
-        featureLayer = new FeatureLayer(serviceUrl, {
-            mode: FeatureLayer.MODE_SNAPSHOT,
-            infoTemplate: template,
-            outFields: ["*"]
-        });
-        featureLayer.setRenderer(renderer);
-        map.addLayer(featureLayer);
-        
-        var legend = new Legend({
+            });
+            var renderer = new SimpleRenderer({
+                symbol: {
+                    type: "esriSMS",
+                    style: "esriSMSCircle",
+                    outline: {
+                        width: 0.5,
+                        color: [160, 160, 160, 70],
+                    }
+                },
+                sizeInfo: {
+                    field: "water_use",
+                    valueUnit: "inches",
+                    valueRepresentation: "diameter"
+                },
+                colorInfo: {
+                    field: "water_use",
+                    minDataValue: 20000,
+                    maxDataValue: 260000,
+                    colors: [
+                        new Color([0, 0, 255]),
+                        new Color([0, 255, 0]),
+                        new Color([255, 255, 0]),
+                        new Color([255, 0, 0])
+                    ]
+                }
+            });
+            serviceUrl = "http://services1.arcgis.com/KNdRU5cN6ENqCTjk/arcgis/rest/services/WaterUsePoint/FeatureServer/0";
+            featureLayer = new FeatureLayer(serviceUrl, {
+                mode: FeatureLayer.MODE_SNAPSHOT,
+                infoTemplate: template,
+                outFields: ["*"]
+            });
+            featureLayer.setRenderer(renderer);
+            map.addLayer(featureLayer);
+
+            var legend = new Legend({
                 map: map
             }, "legend1");
-        legend.startup();
-        legend.refresh([{
-            layer: featureLayer,
-            title: " "
-        }])
-        
-        var scalebar = new Scalebar({
-            map: map,
-            // "dual" displays both miles and kilmometers
-            // "english" is the default, which displays miles
-            // use "metric" for kilometers
-            scalebarUnit: "dual"
-        });
-    });
-</script>
-
-<script type="text/javascript">
-    require([
-    "esri/arcgis/utils",
-    "esri/dijit/Legend",
-    "esri/dijit/Scalebar",
-    "esri/layers/FeatureLayer",
-    "dojo/domReady!"
-    ], function(
-        arcgisUtils,
-        Legend,
-        Scalebar,
-        FeatureLayer
-    ) {
-        var serviceID = "1e4a0319e4ff4284b4e7bad92551006b";
-        arcgisUtils.createMap(serviceID, "map2").then(function(response) {
-            // map
-            var map = response.map;
-            map.disableScrollWheelZoom();
-            
-            //add the scalebar
-            var scalebar = new Scalebar({
-              map: map,
-              scalebarUnit: "dual"
-            }); 
-            
-            //add the legend.
-            var legendLayers = arcgisUtils.getLegendLayers(response);
-            var legend = new Legend({
-                    map: map,
-                    layerInfos: legendLayers
-                },"legend2");
             legend.startup();
-        });
-    });
-</script>
+            legend.refresh([{
+                layer: featureLayer,
+                title: " "
+            }]);
 
-<script type="text/javascript">
-    require([
-    "esri/arcgis/utils",
-    "esri/dijit/Legend",
-    "esri/dijit/Scalebar",
-    "esri/layers/FeatureLayer",
-    "dojo/domReady!"
-    ], function(
-        arcgisUtils,
-        Legend,
-        Scalebar,
-        FeatureLayer
-    ) {
-        var serviceID = "397c436b3f8547eea7dd800f51624e2d";
-        arcgisUtils.createMap(serviceID, "map3").then(function(response) {
-            
-            // map
-            var map = response.map;
-            map.disableScrollWheelZoom();
-            
-            //add the scalebar
             var scalebar = new Scalebar({
-              map: map,
-              scalebarUnit: "dual"
+                map: map,
+                // "dual" displays both miles and kilmometers
+                // "english" is the default, which displays miles
+                // use "metric" for kilometers
+                scalebarUnit: "dual"
             });
         });
-    });
-</script>
 
-<script type="text/javascript">
-require([
-         "esri/Color",
-         "esri/dijit/Legend",
-         "esri/dijit/PopupTemplate",
-         "esri/dijit/Scalebar",
-         "esri/graphic",
-         "esri/layers/FeatureLayer",
-         "esri/map",
-         "esri/renderers/SimpleRenderer",
-         "esri/SpatialReference",
-         "esri/symbols/SimpleMarkerSymbol",
-         "esri/symbols/SimpleFillSymbol",
-         "esri/tasks/AreasAndLengthsParameters",
-         "esri/tasks/GeometryService",
-         "esri/tasks/query",
-         "esri/toolbars/draw",
-         "dojo/dom",
-         "dojo/on",
-         "dojo/_base/array",
-         "dojo/_base/lang",
-         "dojo/domReady!"
-         ], function(
-             Color,
-             Legend,
-             PopupTemplate,
-             Scalebar,
-             Graphic,
-             FeatureLayer,
-             Map,
-             SimpleRenderer,
-             SpatialReference,
-             SimpleMarkerSymbol,
-             SimpleFillSymbol,
-             AreasAndLengthsParameters,
-             GeometryService,
-             Query,
-             Draw,
-             dom,
-             on,
-             arrayUtil,
-             lang
-         ){
-             var map = new Map("map4", {
-                 basemap: "topo",
-                 center: [-98.88, 28.5],
-                 zoom: 10
-             });
-             map.on("load", activateToolbar);
-             
-             //renderer
-             var renderer = new SimpleRenderer({
-                 symbol: {
-                     type: "esriSMS",
-                     style: "esriSMSCircle",
-                     outline:{
-                         width: 0.5,
-                         color: [160, 160,160, 70],
-                     },
-                     size: 5
-                 },
-                 colorInfo: {
-                     field: "water_use",
-                     minDataValue: 20000,
-                     maxDataValue: 260000,
-                     colors: [
-                         new Color([0, 0, 255]), 
-                         new Color([0, 255, 0]), 
-                         new Color([255, 255, 0]), 
-                         new Color([255, 0, 0])
-                     ]
-                 }
-             });
-             // selection symbol
-             var selectionSymbol = new SimpleMarkerSymbol({
-                 type: "esriSMS",
-                 style: "esriSMSCircle",
-                 size: 8,
-                 color: new Color([207, 34, 171, 0.5])
-             });
-             //featureLayer
-             serviceUrl = "http://services1.arcgis.com/KNdRU5cN6ENqCTjk/arcgis/rest/services/WaterUsePoint/FeatureServer/0";
-             var featureLayer = new FeatureLayer(serviceUrl, {
-                 mode: FeatureLayer.MODE_SNAPSHOT,
-                 outFields: ["*"]
-             });
-             featureLayer.setRenderer(renderer);
-             featureLayer.setSelectionSymbol(selectionSymbol); 
-             map.addLayer(featureLayer);
-             //legend
-             var legend = new Legend({
-                 map: map
-             }, "legend4");
-             legend.startup();
-             legend.refresh([{
-                 layer: featureLayer,
-                 title: " "
-             }]);
-             //scalebar
-             var scalebar = new Scalebar({
-                 map: map,
-                 // "dual" displays both miles and kilmometers
-                 // "english" is the default, which displays miles
-                 // use "metric" for kilometers
-                 scalebarUnit: "dual"
-             });
-             
-             //draw graphic
-             var graphic = new Graphic(); 
-             function activateToolbar(event){
-                 // map
-                 map.disableScrollWheelZoom();
-                 
-                 
-                 var toolbar = new Draw(event.map);
-                 // toolbar
-                 on(dom.byId("toolbar"), "click", function(event){
-                     if ( event.target.id === "toolbar" ) {
-                         return;
-                     }
-                     if ( event.target.id === "clear" ) {
-                         map.graphics.clear();
-                         map.disableScrollWheelZoom();
-                         featureLayer.clearSelection();
-                         return;
-                     }
-                     
-                     var tool = event.target.id.toLowerCase();
-                     map.disableMapNavigation();
-                     toolbar.activate(tool);
-                     // events
-                     toolbar.on("draw-end", function(event){
-                         toolbar.deactivate();
-                         map.enableMapNavigation();
-                         map.disableScrollWheelZoom();
-                         // graphic & attr
-                         graphic.setGeometry(event.geometry);
-                         graphic.setSymbol(new SimpleFillSymbol());
-                         map.graphics.add(graphic);
-                         var attr = {"Area":null, "Perimeter":null};
-                         var areasAndLengthParams = new AreasAndLengthsParameters();
-                         areasAndLengthParams.lengthUnit = GeometryService.UNIT_FOOT;
-                         areasAndLengthParams.areaUnit = GeometryService.UNIT_SQUARE_MILES;
-                         areasAndLengthParams.calculationType = "planar";
-                         areasAndLengthParams.polygons = [event.geometry];
-                         var geometryService = new GeometryService("http://sampleserver6.arcgisonline.com/arcgis/rest/services/Utilities/Geometry/GeometryServer");
-                         geometryService.areasAndLengths(areasAndLengthParams);
-                         geometryService.on("areas-and-lengths-complete", function(eventObj){
-                             result = eventObj.result;
-                             attr.Area = result.areas[0].toFixed(3);
-                             attr.Perimeter = result.lengths[0].toFixed(3);
-                         });
-                         graphic.setAttributes(attr);
-                         // query
-                         var query = new Query();
-                         query.geometry = event.geometry;
-                         featureLayer.selectFeatures(query, FeatureLayer.SELECTION_NEW);
-                         featureLayer.on("selection-complete", summerize);
-                     });
-                 });
-             }
-             function summerize(event){
-                 // water use
-                 var totalWaterUse = 0.0;
-                 var featuresNumber = event.features.length;
-                 var waterUseArray = [];
-                 arrayUtil.forEach(event.features, function (feature) {
-                     totalWaterUse += feature.attributes.water_use;
-                     waterUseArray.push(parseInt(feature.attributes.water_use));
-                 });
-                 var meanWaterUse = totalWaterUse/featuresNumber;
-                 //stat
-                 $("#well-number").text(featuresNumber);
-                 $("#total").text(Math.round(totalWaterUse));
-                 $("#mean").text(Math.round(meanWaterUse));
-                 // graphic
-                 var template = new PopupTemplate({
-                     title:"Graphic Info",
-                     fieldInfos: [
-                         {
-                             fieldName:"Area",
-                             label: "Area (square miles):",
-                             visible:true
-                         },
-                         {
-                             fieldName:"Perimeter",
-                             label: "Perimeter (feet):",
-                             visible:true
-                         }
-                     ],
-                 });
-                 graphic.setInfoTemplate(template);
-                 
-                 // chart
-                 var margin = {top: 20, right: 30, bottom: 40, left: 70};
-                 var width = $("#chart1").width() - margin.left - margin.right, 
-                     height = $("#chart1").height() - margin.top - margin.bottom;
-                 var values = waterUseArray;
-                 var xRange = d3.scale.linear()
-                         .domain(d3.extent(values, function (d) { return d; }))
-                         .range([0, width]);
-                 var data = d3.layout.histogram()
-                         .bins(xRange.ticks(10))(values);
-                 var yRange = d3.scale.linear()
-                         .domain([0, d3.max(data, function (d) { return d.y; })])
-                         .range([height, 0]);
-                 var xAxis = d3.svg.axis()
-                         .scale(xRange)
-                         .orient("bottom");
-                 var yAxis = d3.svg.axis()
-                         .scale(yRange)
-                         .orient("left");
-                 var svg = d3.select("#chart1").select("svg");
-                 var chart = svg.select("g");
-                 svg.selectAll(".x.axis").transition().duration(500)
-                         .call(xAxis);
-                 svg.selectAll(".y.axis").transition().duration(500)
-                         .call(yAxis);
-                 chart.selectAll(".bar")
-                         .remove();
-                 // set up the bars and text
-                 var bar = chart.selectAll(".bar")
-                         .data(data)
-                         .enter()
-                         .append("g")
-                         .attr("class", "bar")
-                         .attr("transform", function (d) { return "translate(" + xRange(d.x) + "," + 0 + ")";});
-                 bar.append("rect")
-                         .attr("x", 1)
-                         .attr("y", height)
-                         .attr("fill", "#A8383B")
-                         .attr("width", xRange(data[1].x) - xRange(data[0].x) - 1)
-                         .attr("height", 0);
-                 // transition effect
-                 bar.selectAll("rect")
-                         .transition()
-                         .duration(500)
-                         .attr("y", function (d) {return yRange(d.y);})
-                         .attr("height", function (d) { return height - yRange(d.y); });
-                 bar.selectAll("rect")
-                         .on("mouseover", function () { d3.select(this).attr("fill", "#AA9F39"); })
-                         .on("mouseout", function () { d3.select(this).attr("fill", "#A8383B"); });
-                 bar.append("text")
-                         .attr("dy", "0.75em")
-                         .attr("y", height - 10)
-                         .attr("x", xRange(data[1].x) / 2 - xRange(data[0].x) / 2 - 1)
-                         .style("fill", "black")
-                         .attr("text-anchor", "middle")
-                         .text(function (d) { return d.y; });
-                 bar.selectAll("text")
-                         .transition()
-                         .duration(500)
-                         .attr("y", function (d) {return yRange(d.y) - 10;});
-             }
-         });
-</script>
-<script type="text/javascript">
-    var margin = {top: 20, right: 30, bottom: 40, left: 70};
-    $(document).ready(function () {
-        var width = $(".chart").width() - margin.left - margin.right,
-                height = $(".chart").height() - margin.top - margin.bottom;
-        var init_xRange = d3.scale.linear()
-                .domain(d3.extent([0, 0]))
-                .range([0, width]);
-        var init_yRange = d3.scale.linear()
-                .domain(d3.extent([0, 0]))
-                .range([height, 0]);
-        var xAxis = d3.svg.axis()
-                .scale(init_xRange)
-                .orient("bottom");
-        var yAxis = d3.svg.axis()
-                .scale(init_yRange)
-                .orient("left");
-        var svg = d3.selectAll(".chart").append("svg")
-                .attr("width", width + margin.left + margin.right)
-                .attr("height", height + margin.top + margin.bottom)
-                .append("g")
-                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-        svg.append("g")
-                .attr("class", "x axis")
-                .attr("transform", "translate(0," + height + ")")
-                .call(xAxis);
-        svg.append("g")
-                .attr("class", "y axis")
-                .attr("transform", "translate(0, 0)")
-                .call(yAxis);
-        var chart1 = d3.select("#chart1").select("g");
-        chart1.append("text")
-                .attr("class", "xlabel")
-                .attr("text-anchor", "middle")
-                .attr("x", width / 2)
-                .attr("y", height + margin.bottom - 5)
-                .attr("font-size", 14)
-                .text("Water Used per Well(bbls)");
-        chart1.append("text")
-                .attr("class", "ylabel")
-                .attr("x", 0 - (height / 2))
-                .attr("y", 0 - margin.left + 20)
-                .attr("dy", "1em")
-                .attr("transform", "rotate(-90)")
-                .attr("text-anchor", "middle")
-                .attr("font-size", 14)
-                .text("Number of Wells");
-    });
-    
-</script>
+        var map2_clicked = false;
+        function map2() {
+            if (!map2_clicked) {
+                require([
+                    "esri/arcgis/utils",
+                    "esri/dijit/Legend",
+                    "esri/dijit/Scalebar",
+                    "esri/layers/FeatureLayer",
+                    "dojo/domReady!"
+                ], function (arcgisUtils,
+                             Legend,
+                             Scalebar,
+                             FeatureLayer) {
+                    var serviceID = "1e4a0319e4ff4284b4e7bad92551006b";
+                    arcgisUtils.createMap(serviceID, "map2").then(function (response) {
+                        // map
+                        var map = response.map;
+                        map.disableScrollWheelZoom();
+
+                        //add the scalebar
+                        var scalebar = new Scalebar({
+                            map: map,
+                            scalebarUnit: "dual"
+                        });
+
+                        //add the legend.
+                        var legendLayers = arcgisUtils.getLegendLayers(response);
+                        var legend = new Legend({
+                            map: map,
+                            layerInfos: legendLayers
+                        }, "legend2");
+                        legend.startup();
+                    });
+                });
+                map2_clicked = true;
+            }
+        }
+
+        var map3_clicked = false;
+        function map3() {
+            if (!map3_clicked) {
+                require([
+                    "esri/arcgis/utils",
+                    "esri/dijit/Legend",
+                    "esri/dijit/Scalebar",
+                    "esri/layers/FeatureLayer",
+                    "dojo/domReady!"
+                ], function (arcgisUtils,
+                             Legend,
+                             Scalebar,
+                             FeatureLayer) {
+                    var serviceID = "397c436b3f8547eea7dd800f51624e2d";
+                    arcgisUtils.createMap(serviceID, "map3").then(function (response) {
+
+                        // map
+                        var map = response.map;
+                        map.disableScrollWheelZoom();
+
+                        //add the scalebar
+                        var scalebar = new Scalebar({
+                            map: map,
+                            scalebarUnit: "dual"
+                        });
+                    });
+                });
+                map3_clicked = true;
+            }
+        }
+
+        function map4() {
+
+            require([
+                "esri/Color",
+                "esri/dijit/Legend",
+                "esri/dijit/PopupTemplate",
+                "esri/dijit/Scalebar",
+                "esri/graphic",
+                "esri/layers/FeatureLayer",
+                "esri/map",
+                "esri/renderers/SimpleRenderer",
+                "esri/SpatialReference",
+                "esri/symbols/SimpleMarkerSymbol",
+                "esri/symbols/SimpleFillSymbol",
+                "esri/tasks/AreasAndLengthsParameters",
+                "esri/tasks/GeometryService",
+                "esri/tasks/query",
+                "esri/toolbars/draw",
+                "dojo/dom",
+                "dojo/on",
+                "dojo/_base/array",
+                "dojo/_base/lang",
+                "dojo/domReady!"
+            ], function (Color,
+                         Legend,
+                         PopupTemplate,
+                         Scalebar,
+                         Graphic,
+                         FeatureLayer,
+                         Map,
+                         SimpleRenderer,
+                         SpatialReference,
+                         SimpleMarkerSymbol,
+                         SimpleFillSymbol,
+                         AreasAndLengthsParameters,
+                         GeometryService,
+                         Query,
+                         Draw,
+                         dom,
+                         on,
+                         arrayUtil,
+                         lang) {
+                var map = new Map("map4", {
+                    basemap: "topo",
+                    center: [-98.88, 28.5],
+                    zoom: 10
+                });
+                map.on("load", activateToolbar);
+
+                var margin = {top: 20, right: 30, bottom: 40, left: 70};
+
+                var width = $(".chart").width() - margin.left - margin.right,
+                        height = $(".chart").height() - margin.top - margin.bottom;
+                var init_xRange = d3.scale.linear()
+                        .domain(d3.extent([0, 0]))
+                        .range([0, width]);
+                var init_yRange = d3.scale.linear()
+                        .domain(d3.extent([0, 0]))
+                        .range([height, 0]);
+                var xAxis = d3.svg.axis()
+                        .scale(init_xRange)
+                        .orient("bottom");
+                var yAxis = d3.svg.axis()
+                        .scale(init_yRange)
+                        .orient("left");
+                var svg = d3.selectAll(".chart").append("svg")
+                        .attr("width", width + margin.left + margin.right)
+                        .attr("height", height + margin.top + margin.bottom)
+                        .append("g")
+                        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+                svg.append("g")
+                        .attr("class", "x axis")
+                        .attr("transform", "translate(0," + height + ")")
+                        .call(xAxis);
+                svg.append("g")
+                        .attr("class", "y axis")
+                        .attr("transform", "translate(0, 0)")
+                        .call(yAxis);
+                var chart1 = d3.select("#chart1").select("g");
+                chart1.append("text")
+                        .attr("class", "xlabel")
+                        .attr("text-anchor", "middle")
+                        .attr("x", width / 2)
+                        .attr("y", height + margin.bottom - 5)
+                        .attr("font-size", 14)
+                        .text("Water Used per Well(bbls)");
+                chart1.append("text")
+                        .attr("class", "ylabel")
+                        .attr("x", 0 - (height / 2))
+                        .attr("y", 0 - margin.left + 20)
+                        .attr("dy", "1em")
+                        .attr("transform", "rotate(-90)")
+                        .attr("text-anchor", "middle")
+                        .attr("font-size", 14)
+                        .text("Number of Wells");
+                //renderer
+                var renderer = new SimpleRenderer({
+                    symbol: {
+                        type: "esriSMS",
+                        style: "esriSMSCircle",
+                        outline: {
+                            width: 0.5,
+                            color: [160, 160, 160, 70],
+                        },
+                        size: 5
+                    },
+                    colorInfo: {
+                        field: "water_use",
+                        minDataValue: 20000,
+                        maxDataValue: 260000,
+                        colors: [
+                            new Color([0, 0, 255]),
+                            new Color([0, 255, 0]),
+                            new Color([255, 255, 0]),
+                            new Color([255, 0, 0])
+                        ]
+                    }
+                });
+                // selection symbol
+                var selectionSymbol = new SimpleMarkerSymbol({
+                    type: "esriSMS",
+                    style: "esriSMSCircle",
+                    size: 8,
+                    color: new Color([207, 34, 171, 0.5])
+                });
+                //featureLayer
+                serviceUrl = "http://services1.arcgis.com/KNdRU5cN6ENqCTjk/arcgis/rest/services/WaterUsePoint/FeatureServer/0";
+                var featureLayer = new FeatureLayer(serviceUrl, {
+                    mode: FeatureLayer.MODE_SNAPSHOT,
+                    outFields: ["*"]
+                });
+                featureLayer.setRenderer(renderer);
+                featureLayer.setSelectionSymbol(selectionSymbol);
+                map.addLayer(featureLayer);
+                //legend
+                var legend = new Legend({
+                    map: map
+                }, "legend4");
+                legend.startup();
+                legend.refresh([{
+                    layer: featureLayer,
+                    title: " "
+                }]);
+                //scalebar
+                var scalebar = new Scalebar({
+                    map: map,
+                    // "dual" displays both miles and kilmometers
+                    // "english" is the default, which displays miles
+                    // use "metric" for kilometers
+                    scalebarUnit: "dual"
+                });
+
+                //draw graphic
+                var graphic = new Graphic();
+
+                function activateToolbar(event) {
+                    // map
+                    map.disableScrollWheelZoom();
+
+                    var toolbar = new Draw(event.map);
+                    // toolbar
+                    on(dom.byId("toolbar"), "click", function (event) {
+                        if (event.target.id === "toolbar") {
+                            return;
+                        }
+                        if (event.target.id === "clear") {
+                            map.graphics.clear();
+                            map.disableScrollWheelZoom();
+                            featureLayer.clearSelection();
+                            return;
+                        }
+
+                        var tool = event.target.id.toLowerCase();
+                        map.disableMapNavigation();
+                        toolbar.activate(tool);
+                        // events
+                        toolbar.on("draw-end", function (event) {
+                            toolbar.deactivate();
+                            map.enableMapNavigation();
+                            map.disableScrollWheelZoom();
+                            // graphic & attr
+                            graphic.setGeometry(event.geometry);
+                            graphic.setSymbol(new SimpleFillSymbol());
+                            map.graphics.add(graphic);
+                            var attr = {"Area": null, "Perimeter": null};
+                            var areasAndLengthParams = new AreasAndLengthsParameters();
+                            areasAndLengthParams.lengthUnit = GeometryService.UNIT_FOOT;
+                            areasAndLengthParams.areaUnit = GeometryService.UNIT_SQUARE_MILES;
+                            areasAndLengthParams.calculationType = "planar";
+                            areasAndLengthParams.polygons = [event.geometry];
+                            var geometryService = new GeometryService("http://sampleserver6.arcgisonline.com/arcgis/rest/services/Utilities/Geometry/GeometryServer");
+                            geometryService.areasAndLengths(areasAndLengthParams);
+                            geometryService.on("areas-and-lengths-complete", function (eventObj) {
+                                result = eventObj.result;
+                                attr.Area = result.areas[0].toFixed(3);
+                                attr.Perimeter = result.lengths[0].toFixed(3);
+                            });
+                            graphic.setAttributes(attr);
+                            // query
+                            var query = new Query();
+                            query.geometry = event.geometry;
+                            featureLayer.selectFeatures(query, FeatureLayer.SELECTION_NEW);
+                            featureLayer.on("selection-complete", summerize);
+                        });
+                    });
+                }
+
+                function summerize(event) {
+                    // water use
+                    var totalWaterUse = 0.0;
+                    var featuresNumber = event.features.length;
+                    var waterUseArray = [];
+                    arrayUtil.forEach(event.features, function (feature) {
+                        totalWaterUse += feature.attributes.water_use;
+                        waterUseArray.push(parseInt(feature.attributes.water_use));
+                    });
+                    var meanWaterUse = totalWaterUse / featuresNumber;
+                    //stat
+                    $("#well-number").text(featuresNumber);
+                    $("#total").text(Math.round(totalWaterUse));
+                    $("#mean").text(Math.round(meanWaterUse));
+                    // graphic
+                    var template = new PopupTemplate({
+                        title: "Graphic Info",
+                        fieldInfos: [
+                            {
+                                fieldName: "Area",
+                                label: "Area (square miles):",
+                                visible: true
+                            },
+                            {
+                                fieldName: "Perimeter",
+                                label: "Perimeter (feet):",
+                                visible: true
+                            }
+                        ],
+                    });
+                    graphic.setInfoTemplate(template);
+
+                    // chart
+                    var margin = {top: 20, right: 30, bottom: 40, left: 70};
+                    var width = $("#chart1").width() - margin.left - margin.right,
+                            height = $("#chart1").height() - margin.top - margin.bottom;
+                    var values = waterUseArray;
+                    var xRange = d3.scale.linear()
+                            .domain(d3.extent(values, function (d) { return d; }))
+                            .range([0, width]);
+                    var data = d3.layout.histogram()
+                            .bins(xRange.ticks(10))(values);
+                    var yRange = d3.scale.linear()
+                            .domain([0, d3.max(data, function (d) { return d.y; })])
+                            .range([height, 0]);
+                    var xAxis = d3.svg.axis()
+                            .scale(xRange)
+                            .orient("bottom");
+                    var yAxis = d3.svg.axis()
+                            .scale(yRange)
+                            .orient("left");
+                    var svg = d3.select("#chart1").select("svg");
+                    var chart = svg.select("g");
+                    svg.selectAll(".x.axis").transition().duration(500)
+                            .call(xAxis);
+                    svg.selectAll(".y.axis").transition().duration(500)
+                            .call(yAxis);
+                    chart.selectAll(".bar")
+                            .remove();
+                    // set up the bars and text
+                    var bar = chart.selectAll(".bar")
+                            .data(data)
+                            .enter()
+                            .append("g")
+                            .attr("class", "bar")
+                            .attr("transform", function (d) { return "translate(" + xRange(d.x) + "," + 0 + ")";});
+                    bar.append("rect")
+                            .attr("x", 1)
+                            .attr("y", height)
+                            .attr("fill", "#A8383B")
+                            .attr("width", xRange(data[1].x) - xRange(data[0].x) - 1)
+                            .attr("height", 0);
+                    // transition effect
+                    bar.selectAll("rect")
+                            .transition()
+                            .duration(500)
+                            .attr("y", function (d) {return yRange(d.y);})
+                            .attr("height", function (d) { return height - yRange(d.y); });
+                    bar.selectAll("rect")
+                            .on("mouseover", function () { d3.select(this).attr("fill", "#AA9F39"); })
+                            .on("mouseout", function () { d3.select(this).attr("fill", "#A8383B"); });
+                    bar.append("text")
+                            .attr("dy", "0.75em")
+                            .attr("y", height - 10)
+                            .attr("x", xRange(data[1].x) / 2 - xRange(data[0].x) / 2 - 1)
+                            .style("fill", "black")
+                            .attr("text-anchor", "middle")
+                            .text(function (d) { return d.y; });
+                    bar.selectAll("text")
+                            .transition()
+                            .duration(500)
+                            .attr("y", function (d) {return yRange(d.y) - 10;});
+                }
+            });
+        }
+
+        $(document).ready(function () {
+
+        })
+    </script>
 {% endblock %}
