@@ -1,0 +1,31 @@
+/**
+ * Created by Qiu Yu on 8/17/2015.
+ */
+.nav-tabs li a{
+    height: auto;
+    padding-top: 10px;
+    color: #337ab7;
+    font-size: larger;
+}
+
+.nav-tabs .active{
+    background-color: white !important;
+    color: black;
+}
+
+.nav-tabs > li a:hover{
+    background-color: lightgray !important;
+}
+
+.nav-tabs > li a:focus{
+    background-color: white !important;
+}
+
+.tab-pane {
+    padding-top: 20px;
+    padding-bottom: 30px;
+}
+
+.titlePane > .title{
+    font-size: inherit;
+}

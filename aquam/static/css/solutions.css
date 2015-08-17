@@ -1,0 +1,194 @@
+/*Style in solutions pages*/
+.panel-heading {
+    font-weight: bold;
+}
+
+label.solution-radio {
+    background-color: #dcdfd4;
+    display: inline-block;
+    font-size: 15px;
+    font-weight: bold;
+    padding: 10px 20px 10px 30px;
+    /*margin-left: 8%;*/
+    /*margin-right: 8%;*/
+    margin-bottom: 10px;
+}
+
+.chart-heading {
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.radio-group {
+    text-align: center;
+    overflow: auto;
+
+}
+
+.chart-footer {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.chart-footer .label-primary {
+    display: inline-block;
+}
+
+.chart-footer .output {
+    font-size: 75%;
+    color: #34495E;
+}
+
+.output-error {
+    color: #CE5B56;
+}
+
+.chart-footer .info {
+    color: #CE5B56;
+}
+
+.additional-info {
+    background-color: #dcdfd4;
+    display: inline;
+    text-align: left;
+    font-weight: bold;
+    padding: 10px 10px 12px 10px;
+}
+
+.additional-info .output, .label-form {
+    font-size: 95%;
+}
+
+label.solution-radio.checked {
+    background-color: #266c8e;
+    color: #FFFFFF;
+}
+
+.cal-button {
+    background-color: #266c8e;
+    color: #FFFFFF;
+    margin-top: 5px;
+}
+
+.bar text {
+    fill: black;
+}
+
+/*Style in water quality page*/
+.eq-c {
+    font-weight: bold;
+}
+
+.fraction {
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0 0.2em 0.4ex;
+    text-align: center;
+}
+
+.fraction > span {
+    display: block;
+    padding-top: 0.15em;
+}
+
+.fraction span.fdn {
+    border-top: thin solid black;
+}
+
+.fraction span.bar {
+    display: none;
+}
+
+label.water-quality-radio {
+    display: inline-block;
+    font-size: 15px;
+    font-weight: bold;
+    padding: 10px 20px 10px 30px;
+    /*margin-left: 8%;*/
+    /*margin-right: 8%;*/
+    margin-bottom: 10px;
+}
+
+#y1-axis-path, #y1-axis-ticks {
+    stroke: steelblue;
+}
+
+#y2-axis-path, #y2-axis-ticks {
+    stroke: red;
+}
+
+.col-body, .row-head {
+    font-size: 13px;
+    text-align: right;
+}
+
+/* = Produced water page
+-------------------------------------------------------------*/
+.legend rect {
+    fill: white;
+    stroke: black;
+    opacity: 0.8;
+}
+
+#produced-water-btn-cal {
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+
+.produced-water-label {
+    font-size: 15px;
+    margin-right: 5px;
+}
+
+#predict-cal {
+    height: 30px;
+    padding-top: 4px;
+    margin-top: 5px
+}
+
+#produced-water-est-output {
+    font-weight: bold;
+}
+
+.output-valid {
+    color: steelblue;
+}
+
+.row-head-1 {
+    width: 6%;
+}
+
+.row-head-2 {
+    width: 28%;
+}
+
+.row-head-3 {
+    width: 18%;
+}
+
+#end-day-input, #stages-input, #recycle-input {
+    width: 50px;
+}
+
+.water-treatment-label {
+    font-size: 15px;
+    margin-right: 5px;
+}
+
+#water-treatment-dp-btn {
+    height: 30px;
+    padding-top: 4px;
+    font-weight: bold;
+
+}
+
+#water-treatment-cal-btn {
+    margin-top: 20%;
+    font-size: 16px;
+}
+
+.water-treatment-submit-panel {
+    margin: 1% 1% 1% 1%;
+    padding: 2% 0 2% 0;
+    background-color: #e5e5e5;
+}
