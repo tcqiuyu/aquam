@@ -9,9 +9,24 @@
         .map{
             position:relative;
             width:100%;
-            height:600px;
+            height:800px;
             border: 1px solid #A4A4A4;
             border-radius: 3px;
+        }
+        .map-legend {
+            position: absolute;
+            right: 10px;
+            bottom: 40px;
+            background-color: white;
+            border-radius: 5px;
+        }
+        #legend1{
+            height: 180px;
+            width: 110px;
+        }
+        #legend2, #legend3 {
+            height: 200px;
+            width: 110px;
         }
         #direction-details{
             height: 400px;
@@ -58,13 +73,19 @@
     </div>
     
     <div class="container">
-        <ul class="nav nav-tabs" role="tablist">
-            <li role="presentation" class="active"><a data-toggle="tab" href="#service-area">Service Area</a></li>
-            <li role="presentation"><a data-toggle="tab" href="#nearest-facility" onclick="load_map2()">Nearest Facility</a></li>
-            <li role="presentation"><a data-toggle="tab" href="#route-optimization" onclick="load_map3()">Route Optimization</a></li>
+        <ul id="map-tabs" class="nav nav-tabs" role="tablist">
+            <li class="active"><a data-toggle="tab" href="#service-area">Service Area</a></li>
+            <li><a data-toggle="tab" href="#nearest-facility">Nearest Facility</a></li>
+            <li><a data-toggle="tab" href="#transportation-cost">Transportation Cost</a></li>
         </ul>
         <div class="tab-content">
             <div id="service-area" role="tabpanel" class="tab-pane active">
+                <div id="toolbar">
+                    <button id="point" class="btn btn-default">Add Treatment Facility</button>
+                    <input id="mins-input" type="text" name="mins" value="10"> mins
+                    <button id="calculate" class="btn btn-default">Calculate Service Area</button>
+                    <button id="clear" class="btn btn-default">Clear</button>
+                </div>
                 <div class="map">
                     <div id="map1"></div>
                     <div class="map-legend">
@@ -80,7 +101,7 @@
                     </div>
                 </div>
             </div>
-            <div id="route-optimization" role="tabpanel" class="tab-pane">
+            <div id="transportation-cost" role="tabpanel" class="tab-pane">
                 <div class="map">
                     <div id="map3"></div>
                     <div class="map-legend">
@@ -105,39 +126,406 @@
 <script src="http://js.arcgis.com/3.13/"></script>
 <script type="text/javascript">
     // tab1
-    $( document ).ready(function(){
+    function load_map1(){
         require([
+            "esri/config",
+            "esri/Color",
+            "esri/dijit/Legend",
+            "esri/dijit/Scalebar",
+            "esri/dijit/PopupTemplate",
+            "esri/graphic",
+            "esri/geometry/geometryEngine",
+            "esri/layers/FeatureLayer",
             "esri/map",
+            "esri/renderers/SimpleRenderer",
+            "esri/symbols/SimpleFillSymbol",
+            "esri/symbols/SimpleLineSymbol",
+            "esri/symbols/SimpleMarkerSymbol",
+            "esri/tasks/FeatureSet",
+            "esri/tasks/GeometryService",
+            "esri/tasks/ServiceAreaParameters",
+            "esri/tasks/ServiceAreaTask",
+            "esri/toolbars/draw",
+            "dojo/_base/array",
+            "dojo/dom",
+            "dojo/on",
             "dojo/domReady!"
-            ], function(
-                Map
-            ){
+        ], function(
+            esriConfig,
+            Color,
+            Legend,
+            Scalebar,
+            PopupTemplate,
+            Graphic,
+            geometryEngine,
+            FeatureLayer,
+            Map,
+            SimpleRenderer,
+            SimpleFillSymbol,
+            SimpleLineSymbol,
+            SimpleMarkerSymbol,
+            FeatureSet,
+            GeometryService,
+            ServiceAreaParameters,
+            ServiceAreaTask,
+            Draw,
+            arrayUtils,
+            dom,
+            on
+        ){
+            // service
+            var naServiceUrl = "https://utility.arcgis.com/usrsvcs/servers/9f6aa15d974b496f8199b67c24b28245/rest/services/World/ServiceAreas/NAServer/ServiceArea_World";
+            var wellServiceUrl = "http://services1.arcgis.com/KNdRU5cN6ENqCTjk/arcgis/rest/services/WaterUsePoint/FeatureServer/0";
             //map
             var map = new Map("map1", {
                 basemap: "streets",
-                center: [-98.88, 28.5],
-                zoom: 10
+                center: [-98.38, 28.8],
+                zoom: 9
             });
+            map.on("load", activateToolbar);
+            
+            // well layer
+            var wellRenderer = new SimpleRenderer({
+                symbol: {
+                    type: "esriSMS",
+                    style: "esriSMSCircle",
+                    outline: {
+                        width: 0.5,
+                        color: [160, 160, 160, 70],
+                    },
+                    size: 6
+                },
+                colorInfo: {
+                    field: "water_use",
+                    minDataValue: 20000,
+                    maxDataValue: 260000,
+                    colors: [
+                        new Color([0, 0, 255]),
+                        new Color([0, 255, 0]),
+                        new Color([255, 255, 0]),
+                        new Color([255, 0, 0])
+                    ]
+                }
+            });
+            
+            wellLayer = new FeatureLayer(wellServiceUrl, {
+                mode: FeatureLayer.MODE_SNAPSHOT,
+                outFields: ["water_use"]
+            });
+            wellLayer.setRenderer(wellRenderer);
+            map.addLayer(wellLayer);
+            
+            // legend
+            var legend = new Legend({
+                map: map
+            }, "legend1");
+            legend.startup();
+            legend.refresh([{
+                layer: wellLayer,
+                title: " "
+            }]);
+            
+            //scalebar
+            var scalebar = new Scalebar({
+                map: map,
+                scalebarUnit: "dual"
+            });
+            
+            
+            //drive area
+            var features = []
+            on(dom.byId("calculate"), "click", function(event){
+                if (features === []) {
+                    return;
+                }
+                // service area parameters
+                var saParams = new ServiceAreaParameters();
+                var facilities = new FeatureSet();
+                facilities.features = features;
+                saParams.facilities = facilities;
+                saParams.defaultBreaks= [dom.byId("mins-input").value];
+                saParams.outSpatialReference = map.spatialReference;
+                saParams.returnFacilities = false;
+                // service area task
+                serviceAreaTask = new ServiceAreaTask(naServiceUrl);
+                serviceAreaTask.solve(saParams, function(solveAreas){
+                    var polygonSymbol = new SimpleFillSymbol(
+                        "solid",  
+                        new SimpleLineSymbol("solid", new Color([232,104,80]), 2),
+                        new Color([232,104,80,0.25])
+                    );
+                    arrayUtils.forEach(solveAreas.serviceAreaPolygons, function(serviceArea){
+                        convexServiceArea = geometryEngine.convexHull(serviceArea.geometry);
+                        map.graphics.add(new Graphic(convexServiceArea, polygonSymbol));
+                    });
+                });
+            });
+            
+            // toolbar
+            function activateToolbar(event) {
+                map.disableScrollWheelZoom();
+                var toolbar = new Draw(event.map);
+                on(dom.byId("toolbar"), "click", function (event) {
+                    if (event.target.id === "toolbar") {
+                        return;
+                    }
+                    if (event.target.id === "clear") {
+                        map.graphics.clear();
+                        map.disableScrollWheelZoom();
+                        features = [];
+                        return;
+                    }
+                    var tool = event.target.id.toLowerCase();
+                    if (event.target.id === "point") {
+                        map.disableMapNavigation();
+                        toolbar.activate(tool);
+                    }
+                    toolbar.on("draw-end", function (event) {
+                        toolbar.deactivate();
+                        map.enableMapNavigation();
+                        map.disableScrollWheelZoom();
+                        var graphic = new Graphic();
+                        var pointSymbol = new SimpleMarkerSymbol({
+                            type: "esriSMS",
+                            style: "esriSMSSquare",
+                            outline: {
+                                width: 0.5,
+                                color: [160, 160, 160, 70],
+                            },
+                            size: 13,
+                            color: new Color([255,10,10])
+                        });
+                        graphic.setGeometry(event.geometry);
+                        graphic.setSymbol(pointSymbol);
+                        map.graphics.add(graphic);
+                        features.push(graphic);
+                    });
+                });
+            }
         });
-    });
-    
+    }
+</script>
+
+<script type="text/javascript">
     // tab2
     function load_map2(){
         require([
+            "esri/config",
+            "esri/Color",
+            "esri/dijit/Legend",
+            "esri/dijit/Scalebar",
+            "esri/dijit/PopupTemplate",
+            "esri/graphic",
+            "esri/geometry/geometryEngine",
+            "esri/layers/FeatureLayer",
             "esri/map",
+            "esri/renderers/SimpleRenderer",
+            "esri/symbols/SimpleFillSymbol",
+            "esri/symbols/SimpleLineSymbol",
+            "esri/symbols/SimpleMarkerSymbol",
+            "esri/tasks/FeatureSet",
+            "esri/tasks/GeometryService",
+            "esri/tasks/ServiceAreaParameters",
+            "esri/tasks/ServiceAreaTask",
+            "esri/toolbars/draw",
+            "dojo/_base/array",
+            "dojo/dom",
+            "dojo/on",
             "dojo/domReady!"
-            ], function(
-                Map
-            ){
+        ], function(
+            esriConfig,
+            Color,
+            Legend,
+            Scalebar,
+            PopupTemplate,
+            Graphic,
+            geometryEngine,
+            FeatureLayer,
+            Map,
+            SimpleRenderer,
+            SimpleFillSymbol,
+            SimpleLineSymbol,
+            SimpleMarkerSymbol,
+            FeatureSet,
+            GeometryService,
+            ServiceAreaParameters,
+            ServiceAreaTask,
+            Draw,
+            arrayUtils,
+            dom,
+            on
+        ){
+            // service
+            var naServiceUrl = "https://utility.arcgis.com/usrsvcs/servers/9f6aa15d974b496f8199b67c24b28245/rest/services/World/ServiceAreas/NAServer/ServiceArea_World";
+            var wellServiceUrl = "http://services1.arcgis.com/KNdRU5cN6ENqCTjk/arcgis/rest/services/WaterUsePoint/FeatureServer/0";
+            var facilityServiceUrl = "http://services1.arcgis.com/KNdRU5cN6ENqCTjk/arcgis/rest/services/TreatmentFacility/FeatureServer/0";
             //map
             var map = new Map("map2", {
                 basemap: "topo",
-                center: [-98.88, 28.5],
-                zoom: 10
+                center: [-98.38, 28.8],
+                zoom: 9
             });
+            map.on("load", activateToolbar);
+            
+            // well layer
+            var wellRenderer = new SimpleRenderer({
+                symbol: {
+                    type: "esriSMS",
+                    style: "esriSMSCircle",
+                    outline: {
+                        width: 0.5,
+                        color: [160, 160, 160, 70],
+                    },
+                    size: 6
+                },
+                colorInfo: {
+                    field: "water_use",
+                    minDataValue: 20000,
+                    maxDataValue: 260000,
+                    colors: [
+                        new Color([0, 0, 255]),
+                        new Color([0, 255, 0]),
+                        new Color([255, 255, 0]),
+                        new Color([255, 0, 0])
+                    ]
+                }
+            });
+            
+            wellLayer = new FeatureLayer(wellServiceUrl, {
+                mode: FeatureLayer.MODE_SNAPSHOT,
+                outFields: ["water_use"]
+            });
+            wellLayer.setRenderer(wellRenderer);
+            
+            // facility layer
+            var facilityRenderer = new SimpleRenderer({
+                symbol: {
+                    type: "esriSMS",
+                    style: "esriSMSSquare",
+                    outline: {
+                        width: 0.5,
+                        color: [160, 160, 160, 70],
+                    },
+                    size: 13,
+                    color: new Color([100,150,255])
+                }
+            });
+            var facilityTemplate = new PopupTemplate({
+                fieldInfos: [
+                    {
+                        fieldName: "Name",
+                        label: "Name",
+                        visible: true
+                    }
+                ]
+            });
+            
+            facilityLayer = new FeatureLayer(facilityServiceUrl, {
+                mode: FeatureLayer.MODE_SNAPSHOT,
+                infoTemplate: facilityTemplate,
+                outFields: ["Name"]
+            });
+            facilityLayer.setRenderer(facilityRenderer);
+            
+            // add layers
+            map.addLayers([wellLayer, facilityLayer]);
+            
+            // legend
+            var legend = new Legend({
+                map: map
+            }, "legend1");
+            legend.startup();
+            
+            //scalebar
+            var scalebar = new Scalebar({
+                map: map,
+                scalebarUnit: "dual"
+            });
+            
+            var saParams = new ServiceAreaParameters();
+            saParams.defaultBreaks= [dom.byId("mins-input").value];
+            saParams.outSpatialReference = map.spatialReference;
+            saParams.returnFacilities = false;
+            //drive area
+            on(dom.byId("calculate"), "click", function(event){
+                // service area parameters
+                var features = facilityLayer.graphics;
+                var facilities = new FeatureSet();
+                facilities.features = features;
+                saParams.facilities = facilities;
+                // service area task
+                serviceAreaTask = new ServiceAreaTask(naServiceUrl);
+                serviceAreaTask.solve(saParams, function(solveAreas){
+                    var polygonSymbol = new SimpleFillSymbol(
+                        "solid",  
+                        new SimpleLineSymbol("solid", new Color([232,104,80]), 2),
+                        new Color([232,104,80,0.25])
+                    );
+                    arrayUtils.forEach(solveAreas.serviceAreaPolygons, function(serviceArea){
+                        convexServiceArea = geometryEngine.convexHull(serviceArea.geometry);
+                        map.graphics.add(new Graphic(convexServiceArea, polygonSymbol));
+                    });
+                });
+            });
+            
+            // toolbar
+            function activateToolbar(event) {
+                map.disableScrollWheelZoom();
+                var toolbar = new Draw(event.map);
+                on(dom.byId("toolbar"), "click", function (event) {
+                    if (event.target.id === "toolbar") {
+                        return;
+                    }
+                    if (event.target.id === "clear") {
+                        map.graphics.clear();
+                        map.disableScrollWheelZoom();
+                        return;
+                    }
+                    var tool = event.target.id.toLowerCase();
+                    map.disableMapNavigation();
+                    toolbar.activate(tool);
+                    toolbar.on("draw-end", function (event) {
+                        toolbar.deactivate();
+                        map.enableMapNavigation();
+                        map.disableScrollWheelZoom();
+                        var graphic = new Graphic();
+                        var pointSymbol = new SimpleMarkerSymbol({
+                            type: "esriSMS",
+                            style: "esriSMSSquare",
+                            outline: {
+                                width: 0.5,
+                                color: [160, 160, 160, 70],
+                            },
+                            size: 13,
+                            color: new Color([255,10,10])
+                        });
+                        graphic.setGeometry(event.geometry);
+                        graphic.setSymbol(pointSymbol);
+                        map.graphics.add(graphic);
+                        // service area
+                        var features2 = [graphic];
+                        var facilities = new FeatureSet();
+                        facilities.features = features2;
+                        saParams.facilities = facilities;
+                        serviceAreaTask = new ServiceAreaTask(naServiceUrl);
+                        serviceAreaTask.solve(saParams, function(solveAreas){
+                            var polygonSymbol = new SimpleFillSymbol(
+                                "solid",  
+                                new SimpleLineSymbol("solid", new Color([232,104,80]), 2),
+                                new Color([232,104,80,0.25])
+                            );
+                            var serviceArea = solveAreas.serviceAreaPolygons[0];
+                            convexServiceArea = geometryEngine.convexHull(serviceArea.geometry);
+                            map.graphics.add(new Graphic(convexServiceArea, polygonSymbol));
+                        });
+                    });
+                });
+            }
         });
     }
-    
+</script>
+
+<script type="text/javascript">
     // tab3
     function load_map3(){
         require([
@@ -154,6 +542,7 @@
              "dojo/_base/array",
              "dojo/dom-construct",
              "dgrid/Grid",
+             "dojo/dom",
              "dojo/on",
              "dojo/domReady!"
              ], function(
@@ -170,6 +559,7 @@
                  arrayUtils,
                  domConstruct,
                  Grid,
+                 dom,
                  on
              ){
              //global varible
@@ -194,8 +584,8 @@
              map.on("click", addStop);
              
              //routing
-             routingServiceUrl = "http://utility.arcgis.com/usrsvcs/servers/cc83495aa68841219353131cf078a2ea/rest/services/World/Route/NAServer/Route_World"
-             var routeTask = new RouteTask(routingServiceUrl);
+             naServiceUrl = "http://utility.arcgis.com/usrsvcs/servers/cc83495aa68841219353131cf078a2ea/rest/services/World/Route/NAServer/Route_World";
+             var routeTask = new RouteTask(naServiceUrl);
              var routeParams = new RouteParameters();
              routeParams.stops = new FeatureSet();
              routeParams.outSpatialReference = {
@@ -245,8 +635,8 @@
                  var directionsInfo = event.result.routeResults[0].directions.features;
                  var totalDistance = Math.round(directions.totalLength, 2);
                  var totalTime = Math.round(directions.totalTime, 2);
-                 $("#total-distance").text(totalDistance);
-                 $("#total-time").text(totalTime)
+                 dom.byId("total-distance").text(totalDistance);
+                 dom.byId("total-time").text(totalTime);
                  gridData = arrayUtils.map(directionsInfo,function(feature,index){
                      return {
                          "detail": feature.attributes.text,
@@ -289,5 +679,26 @@
              }
          });
     }
+</script>
+
+<script type="text/javascript">
+    // document ready
+    $( document ).ready(function(){
+        load_map1();
+        $("#map-tabs").on("click", function(event){
+            var tabName = event.target.text;
+            switch (tabName){
+                case "Service Area":
+                    load_map1();
+                    break;
+                case "Nearest Facility":
+                    load_map2();
+                    break;
+                case "Transportation Cost":
+                    load_map3();
+                    break;
+            }
+        });
+    });
 </script>
 {% endblock %}
