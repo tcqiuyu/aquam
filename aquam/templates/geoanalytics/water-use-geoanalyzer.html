@@ -14,6 +14,7 @@
             border: 1px solid #A4A4A4;
             border-radius: 3px;
         }
+
         .map-legend {
             position: absolute;
             right: 10px;
@@ -21,30 +22,40 @@
             background-color: white;
             border-radius: 5px;
         }
+
         #legend1 {
             height: 200px;
             width: 110px;
         }
+
         #legend2 {
             height: 400px;
             width: 150px;
         }
+
         #legend4 {
             height: 200px;
             width: 110px;
         }
+
         #charts {
-            height: 410px;
+            height: 1470px;
             width: 100%;
             border: 1px solid #A4A4A4;
             border-radius: 3px;
         }
+
         .chart {
             height: 400px;
             width: 100%;
         }
+
         #well-number, #total, #mean {
             color: blue;
+        }
+
+        .stat {
+            padding-left: 10px;
         }
     </style>
 {% endblock %}
@@ -113,16 +124,40 @@
                         <div id="legend4"></div>
                     </div>
                 </div>
+                <hr>
                 <div id="stat_panel">
                     <div id="charts">
-                        <div id="chart1" class="chart"></div>
-                    </div>
-                    <div id="stat">
-                        <p>Wells Number: <span id="well-number">________</span></p>
+                        <div id="chart1" class="chart">
 
-                        <p>Total Water Use: <span id="total">________</span> (bbls)</p>
+                        </div>
+                        <div class="stat" id="stat1">
+                            <p>Wells Number: <span id="well-number">________</span></p>
 
-                        <p>Average Water Use: <span id="mean">________</span> (bbls)</p>
+                            <p>Total Water Use: <span id="total">________</span> (bbls)</p>
+
+                            <p>Average Water Use: <span id="mean">________</span> (bbls)</p>
+                        </div>
+
+                        <div id="chart2" class="chart">
+
+                        </div>
+                        <div class="stat" id="stat2">
+                            <p>Wells Number: <span id="well-number">________</span></p>
+
+                            <p>Total Water Use: <span id="total">________</span> (bbls)</p>
+
+                            <p>Average Water Use: <span id="mean">________</span> (bbls)</p>
+                        </div>
+                        <div id="chart3" class="chart">
+
+                        </div>
+                        <div class="stat" id="stat3">
+                            <p>Wells Number: <span id="well-number">________</span></p>
+
+                            <p>Total Water Use: <span id="total">________</span> (bbls)</p>
+
+                            <p>Average Water Use: <span id="mean">________</span> (bbls)</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -257,7 +292,7 @@
                 scalebarUnit: "dual"
             });
         });
-        
+
         var map2_clicked = false;
         function map2() {
             if (!map2_clicked) {
@@ -293,7 +328,7 @@
                 map2_clicked = true;
             }
         }
-        
+
         var map3_clicked = false;
         function map3() {
             if (!map3_clicked) {
@@ -322,7 +357,7 @@
                 map3_clicked = true;
             }
         }
-        
+
         var map4_clicked = false;
         function map4() {
             if (!map4_clicked) {
@@ -417,6 +452,40 @@
                             .attr("text-anchor", "middle")
                             .attr("font-size", 14)
                             .text("Number of Wells");
+                    var chart2 = d3.select("#chart2").select("g");
+                    chart2.append("text")
+                            .attr("class", "xlabel")
+                            .attr("text-anchor", "middle")
+                            .attr("x", width / 2)
+                            .attr("y", height + margin.bottom - 5)
+                            .attr("font-size", 14)
+                            .text("Horizontal Length per Well(ft)");
+                    chart2.append("text")
+                            .attr("class", "ylabel")
+                            .attr("x", 0 - (height / 2))
+                            .attr("y", 0 - margin.left + 20)
+                            .attr("dy", "1em")
+                            .attr("transform", "rotate(-90)")
+                            .attr("text-anchor", "middle")
+                            .attr("font-size", 14)
+                            .text("Number of Wells");
+                    var chart3 = d3.select("#chart3").select("g");
+                    chart3.append("text")
+                            .attr("class", "xlabel")
+                            .attr("text-anchor", "middle")
+                            .attr("x", width / 2)
+                            .attr("y", height + margin.bottom - 5)
+                            .attr("font-size", 14)
+                            .text("Water Used per Horizontal Foot(bbls/ft)");
+                    chart3.append("text")
+                            .attr("class", "ylabel")
+                            .attr("x", 0 - (height / 2))
+                            .attr("y", 0 - margin.left + 20)
+                            .attr("dy", "1em")
+                            .attr("transform", "rotate(-90)")
+                            .attr("text-anchor", "middle")
+                            .attr("font-size", 14)
+                            .text("Number of Wells");
                     //renderer
                     var renderer = new SimpleRenderer({
                         symbol: {
@@ -475,6 +544,7 @@
                     });
                     //draw graphic
                     var graphic = new Graphic();
+
                     function activateToolbar(event) {
                         // map
                         map.disableScrollWheelZoom();
@@ -524,14 +594,20 @@
                             });
                         });
                     }
+
                     function summerize(event) {
                         // water use
                         var totalWaterUse = 0.0;
                         var featuresNumber = event.features.length;
                         var waterUseArray = [];
+                        var horizontalArray = [];
+                        var wuperftArray = [];
+
                         arrayUtil.forEach(event.features, function (feature) {
                             totalWaterUse += feature.attributes.water_use;
                             waterUseArray.push(parseInt(feature.attributes.water_use));
+                            horizontalArray.push(parseInt(feature.attributes.horizontal));
+                            wuperftArray.push(parseInt(feature.attributes.wu_per_foo));
                         });
                         var meanWaterUse = totalWaterUse / featuresNumber;
                         //stat
@@ -552,73 +628,89 @@
                                     label: "Perimeter (feet):",
                                     visible: true
                                 }
-                            ],
+                            ]
                         });
                         graphic.setInfoTemplate(template);
-                        
-                        // chart
-                        var margin = {top: 20, right: 30, bottom: 40, left: 70};
-                        var width = $("#chart1").width() - margin.left - margin.right,
-                                height = $("#chart1").height() - margin.top - margin.bottom;
-                        var values = waterUseArray;
-                        var xRange = d3.scale.linear()
-                                .domain(d3.extent(values, function (d) { return d; }))
-                                .range([0, width]);
-                        var data = d3.layout.histogram()
-                                .bins(xRange.ticks(10))(values);
-                        var yRange = d3.scale.linear()
-                                .domain([0, d3.max(data, function (d) { return d.y; })])
-                                .range([height, 0]);
-                        var xAxis = d3.svg.axis()
-                                .scale(xRange)
-                                .orient("bottom");
-                        var yAxis = d3.svg.axis()
-                                .scale(yRange)
-                                .orient("left");
-                        var svg = d3.select("#chart1").select("svg");
-                        var chart = svg.select("g");
-                        svg.selectAll(".x.axis").transition().duration(500)
-                                .call(xAxis);
-                        svg.selectAll(".y.axis").transition().duration(500)
-                                .call(yAxis);
-                        chart.selectAll(".bar")
-                                .remove();
-                        // set up the bars and text
-                        var bar = chart.selectAll(".bar")
-                                .data(data)
-                                .enter()
-                                .append("g")
-                                .attr("class", "bar")
-                                .attr("transform", function (d) { return "translate(" + xRange(d.x) + "," + 0 + ")";});
-                        bar.append("rect")
-                                .attr("x", 1)
-                                .attr("y", height)
-                                .attr("fill", "#A8383B")
-                                .attr("width", xRange(data[1].x) - xRange(data[0].x) - 1)
-                                .attr("height", 0);
-                        // transition effect
-                        bar.selectAll("rect")
-                                .transition()
-                                .duration(500)
-                                .attr("y", function (d) {return yRange(d.y);})
-                                .attr("height", function (d) { return height - yRange(d.y); });
-                        bar.selectAll("rect")
-                                .on("mouseover", function () { d3.select(this).attr("fill", "#AA9F39"); })
-                                .on("mouseout", function () { d3.select(this).attr("fill", "#A8383B"); });
-                        bar.append("text")
-                                .attr("dy", "0.75em")
-                                .attr("y", height - 10)
-                                .attr("x", xRange(data[1].x) / 2 - xRange(data[0].x) / 2 - 1)
-                                .style("fill", "black")
-                                .attr("text-anchor", "middle")
-                                .text(function (d) { return d.y; });
-                        bar.selectAll("text")
-                                .transition()
-                                .duration(500)
-                                .attr("y", function (d) {return yRange(d.y) - 10;});
+
+                        drawbar(waterUseArray, "#chart1");
+                        drawbar(horizontalArray, "#chart2");
+                        drawbar(wuperftArray, "#chart3");
+
+                        function drawbar(input, chart_id) {
+                            var margin = {top: 20, right: 30, bottom: 40, left: 70};
+                            var width = $(chart_id).width() - margin.left - margin.right,
+                                    height = $(chart_id).height() - margin.top - margin.bottom;
+                            var values = input;
+                            var xRange = d3.scale.linear()
+                                    .domain(d3.extent(values, function (d) { return d; }))
+                                    .range([0, width]);
+                            var data = d3.layout.histogram()
+                                    .bins(xRange.ticks(10))(values);
+                            var yRange = d3.scale.linear()
+                                    .domain([0, d3.max(data, function (d) { return d.y; })])
+                                    .range([height, 0]);
+                            var xAxis = d3.svg.axis()
+                                    .scale(xRange)
+                                    .orient("bottom");
+                            var yAxis = d3.svg.axis()
+                                    .scale(yRange)
+                                    .orient("left");
+                            var svg = d3.select(chart_id).select("svg");
+                            var chart = svg.select("g");
+                            svg.selectAll(".x.axis").transition().duration(500)
+                                    .call(xAxis);
+                            svg.selectAll(".y.axis").transition().duration(500)
+                                    .call(yAxis);
+                            chart.selectAll(".bar")
+                                    .remove();
+                            // set up the bars and text
+                            var bar = chart.selectAll(".bar")
+                                    .data(data)
+                                    .enter()
+                                    .append("g")
+                                    .attr("class", "bar")
+                                    .attr("transform", function (d) { return "translate(" + xRange(d.x) + "," + 0 + ")";});
+                            bar.append("rect")
+                                    .attr("x", 1)
+                                    .attr("y", height)
+                                    .attr("fill", color_picker(chart_id))
+                                    .attr("width", xRange(data[1].x) - xRange(data[0].x) - 1)
+                                    .attr("height", 0);
+                            // transition effect
+                            bar.selectAll("rect")
+                                    .transition()
+                                    .duration(500)
+                                    .attr("y", function (d) {return yRange(d.y);})
+                                    .attr("height", function (d) { return height - yRange(d.y); });
+                            bar.selectAll("rect")
+                                    .on("mouseover", function () { d3.select(this).attr("fill", "#AA9F39"); })
+                                    .on("mouseout", function () { d3.select(this).attr("fill", color_picker(chart_id)); });
+                            bar.append("text")
+                                    .attr("dy", "0.75em")
+                                    .attr("y", height - 10)
+                                    .attr("x", xRange(data[1].x) / 2 - xRange(data[0].x) / 2 - 1)
+                                    .style("fill", "black")
+                                    .attr("text-anchor", "middle")
+                                    .text(function (d) { return d.y; });
+                            bar.selectAll("text")
+                                    .transition()
+                                    .duration(500)
+                                    .attr("y", function (d) {return yRange(d.y) - 10;});
+                        }
                     }
                 });
                 map4_clicked = true;
+            }
+        }
+
+        function color_picker(scheme) {
+            switch (scheme) {
+                case "#chart1":
+                    return "#A8383B";
+                case "#chart2":
+                    return "#4A2D73";
+                case "#chart3":
+                    return "#338A2E";
             }
         }
     </script>
