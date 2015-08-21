@@ -199,7 +199,9 @@
                 center: [-98.38, 28.8],
                 zoom: 9
             });
-            map.on("load", activateToolbar);
+            map.on("load", function(){
+                map.disableScrollWheelZoom();
+            });
             
             // well layer
             var wellsRenderer = new SimpleRenderer({
@@ -225,7 +227,7 @@
                 }
             });
             var wellServiceUrl = "http://services1.arcgis.com/KNdRU5cN6ENqCTjk/arcgis/rest/services/WaterUsePoint/FeatureServer/0";
-            wellsLayer = new FeatureLayer(wellServiceUrl, {
+            var wellsLayer = new FeatureLayer(wellServiceUrl, {
                 mode: FeatureLayer.MODE_SNAPSHOT,
                 outFields: ["water_use"]
             });
@@ -256,6 +258,7 @@
             map.addLayer(areaGraphicsLayer);
             
             // draw
+            var toolbar = new Draw(map);
             on(dom.byId("toolbar1"), "click", function (event) {
                 if (event.target.id === "toolbar1") {
                     return;
