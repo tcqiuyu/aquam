@@ -83,7 +83,7 @@
                 <div id="toolbar1">
                     <button id="facility-point" name="point" class="btn btn-default">Add Treatment Facility</button>
                     <input id="minutes" type="text" name="mins" value="10"> mins
-                    <button id="calculate-area" class="btn btn-default">Calculate Service Area</button>
+                    <button id="calculate-service-area" class="btn btn-default">Calculate Service Area</button>
                     <button id="clear-all" name="clear" class="btn btn-default">Clear</button>
                 </div>
                 <div class="map">
@@ -139,6 +139,8 @@
 <script type="text/javascript">
     $(document).ready(function(){
         load_map1();
+        load_map2();
+        load_map3();
     });
 </script>
 
@@ -295,7 +297,7 @@
             });
             
             // add service area
-            on(dom.byId("calculate-area"), "click", function(event){
+            on(dom.byId("calculate-service-area"), "click", function(event){
                 if (features.length < 1) {
                     return;
                 }
@@ -323,7 +325,6 @@
                         areaGraphicsLayer.add(areaGraphic);
                     });
                 });
-                console.log(areaGraphicsLayer.graphics)
                 arrayUtils.forEach(areaGraphicsLayer.graphics, function(areaGraphic){
                     // summarize
                     var query = new Query();
@@ -359,15 +360,18 @@
                 "esri/dijit/Scalebar",
                 "esri/dijit/PopupTemplate",
                 "esri/graphic",
-                "esri/geometry/geometryEngine",
+                "esri/geometry/Point",
                 "esri/layers/FeatureLayer",
                 "esri/map",
                 "esri/renderers/SimpleRenderer",
                 "esri/symbols/SimpleFillSymbol",
                 "esri/symbols/SimpleLineSymbol",
                 "esri/symbols/SimpleMarkerSymbol",
+                "esri/tasks/ClosestFacilityTask",
+                "esri/tasks/ClosestFacilityParameters",
                 "esri/tasks/FeatureSet",
                 "esri/tasks/GeometryService",
+                "esri/tasks/query",
                 "esri/tasks/ServiceAreaParameters",
                 "esri/tasks/ServiceAreaTask",
                 "esri/toolbars/draw",
@@ -381,14 +385,17 @@
                 Scalebar,
                 PopupTemplate,
                 Graphic,
-                geometryEngine,
+                Point,
                 FeatureLayer,
                 Map,
                 SimpleRenderer,
                 SimpleFillSymbol,
                 SimpleLineSymbol,
                 SimpleMarkerSymbol,
+                ClosestFacilityTask,
+                ClosestFacilityParameters,
                 FeatureSet,
+                Query,
                 GeometryService,
                 ServiceAreaParameters,
                 ServiceAreaTask,
@@ -399,14 +406,16 @@
             ){
                 //map
                 var map = new Map("map2", {
-                 basemap: "topo",
+                 basemap: "streets",
                  center: [-98.38, 28.8],
                  zoom: 9
                 });
-                map.on("load", activateToolbar);
+                map.on("load", function(){
+                    map.disableScrollWheelZoom();
+                });
                 
                 // well layer
-                var wellRenderer = new SimpleRenderer({
+                var wellsRenderer = new SimpleRenderer({
                     symbol: {
                         type: "esriSMS",
                         style: "esriSMSCircle",
@@ -428,15 +437,23 @@
                         ]
                     }
                 });
+                // selection symbol
+                var selectionSymbol = new SimpleMarkerSymbol({
+                    type: "esriSMS",
+                    style: "esriSMSCircle",
+                    size: 8,
+                    color: new Color([207, 34, 171, 0.5])
+                });
                 var wellServiceUrl = "http://services1.arcgis.com/KNdRU5cN6ENqCTjk/arcgis/rest/services/WaterUsePoint/FeatureServer/0";
-                var wellLayer = new FeatureLayer(wellServiceUrl, {
+                var wellsLayer = new FeatureLayer(wellServiceUrl, {
                     mode: FeatureLayer.MODE_SNAPSHOT,
                     outFields: ["water_use"]
                 });
-                wellLayer.setRenderer(wellRenderer);
+                wellsLayer.setRenderer(wellsRenderer);
+                wellsLayer.setSelectionSymbol(selectionSymbol);
                 
-                // facility layer
-                var facilityRenderer = new SimpleRenderer({
+                // injection wells layer
+                var injectionWellRenderer = new SimpleRenderer({
                     symbol: {
                         type: "esriSMS",
                         style: "esriSMSSquare",
@@ -444,11 +461,11 @@
                             width: 0.5,
                             color: [160, 160, 160, 70],
                         },
-                        size: 13,
+                        size: 10,
                         color: new Color([100,150,255])
                     }
                 });
-                var facilityTemplate = new PopupTemplate({
+                var injectionWellTemplate = new PopupTemplate({
                     fieldInfos: [
                         {
                             fieldName: "Name",
@@ -457,17 +474,15 @@
                         }
                     ]
                 });
-                var facilityServiceUrl = "http://services1.arcgis.com/KNdRU5cN6ENqCTjk/arcgis/rest/services/TreatmentFacility/FeatureServer/0";
-                var facilityLayer = new FeatureLayer(facilityServiceUrl, {
+                var injectionWellServiceUrl = "http://services1.arcgis.com/KNdRU5cN6ENqCTjk/arcgis/rest/services/InjectionDisposalWell/FeatureServer/0";
+                var injectionWellsLayer = new FeatureLayer(injectionWellServiceUrl, {
                     mode: FeatureLayer.MODE_SNAPSHOT,
-                    infoTemplate: facilityTemplate,
+                    infoTemplate: injectionWellTemplate,
                     outFields: ["Name"]
                 });
-                facilityLayer.setRenderer(facilityRenderer);
-                
-                // add layers
-                map.addLayers([wellLayer, facilityLayer]);
-                
+                injectionWellsLayer.setRenderer(injectionWellRenderer);
+                map.addLayers([wellsLayer, injectionWellsLayer]);
+
                 // legend
                 var legend = new Legend({
                     map: map
@@ -480,34 +495,95 @@
                     scalebarUnit: "dual"
                 });
                 
-                // toolbar
-                function activateToolbar(event) {
-                    map.disableScrollWheelZoom();
-                    var toolbar = new Draw(event.map);
-                    on(dom.byId("toolbar2"), "click", function (event) {
-                        if (event.target.id === "toolbar2") {
-                            return;
-                        }
-                        if (event.target.id === "clear-them") {
-                            map.graphics.clear();
-                            map.disableScrollWheelZoom();
-                            features = [];
-                            return;
-                        }
-                        var tool = event.target.name.toLowerCase();
-                        map.disableMapNavigation();
-                        toolbar.activate(tool);
-                        toolbar.on("draw-end", function (event) {
-                            toolbar.deactivate();
-                            map.enableMapNavigation();
-                            map.disableScrollWheelZoom();
-                            var graphic = new Graphic();
-                            graphic.setGeometry(event.geometry);
-                            graphic.setSymbol(new SimpleFillSymbol());
-                            map.graphics.add(graphic);
+                // nearest facilities
+                var cfServiceUrl = "http://utility.arcgis.com/usrsvcs/servers/1e3c79d2d2684f33806420f2fde7111b/rest/services/World/ClosestFacility/NAServer/ClosestFacility_World";
+                var closestFacilityTask = new ClosestFacilityTask(cfServiceUrl);
+                var cfParams = new ClosestFacilityParameters();
+                cfParams.impedenceAttribute= "Miles";
+                cfParams.returnIncidents=false;
+                cfParams.returnRoutes=true;
+                cfParams.returnDirections=false;
+                var facilities = new FeatureSet();
+                facilities.features = injectionWellsLayer.graphics;
+                cfParams.facilities = facilities;
+                cfParams.outSpatialReference = map.spatialReference;
+                cfParams.defaultTargetFacilityCount = 1;
+                var routeSymbol = new SimpleLineSymbol({
+                    color: new Color([20, 20, 255]),
+                    style: "STYLE_SOLID",
+                    width: 2
+                });
+                var toolbar = new Draw(map);
+                on(dom.byId("toolbar2"), "click", function (event) {
+                    if (event.target.id === "toolbar2") {
+                        return;
+                    }
+                    if (event.target.id === "clear-them") {
+                        map.graphics.clear();
+                        wellsLayer.clearSelection();
+                        return;
+                    }
+                    var tool = event.target.name.toLowerCase();
+                    toolbar.activate(tool);
+                    toolbar.on("draw-end", function (event) {
+                        toolbar.deactivate();
+                        var graphic = new Graphic();
+                        var fillSymbol = new SimpleFillSymbol({
+                            type: "esriSFS",
+                            style: "esriSFSSolid",
+                            color: [100, 100, 100, 50],
+                            outline: new SimpleLineSymbol()
                         });
+                        graphic.setGeometry(event.geometry);
+                        graphic.setSymbol(fillSymbol);
+                        //map.graphics.add(graphic);
+                        // query
+                        var query = new Query();
+                        query.geometry = event.geometry;
+                        wellsLayer.selectFeatures(query, FeatureLayer.SELECTION_NEW);
+                        map.graphics.clear();
+                        wellsLayer.on("selection-complete", getNearestFacility);
                     });
-                }
+                    function getNearestFacility(event){
+                        if (event.features.length < 1){
+                            return;
+                        }
+                        // find the centroid of the group of selected points
+                        var points = dojo.map(event.features,function(feature){
+                            return feature.geometry;
+                        });
+                        var xSum = 0.0;
+                        var ySum = 0.0;
+                        arrayUtils.forEach(points, function(point){
+                            xSum += point.x;
+                            ySum += point.y;
+                        });
+                        xCenter = xSum / points.length;
+                        yCenter = ySum / points.length;
+                        var centroid = new Point(xCenter, yCenter, map.spatialReference);
+                        centroidGraphic = new Graphic(centroid, new SimpleMarkerSymbol({
+                            type: "esriSMS",
+                            style: "esriSMSCross",
+                            outline: {
+                                width: 2,
+                                color: new Color([255, 0, 0]),
+                            },
+                            size: 13,
+                            color: new Color([255,0,0])
+                        }));
+                        map.graphics.add(centroidGraphic);
+                        var incidents = new FeatureSet();
+                        incidents.features = [centroidGraphic];
+                        cfParams.incidents = incidents;
+                        
+                        // find the nearest facility
+                        closestFacilityTask.solve(cfParams, function(solveResult){
+                            arrayUtils.forEach(solveResult.routes, function(route, index){
+                                map.graphics.add(route.setSymbol(routeSymbol));
+                            });
+                        });
+                    }
+                });
             });
             map2_clicked = true;
         }
@@ -606,7 +682,7 @@
                         lastStop = routeParams.stops.features.splice(0, 1)[0];
                     }
                 }
-                 
+                
                 //Adds the solved route to the map as a graphic
                 function showRoute(event) {
                     var gridData = [];
