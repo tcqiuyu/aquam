@@ -24,7 +24,11 @@
             height: 180px;
             width: 110px;
         }
-        #legend2, #legend3 {
+        #legend2 {
+            height: 310px;
+            width: 170px;
+        }
+        #legend3 {
             height: 200px;
             width: 110px;
         }
@@ -79,7 +83,7 @@
             <li role="presentation"><a data-toggle="tab" href="#transportation-cost" onclick="load_map3()">Transportation Cost</a></li>
         </ul>
         <div class="tab-content">
-            <div id="service-area" role="tabpanel" class="tab-pane22 active">
+            <div id="service-area" role="tabpanel" class="tab-pane active">
                 <div id="toolbar1">
                     <button id="facility-point" name="point" class="btn btn-default">Add Treatment Facility</button>
                     <input id="minutes" type="text" name="mins" value="10"> mins
@@ -98,7 +102,7 @@
                 </div>
             </div>
             
-            <div id="nearest-facility" role="tabpanel" class="tab-pane2">
+            <div id="nearest-facility" role="tabpanel" class="tab-pane">
                 <div id="toolbar2">
                     <button id="draw-rectangle" name="rectangle" class="btn btn-default">Rectangle</button>
                     <button id="draw-circle" name="circle" class="btn btn-default">Circle</button>
@@ -113,7 +117,7 @@
                 </div>
             </div>
             
-            <div id="transportation-cost" role="tabpanel" class="tab-pane22">
+            <div id="transportation-cost" role="tabpanel" class="tab-pane">
                 <div class="map">
                     <div id="map3"></div>
                     <div class="map-legend">
@@ -139,8 +143,6 @@
 <script type="text/javascript">
     $(document).ready(function(){
         load_map1();
-        load_map2();
-        load_map3();
     });
 </script>
 
@@ -323,25 +325,22 @@
                         // add service area to map
                         var areaGraphic = new Graphic(convexServiceArea, polygonSymbol)
                         areaGraphicsLayer.add(areaGraphic);
-                    });
-                });
-                arrayUtils.forEach(areaGraphicsLayer.graphics, function(areaGraphic){
-                    // summarize
-                    var query = new Query();
-                    query.geometry = areaGraphic.geometry;
-                    wellsLayer.selectFeatures(query, wellsLayer.SELECTION_NEW);
-                    wellsLayer.on("selection-complete", function(result){
-                        var totalWaterUse = 0.0;
-                        var featuresNumber = result.features.length;
-                        arrayUtils.forEach(result.features, function (feature) {
-                            totalWaterUse += feature.attributes.water_use;
+                        // summarize
+                        var query = new Query();
+                        query.geometry = areaGraphic.geometry;
+                        wellsLayer.selectFeatures(query, FeatureLayer.SELECTION_NEW, function(features){
+                            var totalWaterUse = 0.0;
+                            var featuresNumber = features.length;
+                            arrayUtils.forEach(features, function (feature) {
+                                totalWaterUse += feature.attributes.water_use;
+                            });
+                            var meanWaterUse = totalWaterUse / featuresNumber;
+                            data = {
+                                "totalWaterUse": Math.round(totalWaterUse),
+                                "meanWaterUse":Math.round(meanWaterUse)
+                            };
+                            console.log(data);
                         });
-                        var meanWaterUse = totalWaterUse / featuresNumber;
-                        data = {
-                            "totalWaterUse": Math.round(totalWaterUse),
-                            "meanWaterUse":Math.round(meanWaterUse)
-                        };
-                        console.log(data);
                     });
                 });
             });
@@ -462,7 +461,7 @@
                             color: [160, 160, 160, 70],
                         },
                         size: 10,
-                        color: new Color([100,150,255])
+                        color: new Color([20,20,255])
                     }
                 });
                 var injectionWellTemplate = new PopupTemplate({
@@ -525,6 +524,7 @@
                     }
                     var tool = event.target.name.toLowerCase();
                     toolbar.activate(tool);
+                    console.log("loop1");
                     toolbar.on("draw-end", function (event) {
                         toolbar.deactivate();
                         var graphic = new Graphic();
@@ -537,52 +537,51 @@
                         graphic.setGeometry(event.geometry);
                         graphic.setSymbol(fillSymbol);
                         //map.graphics.add(graphic);
+                        map.graphics.clear();
                         // query
                         var query = new Query();
                         query.geometry = event.geometry;
-                        wellsLayer.selectFeatures(query, FeatureLayer.SELECTION_NEW);
-                        map.graphics.clear();
-                        wellsLayer.on("selection-complete", getNearestFacility);
-                    });
-                    function getNearestFacility(event){
-                        if (event.features.length < 1){
-                            return;
-                        }
-                        // find the centroid of the group of selected points
-                        var points = dojo.map(event.features,function(feature){
-                            return feature.geometry;
-                        });
-                        var xSum = 0.0;
-                        var ySum = 0.0;
-                        arrayUtils.forEach(points, function(point){
-                            xSum += point.x;
-                            ySum += point.y;
-                        });
-                        xCenter = xSum / points.length;
-                        yCenter = ySum / points.length;
-                        var centroid = new Point(xCenter, yCenter, map.spatialReference);
-                        centroidGraphic = new Graphic(centroid, new SimpleMarkerSymbol({
-                            type: "esriSMS",
-                            style: "esriSMSCross",
-                            outline: {
-                                width: 2,
-                                color: new Color([255, 0, 0]),
-                            },
-                            size: 13,
-                            color: new Color([255,0,0])
-                        }));
-                        map.graphics.add(centroidGraphic);
-                        var incidents = new FeatureSet();
-                        incidents.features = [centroidGraphic];
-                        cfParams.incidents = incidents;
-                        
-                        // find the nearest facility
-                        closestFacilityTask.solve(cfParams, function(solveResult){
-                            arrayUtils.forEach(solveResult.routes, function(route, index){
-                                map.graphics.add(route.setSymbol(routeSymbol));
+                        console.log("loop2");
+                        wellsLayer.selectFeatures(query, FeatureLayer.SELECTION_NEW, function(features){
+                            if (features.length < 1){
+                                return;
+                            }
+                            // find the centroid of the group of selected points
+                            var points = dojo.map(features,function(feature){
+                                return feature.geometry;
+                            });
+                            var xSum = 0.0;
+                            var ySum = 0.0;
+                            arrayUtils.forEach(points, function(point){
+                                xSum += point.x;
+                                ySum += point.y;
+                            });
+                            xCenter = xSum / points.length;
+                            yCenter = ySum / points.length;
+                            var centroid = new Point(xCenter, yCenter, map.spatialReference);
+                            centroidGraphic = new Graphic(centroid, new SimpleMarkerSymbol({
+                                type: "esriSMS",
+                                style: "esriSMSCross",
+                                outline: {
+                                    width: 2,
+                                    color: new Color([255, 0, 0]),
+                                },
+                                size: 13,
+                                color: new Color([255,0,0])
+                            }));
+                            map.graphics.add(centroidGraphic);
+                            var incidents = new FeatureSet();
+                            incidents.features = [centroidGraphic];
+                            cfParams.incidents = incidents;
+                            
+                            // find the nearest facility
+                            closestFacilityTask.solve(cfParams, function(solveResult){
+                                arrayUtils.forEach(solveResult.routes, function(route, index){
+                                    map.graphics.add(route.setSymbol(routeSymbol));
+                                });
                             });
                         });
-                    }
+                    });
                 });
             });
             map2_clicked = true;
@@ -593,8 +592,8 @@
 <script type="text/javascript">
     // tab3
     var map3_clicked = false;
-    if (!map3_clicked) {
-        function load_map3(){
+    function load_map3(){
+        if (!map3_clicked) {
             require([
                 "esri/Color",
                 "esri/dijit/Scalebar",
@@ -737,7 +736,6 @@
                         segmentGraphic.setGeometry(segment.geometry);
                     }
                 }
-                
                 //Displays any error returned by the Route Task
                 function errorHandler(err) {
                     alert("An error occured\n" + err.message + "\n");
