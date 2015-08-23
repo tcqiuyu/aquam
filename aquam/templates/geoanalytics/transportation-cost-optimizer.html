@@ -795,6 +795,7 @@
                 "esri/dijit/Scalebar",
                 "esri/graphic",
                 "esri/lang",
+                "esri/layers/FeatureLayer",
                 "esri/map",
                 "esri/symbols/SimpleMarkerSymbol",
                 "esri/symbols/SimpleLineSymbol",
@@ -812,6 +813,7 @@
                 Scalebar,
                 Graphic,
                 esriLang,
+                FeatureLayer,
                 Map,
                 SimpleMarkerSymbol,
                 SimpleLineSymbol,
@@ -842,6 +844,10 @@
                 });
                 //add stops
                 map.on("click", addStop);
+                
+                tenWellsServiceUrl = "http://services1.arcgis.com/KNdRU5cN6ENqCTjk/arcgis/rest/services/TenWaterUsePoints/FeatureServer/0";
+                
+                
                 //routing
                 naServiceUrl = "http://utility.arcgis.com/usrsvcs/servers/cc83495aa68841219353131cf078a2ea/rest/services/World/Route/NAServer/Route_World";
                 var routeTask = new RouteTask(naServiceUrl);
