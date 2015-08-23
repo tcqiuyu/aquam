@@ -39,7 +39,7 @@
         }
 
         #charts {
-            height: 1470px;
+            height: auto;
             width: 100%;
             border: 1px solid #A4A4A4;
             border-radius: 3px;
@@ -50,12 +50,28 @@
             width: 100%;
         }
 
-        #well-number, #total, #mean {
+        #well-number, .stat-data > span {
             color: blue;
         }
 
         .stat {
-            padding-left: 10px;
+        {#            background-color: lightgray;#} padding: 10px 0 10px 0;
+            margin: 10px 20px 10px 20px;
+        }
+
+        .stat-label {
+            background-color: lightgray;
+            font-size: small;
+            padding: 10px 10px 10px 10px;
+        {#            margin-left: 10px;#} font-weight: bold;
+            border: 1px solid #A4A4A4;
+            border-radius: 3px;
+            display: inline-block;
+        }
+
+        .stat-data {
+            margin: 5px 0 5px 0;
+        {#            margin-outside: 10px;#} display: inline-block;
         }
     </style>
 {% endblock %}
@@ -126,37 +142,48 @@
                 </div>
                 <hr>
                 <div id="stat_panel">
+                    <button id="analytics" class="btn btn-default">Analytics</button>
+                    <button id="kpis" class="btn btn-default">KPIs</button>
                     <div id="charts">
+
+                        <div class="stat">
+                            <span class="stat-label">Wells Number: <span
+                                    id="well-number">________</span></span>
+                        </div>
+                        <hr>
+
                         <div id="chart1" class="chart">
 
                         </div>
                         <div class="stat" id="stat1">
-                            <p>Wells Number: <span id="well-number">________</span></p>
-
-                            <p>Total Water Use: <span id="total">________</span> (bbls)</p>
-
-                            <p>Average Water Use: <span id="mean">________</span> (bbls)</p>
+                            <span class="stat-label">
+                                <span class="stat-data">Total Water Use: <span id="total-1">________</span> (bbls) </span><br/>
+                            <span class="stat-data">Average Water Use: <span
+                                    id="mean-1">________</span> (bbls)</span><br/>
+                            <span class="stat-data">Standard deviation: <span id="std-1">________</span></span>
+                            </span>
                         </div>
+
+                        <hr>
 
                         <div id="chart2" class="chart">
-
                         </div>
                         <div class="stat" id="stat2">
-                            <p>Wells Number: <span id="well-number">________</span></p>
-
-                            <p>Total Water Use: <span id="total">________</span> (bbls)</p>
-
-                            <p>Average Water Use: <span id="mean">________</span> (bbls)</p>
+                            <span class="stat-label">
+                                <span class="stat-data">Average Hrizontal Length: <span id="mean-2">________</span> (ft)</span><br/>
+                                <span class="stat-data">Standard deviation: <span id="std-2">________</span></span>
+                            </span>
                         </div>
-                        <div id="chart3" class="chart">
+                        <hr>
 
+                        <div id="chart3" class="chart">
                         </div>
                         <div class="stat" id="stat3">
-                            <p>Wells Number: <span id="well-number">________</span></p>
-
-                            <p>Total Water Use: <span id="total">________</span> (bbls)</p>
-
-                            <p>Average Water Use: <span id="mean">________</span> (bbls)</p>
+                            <span class="stat-label">
+                                <span class="stat-data">Average Water Use per Horizontal foot: <span id="mean-3">________</span> (bbls/ft)</span><br/>
+                                <span class="stat-data">Standard deviation: <span
+                                        id="std-3">________</span></span>
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -596,24 +623,33 @@
                     }
 
                     function summerize(event) {
+
+                        console.log(event.features);
+
                         // water use
-                        var totalWaterUse = 0.0;
                         var featuresNumber = event.features.length;
                         var waterUseArray = [];
                         var horizontalArray = [];
                         var wuperftArray = [];
 
                         arrayUtil.forEach(event.features, function (feature) {
-                            totalWaterUse += feature.attributes.water_use;
                             waterUseArray.push(parseInt(feature.attributes.water_use));
                             horizontalArray.push(parseInt(feature.attributes.horizontal));
                             wuperftArray.push(parseInt(feature.attributes.wu_per_foo));
                         });
-                        var meanWaterUse = totalWaterUse / featuresNumber;
+
                         //stat
                         $("#well-number").text(featuresNumber);
-                        $("#total").text(Math.round(totalWaterUse));
-                        $("#mean").text(Math.round(meanWaterUse));
+                        $("#total-1").text(d3.sum(waterUseArray));
+                        $("#mean-1").text(d3.mean(waterUseArray).toFixed(2));
+                        $("#std-1").text(d3.deviation(waterUseArray).toFixed(2));
+                        
+                        $("#mean-2").text(d3.mean(horizontalArray).toFixed(2));
+                        $("#std-2").text(d3.deviation(horizontalArray).toFixed(2));
+                        
+                        
+                        $("#mean-3").text(d3.mean(wuperftArray).toFixed(2));
+                        $("#std-3").text(d3.deviation(wuperftArray).toFixed(2));
                         // graphic
                         var template = new PopupTemplate({
                             title: "Graphic Info",
