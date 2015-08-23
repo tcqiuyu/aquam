@@ -25,17 +25,20 @@
             width: 110px;
         }
         #legend2 {
-            height: 310px;
-            width: 170px;
+            height: 460px;
+            width: 120px;
         }
         #legend3 {
             height: 200px;
             width: 110px;
         }
-        #direction-details{
+        #close-route-sum-grid{
+            height: 90px;
+            width: 100%;
+        }
+        #service-area-grid, #close-route-grid, #direction-details{
             height: 400px;
             width: 100%;
-            border: 1px solid #A4A4A4;
             border-radius: 3px;
         }
         #grid{
@@ -45,13 +48,45 @@
             padding:5px;
             margin-bottom:5px;
             min-height:50px;
-            border-bottom: solid 1px #C0C0C0;
         }
         .dgrid-row .detail div {
             cursor: pointer;
         }
+        .dgrid-row-table{
+            cursor: pointer;
+        }
         .dgrid-row .detail div:hover{
             text-decoration:underline;
+        }
+        .field-AreaID {
+            width: 10%;
+        }
+        .field-DriveTime {
+            width: 12%;
+        }
+        .field-WellsNumber {
+            width: 13%;
+        }
+        .field-TotalWaterUse {
+            width: 20%;
+        }
+        .field-AverageWaterUse {
+            width: 20%;
+        }
+        .field-AverageHorizontalLength {
+            width: 25%;
+        }
+        .field-Index, .field-RouteId {
+            width: 20%;
+        }
+        .field-Details, .field-ToClosedFacility{
+            width: 50%;
+        }
+        .field-Distance, .field-TotalDistance{
+            width: 15%;
+        }
+        .field-DriveTime, .field-TotalDriveTime{
+            width: 15%;
         }
         .distance{
             float:right;
@@ -84,17 +119,17 @@
         </ul>
         <div class="tab-content">
             <div id="service-area" role="tabpanel" class="tab-pane active">
-                <div id="toolbar1">
-                    <button id="facility-point" name="point" class="btn btn-default">Add Treatment Facility</button>
-                    <input id="minutes" type="text" name="mins" value="10"> mins
-                    <button id="calculate-service-area" class="btn btn-default">Calculate Service Area</button>
-                    <button id="clear-all" name="clear" class="btn btn-default">Clear</button>
-                </div>
                 <div class="map">
                     <div id="map1"></div>
                     <div class="map-legend">
                         <div id="legend1"></div>
                     </div>
+                </div>
+                <div id="toolbar1">
+                    <button id="facility-point" name="point" class="btn btn-default">Add Treatment Facility</button>
+                    <input id="minutes" type="text" name="mins" value="10"> mins
+                    <button id="calculate-service-area" class="btn btn-default">Calculate Service Area</button>
+                    <button id="clear-all" name="clear" class="btn btn-default">Clear</button>
                 </div>
                 <h4>Service Area Details</h4>
                 <div id="service-area-details">
@@ -103,17 +138,22 @@
             </div>
             
             <div id="nearest-facility" role="tabpanel" class="tab-pane">
+                <div class="map">
+                    <div id="map2"></div>
+                    <div class="map-legend">
+                        <div id="legend2"></div>
+                    </div>
+                </div>
                 <div id="toolbar2">
                     <button id="draw-rectangle" name="rectangle" class="btn btn-default">Rectangle</button>
                     <button id="draw-circle" name="circle" class="btn btn-default">Circle</button>
                     <button id="draw-freehandPolygon" name="freehandPolygon" class="btn btn-default">Polygon</button>
                     <button id="clear-them" class="btn btn-default">Clear</button>
                 </div>
-                <div class="map">
-                    <div id="map2"></div>
-                    <div class="map-legend">
-                        <div id="legend2"></div>
-                    </div>
+                <h4>Route to the Nearest Facility</h4>
+                <div id="close-route-details">
+                    <div id="close-route-sum-grid"></div>
+                    <div id="close-route-grid"></div>
                 </div>
             </div>
             
@@ -158,6 +198,7 @@
             "esri/geometry/geometryEngine",
             "esri/layers/FeatureLayer",
             "esri/layers/GraphicsLayer",
+            "esri/lang",
             "esri/map",
             "esri/renderers/SimpleRenderer",
             "esri/symbols/SimpleFillSymbol",
@@ -171,6 +212,7 @@
             "esri/toolbars/draw",
             "dojo/_base/array",
             "dojo/dom",
+            "dgrid/Grid",
             "dojo/on",
             "dojo/domReady!"
         ], function(
@@ -182,6 +224,7 @@
             geometryEngine,
             FeatureLayer,
             GraphicsLayer,
+            esriLang,
             Map,
             SimpleRenderer,
             SimpleFillSymbol,
@@ -195,12 +238,13 @@
             Draw,
             arrayUtils,
             dom,
+            Grid,
             on
         ){
             //map
             var map = new Map("map1", {
                 basemap: "streets",
-                center: [-98.38, 28.8],
+                center: [-98.58, 28.8],
                 zoom: 9
             });
             map.on("load", function(){
@@ -216,7 +260,7 @@
                         width: 0.5,
                         color: [160, 160, 160, 70],
                     },
-                    size: 6
+                    size: 5
                 },
                 colorInfo: {
                     field: "water_use",
@@ -233,7 +277,7 @@
             var wellServiceUrl = "http://services1.arcgis.com/KNdRU5cN6ENqCTjk/arcgis/rest/services/WaterUsePoint/FeatureServer/0";
             var wellsLayer = new FeatureLayer(wellServiceUrl, {
                 mode: FeatureLayer.MODE_SNAPSHOT,
-                outFields: ["water_use"]
+                outFields: ["water_use", "horizontal"]
             });
             wellsLayer.setRenderer(wellsRenderer);
             map.addLayer(wellsLayer);
@@ -256,10 +300,19 @@
             
             //add two graphics layer for point & area
             var features = [];
-            var pointGraphicsLayer = new GraphicsLayer();
-            var areaGraphicsLayer = new GraphicsLayer();
-            map.addLayer(pointGraphicsLayer);
-            map.addLayer(areaGraphicsLayer);
+            
+            // grid for area data
+            var grid = new Grid({
+                columns: {
+                    AreaID: "Area ID",
+                    DriveTime: "Drive Time (mins)",
+                    WellsNumber: "Wells Number",
+                    TotalWaterUse: "Total Water Use (bbls)",
+                    AverageWaterUse: "Average Water Use (bbls)",
+                    AverageHorizontalLength: "Average Horizontal Length (feet)"
+                }
+            }, "service-area-grid");
+            var areaNumber = 0;
             
             // draw
             var toolbar = new Draw(map);
@@ -268,10 +321,23 @@
                     return;
                 }
                 if (event.target.id === "clear-all") {
-                    pointGraphicsLayer.clear();
-                    areaGraphicsLayer.clear();
+                    map.graphics.clear();
                     wellsLayer.clearSelection();
                     features = [];
+                    if (grid){
+                        $("#service-area-grid").empty();
+                        grid = new Grid({
+                            columns: {
+                                AreaID: "Area ID",
+                                DriveTime: "Drive Time (mins)",
+                                WellsNumber: "Wells Number",
+                                TotalWaterUse: "Total Water Use (bbls)",
+                                AverageWaterUse: "Average Water Use (bbls)",
+                                AverageHorizontalLength: "Average Horizontal Length (feet)"
+                            }
+                        }, "service-area-grid");
+                        areaNumber = 0;
+                    }
                     return;
                 }
                 var tool = event.target.name.toLowerCase();
@@ -292,7 +358,7 @@
                         });
                         pointGraphic.setGeometry(event.geometry);
                         pointGraphic.setSymbol(pointSymbol);
-                        pointGraphicsLayer.add(pointGraphic);
+                        map.graphics.add(pointGraphic);
                         features.push(pointGraphic);
                     });
                 }
@@ -311,38 +377,76 @@
                 saParams.defaultBreaks= [dom.byId("minutes").value];
                 saParams.outSpatialReference = map.spatialReference;
                 saParams.returnFacilities = false;
+                
                 // service area task
                 var naServiceUrl = "https://utility.arcgis.com/usrsvcs/servers/9f6aa15d974b496f8199b67c24b28245/rest/services/World/ServiceAreas/NAServer/ServiceArea_World";
                 var serviceAreaTask = new ServiceAreaTask(naServiceUrl);
+                var polygonSymbol = new SimpleFillSymbol(
+                    "solid",  
+                    new SimpleLineSymbol("solid", new Color([232,104,80]), 2),
+                    new Color([232,104,80,0.25])
+                );
                 serviceAreaTask.solve(saParams, function(solveAreas){
-                    var polygonSymbol = new SimpleFillSymbol(
-                        "solid",  
-                        new SimpleLineSymbol("solid", new Color([232,104,80]), 2),
-                        new Color([232,104,80,0.25])
-                    );
                     arrayUtils.forEach(solveAreas.serviceAreaPolygons, function(serviceArea){
                         convexServiceArea = geometryEngine.convexHull(serviceArea.geometry);
                         // add service area to map
-                        var areaGraphic = new Graphic(convexServiceArea, polygonSymbol)
-                        areaGraphicsLayer.add(areaGraphic);
+                        var areaGraphic = new Graphic(convexServiceArea, polygonSymbol);
+                        map.graphics.add(areaGraphic);
                         // summarize
                         var query = new Query();
                         query.geometry = areaGraphic.geometry;
                         wellsLayer.selectFeatures(query, FeatureLayer.SELECTION_NEW, function(features){
                             var totalWaterUse = 0.0;
+                            var totalLength = 0.0;
                             var featuresNumber = features.length;
                             arrayUtils.forEach(features, function (feature) {
                                 totalWaterUse += feature.attributes.water_use;
+                                totalLength += feature.attributes.horizontal;
                             });
                             var meanWaterUse = totalWaterUse / featuresNumber;
-                            data = {
-                                "totalWaterUse": Math.round(totalWaterUse),
-                                "meanWaterUse":Math.round(meanWaterUse)
-                            };
-                            console.log(data);
+                            var meanLength = totalLength / featuresNumber;
+                            
+                            // add to grid
+                            areaNumber += 1;
+                            areaGraphic.setAttributes({"AreaID": areaNumber});
+                            var template = new PopupTemplate({
+                                title: "Graphic Info",
+                                fieldInfos: [
+                                    {
+                                        fieldName: "AreaID",
+                                        label: "Area ID:",
+                                        visible: true
+                                    }
+                                ],
+                            });
+                            areaGraphic.setInfoTemplate(template);
+                            var rowData = {AreaID: areaNumber, DriveTime: dom.byId("minutes").value, WellsNumber: featuresNumber, TotalWaterUse: Math.round(totalWaterUse), AverageWaterUse: Math.round(meanWaterUse), AverageHorizontalLength: Math.round(meanLength)};
+                            grid.renderArray([rowData]);
                         });
                     });
                 });
+                // click
+                grid.on(".dgrid-row:click", zoomToArea);
+                var newFillSymbol = new SimpleFillSymbol(
+                    "solid",  
+                    new SimpleLineSymbol("solid", new Color([0,0,255]), 3),
+                    new Color([232,104,80,0.25])
+                );
+                var selectGraphicsLayer = new GraphicsLayer();
+                map.addLayer(selectGraphicsLayer);
+                function zoomToArea(event){
+                    selectGraphicsLayer.clear();
+                    areaID = grid.row(event).data.AreaID;
+                    arrayUtils.forEach(map.graphics.graphics, function(areaGraphic){
+                        if (areaGraphic.attributes){
+                            if (areaGraphic.attributes.AreaID === areaID){
+                                var targetAreaGraphic = new Graphic(areaGraphic.geometry, newFillSymbol);
+                                selectGraphicsLayer.add(targetAreaGraphic);
+                                map.setExtent(targetAreaGraphic.geometry.getExtent(), true);
+                            }
+                        }
+                    });
+                }
             });
         });
     }
@@ -354,6 +458,7 @@
     function load_map2(){
         if (!map2_clicked){
             require([
+                "esri/config",
                 "esri/Color",
                 "esri/dijit/Legend",
                 "esri/dijit/Scalebar",
@@ -376,9 +481,11 @@
                 "esri/toolbars/draw",
                 "dojo/_base/array",
                 "dojo/dom",
+                "dgrid/Grid",
                 "dojo/on",
                 "dojo/domReady!"
             ], function(
+                esriConfig,
                 Color,
                 Legend,
                 Scalebar,
@@ -401,12 +508,16 @@
                 Draw,
                 arrayUtils,
                 dom,
+                Grid,
                 on
             ){
+                // CORS
+                esriConfig.defaults.io.corsEnabledServers.push("utility.arcgis.com");
+                
                 //map
                 var map = new Map("map2", {
                  basemap: "streets",
-                 center: [-98.38, 28.8],
+                 center: [-98.58, 28.8],
                  zoom: 9
                 });
                 map.on("load", function(){
@@ -422,7 +533,7 @@
                          width: 0.5,
                          color: [160, 160, 160, 70],
                         },
-                        size: 6
+                        size: 5
                     },
                     colorInfo: {
                         field: "water_use",
@@ -440,7 +551,7 @@
                 var selectionSymbol = new SimpleMarkerSymbol({
                     type: "esriSMS",
                     style: "esriSMSCircle",
-                    size: 8,
+                    size: 7,
                     color: new Color([207, 34, 171, 0.5])
                 });
                 var wellServiceUrl = "http://services1.arcgis.com/KNdRU5cN6ENqCTjk/arcgis/rest/services/WaterUsePoint/FeatureServer/0";
@@ -460,8 +571,20 @@
                             width: 0.5,
                             color: [160, 160, 160, 70],
                         },
-                        size: 10,
+                        size: 13,
                         color: new Color([20,20,255])
+                    },
+                    colorInfo: {
+                        field: "id",
+                        minDataValue: 1,
+                        maxDataValue: 5,
+                        colors: [
+                            new Color([0, 0, 255]),
+                            new Color([255, 0, 255]),
+                            new Color([255, 255, 0]),
+                            new Color([255, 0, 0]),
+                            new Color([0, 255, 255])
+                        ]
                     }
                 });
                 var injectionWellTemplate = new PopupTemplate({
@@ -477,11 +600,11 @@
                 var injectionWellsLayer = new FeatureLayer(injectionWellServiceUrl, {
                     mode: FeatureLayer.MODE_SNAPSHOT,
                     infoTemplate: injectionWellTemplate,
-                    outFields: ["Name"]
+                    outFields: ["Id", "Name"]
                 });
                 injectionWellsLayer.setRenderer(injectionWellRenderer);
                 map.addLayers([wellsLayer, injectionWellsLayer]);
-
+                
                 // legend
                 var legend = new Legend({
                     map: map
@@ -494,6 +617,25 @@
                     scalebarUnit: "dual"
                 });
                 
+                // grid for route summary data
+                var closeRouteSumGrid = new Grid({
+                    columns: {
+                        RouteId: "Route Id",
+                        ToClosedFacility: "To Closed Facility",
+                        TotalDistance: "Total Distance (miles)",
+                        TotalDriveTime: "Total Drive Time (mins)"
+                    }
+                }, "close-route-sum-grid");
+                // grid for route data
+                var closeRouteGrid = new Grid({
+                    columns: {
+                        Index: "Index",
+                        Details: "Details",
+                        Distance: "Distance (miles)",
+                        DriveTime: "Drive Time (mins)"
+                    }
+                }, "close-route-grid");
+                
                 // nearest facilities
                 var cfServiceUrl = "http://utility.arcgis.com/usrsvcs/servers/1e3c79d2d2684f33806420f2fde7111b/rest/services/World/ClosestFacility/NAServer/ClosestFacility_World";
                 var closestFacilityTask = new ClosestFacilityTask(cfServiceUrl);
@@ -501,7 +643,8 @@
                 cfParams.impedenceAttribute= "Miles";
                 cfParams.returnIncidents=false;
                 cfParams.returnRoutes=true;
-                cfParams.returnDirections=false;
+                cfParams.returnDirections=true;
+                cfParams.returnFacilities=false;
                 var facilities = new FeatureSet();
                 facilities.features = injectionWellsLayer.graphics;
                 cfParams.facilities = facilities;
@@ -512,6 +655,7 @@
                     style: "STYLE_SOLID",
                     width: 2
                 });
+                
                 var toolbar = new Draw(map);
                 on(dom.byId("toolbar2"), "click", function (event) {
                     if (event.target.id === "toolbar2") {
@@ -520,69 +664,121 @@
                     if (event.target.id === "clear-them") {
                         map.graphics.clear();
                         wellsLayer.clearSelection();
+                        $("#close-route-sum-grid").empty();
+                        closeRouteSumGrid = new Grid({
+                            columns: {
+                                RouteId: "Route Id",
+                                ToClosedFacility: "To Closed Facility",
+                                TotalDistance: "Total Distance (miles)",
+                                TotalDriveTime: "Total Drive Time (mins)"
+                            }
+                        }, "close-route-sum-grid");
+                        $("#close-route-grid").empty();
+                        closeRouteGrid = new Grid({
+                            columns: {
+                                Index: "Index",
+                                Details: "Details",
+                                Distance: "Distance (miles)",
+                                DriveTime: "Drive Time (mins)"
+                            }
+                        }, "close-route-grid");
                         return;
                     }
                     var tool = event.target.name.toLowerCase();
                     toolbar.activate(tool);
-                    console.log("loop1");
-                    toolbar.on("draw-end", function (event) {
-                        toolbar.deactivate();
-                        var graphic = new Graphic();
-                        var fillSymbol = new SimpleFillSymbol({
-                            type: "esriSFS",
-                            style: "esriSFSSolid",
-                            color: [100, 100, 100, 50],
-                            outline: new SimpleLineSymbol()
+                });
+                
+                // route & directions
+                var directionFeatures;
+                var segmentGraphic;
+                toolbar.on("draw-end", function (event) {
+                    toolbar.deactivate();
+                    var graphic = new Graphic();
+                    var fillSymbol = new SimpleFillSymbol({
+                        type: "esriSFS",
+                        style: "esriSFSSolid",
+                        color: [100, 100, 100, 50],
+                        outline: new SimpleLineSymbol()
+                    });
+                    graphic.setGeometry(event.geometry);
+                    graphic.setSymbol(fillSymbol);
+                    map.graphics.clear();
+                    map.graphics.add(graphic);
+                    // query
+                    var query = new Query();
+                    query.geometry = event.geometry;
+                    wellsLayer.selectFeatures(query, FeatureLayer.SELECTION_NEW, function(features){
+                        if (features.length < 1){
+                            return;
+                        }
+                        // find the centroid of the group of selected points
+                        var points = dojo.map(features,function(feature){
+                            return feature.geometry;
                         });
-                        graphic.setGeometry(event.geometry);
-                        graphic.setSymbol(fillSymbol);
-                        //map.graphics.add(graphic);
-                        map.graphics.clear();
-                        // query
-                        var query = new Query();
-                        query.geometry = event.geometry;
-                        console.log("loop2");
-                        wellsLayer.selectFeatures(query, FeatureLayer.SELECTION_NEW, function(features){
-                            if (features.length < 1){
-                                return;
-                            }
-                            // find the centroid of the group of selected points
-                            var points = dojo.map(features,function(feature){
-                                return feature.geometry;
+                        var xSum = 0.0;
+                        var ySum = 0.0;
+                        arrayUtils.forEach(points, function(point){
+                            xSum += point.x;
+                            ySum += point.y;
+                        });
+                        xCenter = xSum / points.length;
+                        yCenter = ySum / points.length;
+                        var centroid = new Point(xCenter, yCenter, map.spatialReference);
+                        centroidGraphic = new Graphic(centroid, new SimpleMarkerSymbol({
+                            type: "esriSMS",
+                            style: "esriSMSCross",
+                            outline: {
+                                width: 2,
+                                color: new Color([255, 0, 0]),
+                            },
+                            size: 13,
+                            color: new Color([255,0,0])
+                        }));
+                        map.graphics.add(centroidGraphic);
+                        var incidents = new FeatureSet();
+                        incidents.features = [centroidGraphic];
+                        cfParams.incidents = incidents;
+                        
+                        // find the nearest facility
+                        closestFacilityTask.solve(cfParams, function(solveResult){
+                            // route
+                            closeRoute = solveResult.routes[0];
+                            map.graphics.add(closeRoute.setSymbol(routeSymbol));
+                            // directions
+                            var closeDirections = solveResult.directions[0];
+                            directionFeatures = closeDirections.features;
+                            var gridDirection = arrayUtils.map(directionFeatures, function(feature,index){
+                                return {
+                                    Index: index,
+                                    Details: feature.attributes.text,
+                                    Distance: feature.attributes.length.toFixed(2),
+                                    DriveTime: feature.attributes.time.toFixed(2)
+                                };
                             });
-                            var xSum = 0.0;
-                            var ySum = 0.0;
-                            arrayUtils.forEach(points, function(point){
-                                xSum += point.x;
-                                ySum += point.y;
-                            });
-                            xCenter = xSum / points.length;
-                            yCenter = ySum / points.length;
-                            var centroid = new Point(xCenter, yCenter, map.spatialReference);
-                            centroidGraphic = new Graphic(centroid, new SimpleMarkerSymbol({
-                                type: "esriSMS",
-                                style: "esriSMSCross",
-                                outline: {
-                                    width: 2,
-                                    color: new Color([255, 0, 0]),
-                                },
-                                size: 13,
-                                color: new Color([255,0,0])
-                            }));
-                            map.graphics.add(centroidGraphic);
-                            var incidents = new FeatureSet();
-                            incidents.features = [centroidGraphic];
-                            cfParams.incidents = incidents;
-                            
-                            // find the nearest facility
-                            closestFacilityTask.solve(cfParams, function(solveResult){
-                                arrayUtils.forEach(solveResult.routes, function(route, index){
-                                    map.graphics.add(route.setSymbol(routeSymbol));
-                                });
-                            });
+                            closeRouteGrid.renderArray(gridDirection);
+                            var routeId = closeDirections.routeId;
+                            var toClosedFacility = closeDirections.routeName;
+                            var totalDistance = closeDirections.totalLength.toFixed(2);
+                            var totalDriveTime = closeDirections.totalDriveTime.toFixed(2);
+                            var sumData = [{RouteId: routeId, ToClosedFacility: toClosedFacility, TotalDistance: totalDistance, TotalDriveTime: totalDriveTime}];
+                            closeRouteSumGrid.renderArray(sumData);
                         });
                     });
                 });
+                // click to zoom
+                closeRouteGrid.on(".dgrid-row:click", zoomToSegment);
+                function zoomToSegment(event){
+                    var index = closeRouteGrid.row(event).id;
+                    var segment = directionFeatures[index];
+                    var segmentSymbol = new SimpleLineSymbol().setColor(new Color([255,0,0,0.5])).setWidth(8);
+                    
+                    map.setExtent(segment.geometry.getExtent(), true);
+                    if ( !segmentGraphic ) {
+                        segmentGraphic = map.graphics.add(new Graphic(segment.geometry, segmentSymbol));
+                    } else {
+                        segmentGraphic.setGeometry(segment.geometry);
+                    }
+                }
             });
             map2_clicked = true;
         }
@@ -631,11 +827,10 @@
                 //global varible
                 var directionFeatures;
                 var segmentGraphic;
-             
                 //map
                 var map = new Map("map3", {
                     basemap: "streets",
-                    center: [-98.88, 28.5],
+                    center: [-98.58, 28.8],
                     zoom: 10
                 });
                 map.on("load", function() {
@@ -645,18 +840,14 @@
                     map: map,
                     scalebarUnit: "dual"
                 });
-             
                 //add stops
                 map.on("click", addStop);
-                 
                 //routing
                 naServiceUrl = "http://utility.arcgis.com/usrsvcs/servers/cc83495aa68841219353131cf078a2ea/rest/services/World/Route/NAServer/Route_World";
                 var routeTask = new RouteTask(naServiceUrl);
                 var routeParams = new RouteParameters();
                 routeParams.stops = new FeatureSet();
-                routeParams.outSpatialReference = {
-                    "wkid" : 102100
-                };
+                routeParams.outSpatialReference = map.spatialReference;
                 routeParams.returnDirections = true;
                 routeTask.on("solve-complete", showRoute);
                 routeTask.on("error", errorHandler);
@@ -686,7 +877,7 @@
                 function showRoute(event) {
                     var gridData = [];
                     if (grid){
-                        $("grid").empty();
+                        $("#grid").empty();
                     }
                     var routeSymbol = new SimpleLineSymbol({
                         color: new Color([30, 220, 70]),
