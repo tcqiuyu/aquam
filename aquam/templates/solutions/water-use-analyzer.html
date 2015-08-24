@@ -407,6 +407,7 @@
             }
         });
         function draw_chart2(data, ylabel, scheme) {
+            console.log(data);
             var width = $("#chart2").width() - margin.left - margin.right,
                     height = $("#chart2").height() - margin.top - margin.bottom;
             var xRange = d3.scale.ordinal()
@@ -495,7 +496,7 @@
                 return;
             }
             d3.json("{% url 'get-annual-water' %}", function (error, data) {
-                draw_chart2(data, "Annual Average Water User per Well(bbls)", 1);
+                draw_chart2(data, "Annual Average Water Used per Well(bbls)", 1);
             });
         });
 
