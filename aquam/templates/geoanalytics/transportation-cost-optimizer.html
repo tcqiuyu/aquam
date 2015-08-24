@@ -36,7 +36,7 @@
             height: 90px;
             width: 100%;
         }
-        #service-area-grid, #close-route-grid, #direction-details{
+        #service-area-grid, #close-route-grid, #opt-route-grid{
             height: 400px;
             width: 100%;
             border-radius: 3px;
@@ -115,7 +115,7 @@
         <ul id="map-tabs" class="nav nav-tabs" role="tablist">
             <li role="presentation" class="active"><a data-toggle="tab" href="#service-area">Service Area</a></li>
             <li role="presentation"><a data-toggle="tab" href="#nearest-facility" onclick="load_map2()">Nearest Facility</a></li>
-            <li role="presentation"><a data-toggle="tab" href="#transportation-cost" onclick="load_map3()">Transportation Cost</a></li>
+            <li role="presentation"><a data-toggle="tab" href="#route-optimization" onclick="load_map3()">Route Optimization</a></li>
         </ul>
         <div class="tab-content">
             <div id="service-area" role="tabpanel" class="tab-pane active">
@@ -157,16 +157,21 @@
                 </div>
             </div>
             
-            <div id="transportation-cost" role="tabpanel" class="tab-pane">
+            <div id="route-optimization" role="tabpanel" class="tab-pane">
                 <div class="map">
                     <div id="map3"></div>
                     <div class="map-legend">
                         <div id="legend3"></div>
                     </div>
                 </div>
+                <div id="toolbar3">
+                    <button id="start-point" name="point" class="btn btn-default">Add Start Location</button>
+                    <button id="calculate-optimized-route" class="btn btn-default">Calculate Optimized Route</button>
+                    <button id="clear-all-them" name="clear" class="btn btn-default">Clear</button>
+                </div>
                 <h4>Route Details</h4>
-                <div id="direction-details">
-                    <div id="grid"></div>
+                <div id="opt-route-details">
+                    <div id="opt-route-grid"></div>
                 </div>
                 <h4>Cost Calculation</h4>
                 <div id="cost">
@@ -302,7 +307,7 @@
             var features = [];
             
             // grid for area data
-            var grid = new Grid({
+            var serviceAreaGrid = new Grid({
                 columns: {
                     AreaID: "Area ID",
                     DriveTime: "Drive Time (mins)",
@@ -324,9 +329,9 @@
                     map.graphics.clear();
                     wellsLayer.clearSelection();
                     features = [];
-                    if (grid){
+                    if (serviceAreaGrid){
                         $("#service-area-grid").empty();
-                        grid = new Grid({
+                        serviceAreaGrid = new Grid({
                             columns: {
                                 AreaID: "Area ID",
                                 DriveTime: "Drive Time (mins)",
@@ -421,12 +426,12 @@
                             });
                             areaGraphic.setInfoTemplate(template);
                             var rowData = {AreaID: areaNumber, DriveTime: dom.byId("minutes").value, WellsNumber: featuresNumber, TotalWaterUse: Math.round(totalWaterUse), AverageWaterUse: Math.round(meanWaterUse), AverageHorizontalLength: Math.round(meanLength)};
-                            grid.renderArray([rowData]);
+                            serviceAreaGrid.renderArray([rowData]);
                         });
                     });
                 });
                 // click
-                grid.on(".dgrid-row:click", zoomToArea);
+                serviceAreaGrid.on(".dgrid-row:click", zoomToArea);
                 var newFillSymbol = new SimpleFillSymbol(
                     "solid",  
                     new SimpleLineSymbol("solid", new Color([0,0,255]), 3),
@@ -436,7 +441,7 @@
                 map.addLayer(selectGraphicsLayer);
                 function zoomToArea(event){
                     selectGraphicsLayer.clear();
-                    areaID = grid.row(event).data.AreaID;
+                    areaID = serviceAreaGrid.row(event).data.AreaID;
                     arrayUtils.forEach(map.graphics.graphics, function(areaGraphic){
                         if (areaGraphic.attributes){
                             if (areaGraphic.attributes.AreaID === areaID){
@@ -791,49 +796,54 @@
     function load_map3(){
         if (!map3_clicked) {
             require([
+                "esri/config",
                 "esri/Color",
+                "esri/dijit/Legend",
                 "esri/dijit/Scalebar",
+                "esri/dijit/PopupTemplate",
                 "esri/graphic",
-                "esri/lang",
                 "esri/layers/FeatureLayer",
                 "esri/map",
+                "esri/renderers/SimpleRenderer",
                 "esri/symbols/SimpleMarkerSymbol",
                 "esri/symbols/SimpleLineSymbol",
                 "esri/tasks/FeatureSet",
                 "esri/tasks/RouteParameters",
                 "esri/tasks/RouteTask",
+                "esri/toolbars/draw",
                 "dojo/_base/array",
-                "dojo/dom-construct",
                 "dgrid/Grid",
                 "dojo/dom",
                 "dojo/on",
                 "dojo/domReady!"
             ], function(
+                esriConfig,
                 Color,
+                Legend,
                 Scalebar,
+                PopupTemplate,
                 Graphic,
-                esriLang,
                 FeatureLayer,
                 Map,
+                SimpleRenderer,
                 SimpleMarkerSymbol,
                 SimpleLineSymbol,
                 FeatureSet,
                 RouteParameters,
                 RouteTask,
+                Draw,
                 arrayUtils,
-                domConstruct,
                 Grid,
                 dom,
                 on
              ){
-                //global varible
-                var directionFeatures;
-                var segmentGraphic;
+                // CORS
+                esriConfig.defaults.io.corsEnabledServers.push("utility.arcgis.com");
                 //map
                 var map = new Map("map3", {
                     basemap: "streets",
-                    center: [-98.58, 28.8],
-                    zoom: 10
+                    center: [-99.68, 28.35],
+                    zoom: 12
                 });
                 map.on("load", function() {
                     map.disableScrollWheelZoom();
@@ -842,87 +852,166 @@
                     map: map,
                     scalebarUnit: "dual"
                 });
-                //add stops
-                map.on("click", addStop);
-                
+                map.on("load", function(){
+                    map.disableScrollWheelZoom();
+                });
+                // 10 wells layer
+                 var tenWellsRenderer = new SimpleRenderer({
+                    symbol: {
+                        type: "esriSMS",
+                        style: "esriSMSCircle",
+                        outline: {
+                         width: 0.5,
+                         color: [160, 160, 160, 70],
+                        },
+                        size: 10
+                    },
+                    colorInfo: {
+                        field: "water_use",
+                        minDataValue: 72000,
+                        maxDataValue: 260000,
+                        colors: [
+                            new Color([0, 0, 255]),
+                            new Color([0, 255, 0]),
+                            new Color([255, 255, 0]),
+                            new Color([255, 0, 0])
+                        ]
+                    }
+                });
+                var tenWellsTemplate = new PopupTemplate({
+                     fieldInfos: [
+                         {
+                             fieldName: "water_use",
+                             label: "WaterUse",
+                             visible: true
+                         }
+                     ]
+                 });
                 tenWellsServiceUrl = "http://services1.arcgis.com/KNdRU5cN6ENqCTjk/arcgis/rest/services/TenWaterUsePoints/FeatureServer/0";
-                
-                
-                //routing
+                var tenWellsLayer = new FeatureLayer(tenWellsServiceUrl, {
+                    mode: FeatureLayer.MODE_SNAPSHOT,
+                    infoTemplate: tenWellsTemplate,
+                    outFields: ["water_use"]
+                });
+                tenWellsLayer.setRenderer(tenWellsRenderer);
+                map.addLayer(tenWellsLayer);
+                // legend
+                var legend = new Legend({
+                    map: map
+                }, "legend3");
+                legend.startup();
+                legend.refresh([{
+                    layer: tenWellsLayer,
+                    title: " "
+                }]);
+                // grid for optimized data
+                var optRouteGrid = new Grid({
+                    columns: {
+                        Index: "Index",
+                        Details: "Details",
+                        Distance: "Distance (miles)",
+                        DriveTime: "Drive Time (mins)"
+                    },
+                }, "opt-route-grid");
+                // route params
+                var directionFeatures;
+                var segmentGraphic;
                 naServiceUrl = "http://utility.arcgis.com/usrsvcs/servers/cc83495aa68841219353131cf078a2ea/rest/services/World/Route/NAServer/Route_World";
                 var routeTask = new RouteTask(naServiceUrl);
                 var routeParams = new RouteParameters();
-                routeParams.stops = new FeatureSet();
+                var stops = new FeatureSet();
+                //stops.features = tenWellsLayer.graphics;
+                //routeParams.stops = stops;
                 routeParams.outSpatialReference = map.spatialReference;
                 routeParams.returnDirections = true;
-                routeTask.on("solve-complete", showRoute);
-                routeTask.on("error", errorHandler);
-
-                //Adds a graphic when the user clicks the map. If 2 or more points exist, route is solved.
-                function addStop(event){
-                    var stopSymbol = new SimpleMarkerSymbol({
-                        type: "esriSMS",
-                        style: "esriSMSCircle",
-                        color: new Color([255, 40, 40]),
-                        size: 12,
-                        outline: {
-                            width: 0.5,
-                            color: new Color([180, 20, 160])
-                        }
-                    });
-                    var grahic = new Graphic(event.mapPoint, stopSymbol);
-                    var stop = map.graphics.add(grahic);
-                    routeParams.stops.features.push(stop);
-                    if (routeParams.stops.features.length >= 2) {
-                        routeTask.solve(routeParams);
-                        lastStop = routeParams.stops.features.splice(0, 1)[0];
+                // toolbar
+                var toolbar = new Draw(map);
+                var has_start_point = false;
+                on(dom.byId("toolbar3"), "click", function (event) {
+                    if (event.target.id === "toolbar3") {
+                        return;
                     }
-                }
-                
-                //Adds the solved route to the map as a graphic
+                    if (event.target.id === "clear-all-them") {
+                        map.graphics.clear();
+                        has_start_point = false;
+                        $("opt-route-grid").empty();
+                        optRouteGrid = new Grid({
+                            columns: {
+                                Index: "Index",
+                                Details: "Details",
+                                Distance: "Distance (miles)",
+                                DriveTime: "Drive Time (mins)"
+                            }
+                        }, "opt-route-grid");
+                        return;
+                    }
+                    var tool = event.target.name.toLowerCase();
+                    if (tool === "point") {
+                        toolbar.activate(tool);
+                    }
+                });
+                var startPointGraphic;
+                toolbar.on("draw-end", function (event) {
+                    toolbar.deactivate();
+                    var pointSymbol = new SimpleMarkerSymbol({
+                        type: "esriSMS",
+                        style: "esriSMSCross",
+                        outline: {
+                            width: 3,
+                            color: new Color([255,10,10])
+                        },
+                        size: 13
+                    });
+                    startPointGraphic = new Graphic(event.geometry, pointSymbol);
+                    map.graphics.clear();
+                    map.graphics.add(startPointGraphic);
+                    has_start_point = true;
+                });
+                // set route params
+                stops.features = tenWellsLayer.graphics;
+                routeParams.stops = stops;
+                // route solve
+                on(dom.byId("calculate-optimized-route"), "click", function(){
+                    if (!has_start_point){
+                        return;
+                    } else {
+                        routeTask.solve(routeParams);
+                        routeTask.on("solve-complete", showRoute);
+                        //routeTask.on("error", errorHandler);
+                    }
+                });
                 function showRoute(event) {
                     var gridData = [];
-                    if (grid){
-                        $("#grid").empty();
+                    if (optRouteGrid){
+                        $("#opt-route-grid").empty();
                     }
                     var routeSymbol = new SimpleLineSymbol({
-                        color: new Color([30, 220, 70]),
+                        color: new Color([30, 150, 185]),
                         style: "STYLE_SOLID",
                         width: 2
                     });
                     map.graphics.add(event.result.routeResults[0].route.setSymbol(routeSymbol));
-                     
+                    console.log(event);
                     //Display the route details
                     var directions = event.result.routeResults[0].directions;
                     directionFeatures = directions.features;
                     var directionsInfo = event.result.routeResults[0].directions.features;
-                    var totalDistance = Math.round(directions.totalLength, 2);
-                    var totalTime = Math.round(directions.totalTime, 2);
-                    $("#total-distance").text(totalDistance);
-                    $("#total-time").text(totalTime);
                     gridData = arrayUtils.map(directionsInfo,function(feature,index){
                         return {
-                            "detail": feature.attributes.text,
-                            "distance": Math.round(feature.attributes.length, 2),
-                            "index": index
+                            Index: index,
+                            Details: feature.attributes.text,
+                            Distance: feature.attributes.length.toFixed(2),
+                            DriveTime: feature.attributes.time.toFixed(2)
                         };
                     });
-                    grid = new Grid({
-                        renderRow: renderList,
-                        showHeader:false
-                    }, "grid");
-                    grid.renderArray(gridData);
-                    grid.on(".dgrid-row:click", zoomToSegment);
+                    optRouteGrid.renderArray(gridData);
+                    var totalDistance = directions.totalLength.toFixed(2);
+                    var totalTime = directions.totalTime.toFixed(2);
+                    optRouteGrid.on(".dgrid-row:click", zoomToSegment);
                 }
-                
-                function renderList(obj,options){
-                    var template = "<div class='detail'><div style='max-width:70%;float:left;'>${detail}</div><span style='float:right;' class='distance'>${distance} miles</span></div>";       
-                    return domConstruct.create("div", { innerHTML: esriLang.substitute(obj, template) });
-                }
-                
                 function zoomToSegment(event) {
                     //Grid row id corresponds to the segment to highlight
-                    var index = grid.row(event).id;
+                    var index = optRouteGrid.row(event).id;
                     var segment = directionFeatures[index];
                     var segmentSymbol = new SimpleLineSymbol().setColor(new Color([255,0,0,0.5])).setWidth(8);
                     
@@ -933,12 +1022,10 @@
                         segmentGraphic.setGeometry(segment.geometry);
                     }
                 }
-                //Displays any error returned by the Route Task
+                /*//Displays any error returned by the Route Task
                 function errorHandler(err) {
-                    alert("An error occured\n" + err.message + "\n");
-                    routeParams.stops.features.splice(0, 0, lastStop);
-                    map.graphics.remove(routeParams.stops.features.splice(1, 1)[0]);
-                }
+                    alert("An error occured\n" + err.message);
+                } */
             });
             map3_clicked = true;
         }
