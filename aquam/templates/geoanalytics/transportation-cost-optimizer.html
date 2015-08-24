@@ -32,7 +32,7 @@
             height: 200px;
             width: 110px;
         }
-        #close-route-sum-grid{
+        #close-route-sum-grid, #opt-route-sum-grid{
             height: 90px;
             width: 100%;
         }
@@ -88,14 +88,12 @@
         .field-DriveTime, .field-TotalDriveTime{
             width: 15%;
         }
-        .distance{
-            float:right;
-            color:#C0C0C0;
-            font-style:italic;
-        }
-        #cost{
+        #cost-calculation{
             border: 1px solid #A4A4A4;
             border-radius: 3px;
+        }
+        #toolbar1, #toolbar2, toolbar3 {
+            margin-top: 10px;
         }
     </style>
 {% endblock %}
@@ -152,8 +150,8 @@
                 </div>
                 <h4>Route to the Nearest Facility</h4>
                 <div id="close-route-details">
-                    <div id="close-route-sum-grid"></div>
                     <div id="close-route-grid"></div>
+                    <div id="close-route-sum-grid"></div>
                 </div>
             </div>
             
@@ -172,11 +170,38 @@
                 <h4>Route Details</h4>
                 <div id="opt-route-details">
                     <div id="opt-route-grid"></div>
+                    <div id="opt-route-sum-grid"></div>
                 </div>
                 <h4>Cost Calculation</h4>
-                <div id="cost">
-                    <p>Total Distance: <span id="total-distance">______</span> miles</p>
-                    <p>Total Drive Time: <span id="total-time">______</span> minutes</p>
+                <div id="cost-calculation">
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <p>Total Distance (or Total Drive time)</p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p>$/mile (or $/hour)</p>
+                        </div>
+                        <div class="col-sm-1">
+                            
+                        </div>
+                        <div class="col-sm-5">
+                            <p>Total Cost</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <input type="text" class="form-control" id="total-input">
+                        </div>
+                        <div class="col-sm-3">
+                            <input type="text" class="form-control" id="per-cost">
+                        </div>
+                        <div class="col-sm-1">
+                            <button class="btn btn-default" onclick="calculateCost()">Multiply</button>
+                        </div>
+                        <div class="col-sm-5">
+                            <input type="text" class="form-control" id="total-cost">
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -189,6 +214,16 @@
     $(document).ready(function(){
         load_map1();
     });
+    function calculateCost(){
+        var total = parseFloat($("#total-input").val());
+        var perCost = parseFloat($("#per-cost").val());
+        if (total && perCost){
+            var totalCost = total * perCost;
+            $("#total-cost").val(totalCost);
+        } else {
+            alert("input number please!");
+        }
+    }
 </script>
 
 <script type="text/javascript">
@@ -803,6 +838,7 @@
                 "esri/dijit/PopupTemplate",
                 "esri/graphic",
                 "esri/layers/FeatureLayer",
+                "esri/layers/GraphicsLayer",
                 "esri/map",
                 "esri/renderers/SimpleRenderer",
                 "esri/symbols/SimpleMarkerSymbol",
@@ -824,6 +860,7 @@
                 PopupTemplate,
                 Graphic,
                 FeatureLayer,
+                GraphicsLayer,
                 Map,
                 SimpleRenderer,
                 SimpleMarkerSymbol,
@@ -904,6 +941,15 @@
                     layer: tenWellsLayer,
                     title: " "
                 }]);
+                // grid for route summary data
+                var optRouteSumGrid = new Grid({
+                    columns: {
+                        RouteId: "Route Id",
+                        RouteName: "Route Name",
+                        TotalDistance: "Total Distance (miles)",
+                        TotalDriveTime: "Total Drive Time (mins)"
+                    }
+                }, "opt-route-sum-grid");
                 // grid for optimized data
                 var optRouteGrid = new Grid({
                     columns: {
@@ -920,8 +966,6 @@
                 var routeTask = new RouteTask(naServiceUrl);
                 var routeParams = new RouteParameters();
                 var stops = new FeatureSet();
-                //stops.features = tenWellsLayer.graphics;
-                //routeParams.stops = stops;
                 routeParams.outSpatialReference = map.spatialReference;
                 routeParams.returnDirections = true;
                 // toolbar
@@ -934,6 +978,15 @@
                     if (event.target.id === "clear-all-them") {
                         map.graphics.clear();
                         has_start_point = false;
+                        $("opt-route-sum-grid").empty();
+                        optRouteSumGrid = new Grid({
+                            columns: {
+                                RouteId: "Route Id",
+                                RouteName: "Route Name",
+                                TotalDistance: "Total Distance (miles)",
+                                TotalDriveTime: "Total Drive Time (mins)"
+                            }
+                        }, "opt-route-sum-grid");
                         $("opt-route-grid").empty();
                         optRouteGrid = new Grid({
                             columns: {
@@ -967,32 +1020,74 @@
                     map.graphics.add(startPointGraphic);
                     has_start_point = true;
                 });
-                // set route params
-                stops.features = tenWellsLayer.graphics;
-                routeParams.stops = stops;
                 // route solve
                 on(dom.byId("calculate-optimized-route"), "click", function(){
                     if (!has_start_point){
                         return;
                     } else {
+                        //set stops order
+                        var tempFeatures = []
+                        arrayUtils.forEach(tenWellsLayer.graphics, function(graphic){
+                            tempFeatures.push(new Graphic(graphic.geometry));
+                        });
+                        stops.features = [new Graphic(startPointGraphic.geometry)];
+                        while (tempFeatures.length > 0){
+                            var minDist = Infinity;
+                            preGraphic = stops.features[stops.features.length - 1];
+                            preX = preGraphic.geometry.x;
+                            preY = preGraphic.geometry.y;
+                            var nextGraphic;
+                            var index;
+                            arrayUtils.forEach(tempFeatures, function(graphic){
+                                curX = graphic.geometry.x;
+                                curY = graphic.geometry.y;
+                                dist = Math.sqrt((preX-curX)*(preX-curX) + (preY-curY)*(preY-curY));
+                                if (dist < minDist) {
+                                    minDist = dist;
+                                    nextGraphic = graphic;
+                                    index = tempFeatures.indexOf(graphic);
+                                }
+                            });
+                            stops.features.push(nextGraphic);
+                            tempFeatures.splice(index, 1);
+                        }
+                        routeParams.stops = stops;
+                        //solve
                         routeTask.solve(routeParams);
                         routeTask.on("solve-complete", showRoute);
-                        //routeTask.on("error", errorHandler);
+                        routeTask.on("error", errorHandler);
                     }
                 });
                 function showRoute(event) {
                     var gridData = [];
                     if (optRouteGrid){
+                        $("#opt-route-sum-grid").empty();
+                        optRouteSumGrid = new Grid({
+                            columns: {
+                                RouteId: "Route Id",
+                                RouteName: "Route Name",
+                                TotalDistance: "Total Distance (miles)",
+                                TotalDriveTime: "Total Drive Time (mins)"
+                            }
+                        }, "opt-route-sum-grid");
                         $("#opt-route-grid").empty();
+                        optRouteGrid = new Grid({
+                            columns: {
+                                Index: "Index",
+                                Details: "Details",
+                                Distance: "Distance (miles)",
+                                DriveTime: "Drive Time (mins)"
+                            },
+                        }, "opt-route-grid");
                     }
                     var routeSymbol = new SimpleLineSymbol({
                         color: new Color([30, 150, 185]),
                         style: "STYLE_SOLID",
                         width: 2
                     });
+                    console.log(event.result.routeResults[0]);
                     map.graphics.add(event.result.routeResults[0].route.setSymbol(routeSymbol));
-                    console.log(event);
-                    //Display the route details
+                    // display the route details
                     var directions = event.result.routeResults[0].directions;
                     directionFeatures = directions.features;
                     var directionsInfo = event.result.routeResults[0].directions.features;
@@ -1005,12 +1100,16 @@
                         };
                     });
                     optRouteGrid.renderArray(gridData);
+                    var routeId = directions.routeId;
+                    var routeName = directions.routeName;
                     var totalDistance = directions.totalLength.toFixed(2);
-                    var totalTime = directions.totalTime.toFixed(2);
+                    var totalDriveTime = directions.totalDriveTime.toFixed(2);
+                    var sumData = [{RouteId: routeId, RouteName: routeName, TotalDistance: totalDistance, TotalDriveTime: totalDriveTime}];
+                    optRouteSumGrid.renderArray(sumData);
                     optRouteGrid.on(".dgrid-row:click", zoomToSegment);
                 }
                 function zoomToSegment(event) {
-                    //Grid row id corresponds to the segment to highlight
+                    // grid row id corresponds to the segment to highlight
                     var index = optRouteGrid.row(event).id;
                     var segment = directionFeatures[index];
                     var segmentSymbol = new SimpleLineSymbol().setColor(new Color([255,0,0,0.5])).setWidth(8);
@@ -1022,10 +1121,10 @@
                         segmentGraphic.setGeometry(segment.geometry);
                     }
                 }
-                /*//Displays any error returned by the Route Task
+                //Displays any error returned by the Route Task
                 function errorHandler(err) {
                     alert("An error occured\n" + err.message);
-                } */
+                }
             });
             map3_clicked = true;
         }
