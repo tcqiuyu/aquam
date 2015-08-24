@@ -88,11 +88,11 @@
         .field-DriveTime, .field-TotalDriveTime{
             width: 15%;
         }
-        #cost-calculation{
+        #cost-calculation2, #cost-calculation3{
             border: 1px solid #A4A4A4;
             border-radius: 3px;
         }
-        #toolbar1, #toolbar2, toolbar3 {
+        #toolbar1, #toolbar2, #toolbar3{
             margin-top: 10px;
         }
     </style>
@@ -153,6 +153,37 @@
                     <div id="close-route-grid"></div>
                     <div id="close-route-sum-grid"></div>
                 </div>
+                <h4>Cost Calculation</h4>
+                <div id="cost-calculation2">
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <p>Total Distance (or Total Drive time)</p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p>$/mile (or $/hour)</p>
+                        </div>
+                        <div class="col-sm-1">
+                            
+                        </div>
+                        <div class="col-sm-5">
+                            <p>Total Cost</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <input type="text" class="form-control" id="total-input2">
+                        </div>
+                        <div class="col-sm-3">
+                            <input type="text" class="form-control" id="per-cost2">
+                        </div>
+                        <div class="col-sm-1">
+                            <button class="btn btn-default" onclick="calculateCost2()">Multiply</button>
+                        </div>
+                        <div class="col-sm-5">
+                            <input type="text" class="form-control" id="total-cost2">
+                        </div>
+                    </div>
+                </div>
             </div>
             
             <div id="route-optimization" role="tabpanel" class="tab-pane">
@@ -173,7 +204,7 @@
                     <div id="opt-route-sum-grid"></div>
                 </div>
                 <h4>Cost Calculation</h4>
-                <div id="cost-calculation">
+                <div id="cost-calculation3">
                     <div class="row">
                         <div class="col-sm-3">
                             <p>Total Distance (or Total Drive time)</p>
@@ -190,16 +221,16 @@
                     </div>
                     <div class="row">
                         <div class="col-sm-3">
-                            <input type="text" class="form-control" id="total-input">
+                            <input type="text" class="form-control" id="total-input3">
                         </div>
                         <div class="col-sm-3">
-                            <input type="text" class="form-control" id="per-cost">
+                            <input type="text" class="form-control" id="per-cost3">
                         </div>
                         <div class="col-sm-1">
-                            <button class="btn btn-default" onclick="calculateCost()">Multiply</button>
+                            <button class="btn btn-default" onclick="calculateCost3()">Multiply</button>
                         </div>
                         <div class="col-sm-5">
-                            <input type="text" class="form-control" id="total-cost">
+                            <input type="text" class="form-control" id="total-cost3">
                         </div>
                     </div>
                 </div>
@@ -214,12 +245,22 @@
     $(document).ready(function(){
         load_map1();
     });
-    function calculateCost(){
-        var total = parseFloat($("#total-input").val());
-        var perCost = parseFloat($("#per-cost").val());
+    function calculateCost2(){
+        var total = parseFloat($("#total-input2").val());
+        var perCost = parseFloat($("#per-cost2").val());
         if (total && perCost){
             var totalCost = total * perCost;
-            $("#total-cost").val(totalCost);
+            $("#total-cost2").val(totalCost);
+        } else {
+            alert("input number please!");
+        }
+    }
+    function calculateCost3(){
+        var total = parseFloat($("#total-input3").val());
+        var perCost = parseFloat($("#per-cost3").val());
+        if (total && perCost){
+            var totalCost = total * perCost;
+            $("#total-cost3").val(totalCost);
         } else {
             alert("input number please!");
         }

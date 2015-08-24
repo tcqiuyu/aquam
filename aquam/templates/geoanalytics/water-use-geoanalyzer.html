@@ -73,6 +73,9 @@
             margin: 5px 0 5px 0;
         {#            margin-outside: 10px;#} display: inline-block;
         }
+        #toolbar {
+            margin-top: 10px;
+        }
     </style>
 {% endblock %}
 
@@ -128,17 +131,17 @@
             </div>
 
             <div id="statistics" role="tabpanel" class="tab-pane">
-                <div id="toolbar">
-                    <button id="freehandPolygon" class="btn btn-default">Polygon</button>
-                    <button id="circle" class="btn btn-default">Circle</button>
-                    <button id="rectangle" class="btn btn-default">Rectangle</button>
-                    <button id="clear" class="btn btn-default">Clear</button>
-                </div>
                 <div class="map">
                     <div id="map4"></div>
                     <div class="map-legend">
                         <div id="legend4"></div>
                     </div>
+                </div>
+                <div id="toolbar">
+                    <button id="freehandPolygon" class="btn btn-default">Polygon</button>
+                    <button id="circle" class="btn btn-default">Circle</button>
+                    <button id="rectangle" class="btn btn-default">Rectangle</button>
+                    <button id="clear" class="btn btn-default">Clear</button>
                 </div>
                 <hr>
                 <div id="stat_panel">
