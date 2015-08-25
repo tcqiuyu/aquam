@@ -1097,7 +1097,7 @@
                     if (event.target.id === "clear-all-them") {
                         map.graphics.clear();
                         has_start_point = false;
-                        $("opt-route-sum-grid").empty();
+                        $("#opt-route-sum-grid").empty();
                         optRouteSumGrid = new Grid({
                             columns: {
                                 RouteId: "Route Id",
@@ -1106,7 +1106,7 @@
                                 TotalDriveTime: "Total Drive Time (mins)"
                             }
                         }, "opt-route-sum-grid");
-                        $("opt-route-grid").empty();
+                        $("#opt-route-grid").empty();
                         optRouteGrid = new Grid({
                             columns: {
                                 Index: "Index",
@@ -1186,15 +1186,6 @@
                 function showRoute(event) {
                     var gridData = [];
                     if (optRouteGrid){
-                        $("#opt-route-sum-grid").empty();
-                        optRouteSumGrid = new Grid({
-                            columns: {
-                                RouteId: "Route Id",
-                                RouteName: "Route Name",
-                                TotalDistance: "Total Distance (miles)",
-                                TotalDriveTime: "Total Drive Time (mins)"
-                            }
-                        }, "opt-route-sum-grid");
                         $("#opt-route-grid").empty();
                         optRouteGrid = new Grid({
                             columns: {
@@ -1204,6 +1195,15 @@
                                 DriveTime: "Drive Time (mins)"
                             },
                         }, "opt-route-grid");
+                        $("#opt-route-sum-grid").empty();
+                        optRouteSumGrid = new Grid({
+                            columns: {
+                                RouteId: "Route Id",
+                                RouteName: "Route Name",
+                                TotalDistance: "Total Distance (miles)",
+                                TotalDriveTime: "Total Drive Time (mins)"
+                            }
+                        }, "opt-route-sum-grid");
                     }
                     var routeSymbol = new SimpleLineSymbol({
                         color: new Color([30, 150, 185]),
@@ -1223,22 +1223,7 @@
                             DriveTime: feature.attributes.time.toFixed(2)
                         };
                     });
-                    $("opt-route-sum-grid").empty();
-                    optRouteSumGrid = new Grid({
-                        columns: {
-                            RouteId: "Route Id",
-                            RouteName: "Route Name",
-                            TotalDistance: "Total Distance (miles)",
-                            TotalDriveTime: "Total Drive Time (mins)"
-                        }
-                    }, "opt-route-sum-grid");
-                    optRouteGrid.renderArray(gridData);
-                    var routeId = directions.routeId;
-                    var routeName = directions.routeName;
-                    var totalDistance = directions.totalLength.toFixed(2);
-                    var totalDriveTime = directions.totalDriveTime.toFixed(2);
-                    var sumData = [{RouteId: routeId, RouteName: routeName, TotalDistance: totalDistance, TotalDriveTime: totalDriveTime}];
-                    $("opt-route-grid").empty();
+                    $("#opt-route-grid").empty();
                     optRouteGrid = new Grid({
                         columns: {
                             Index: "Index",
@@ -1247,6 +1232,21 @@
                             DriveTime: "Drive Time (mins)"
                         }
                     }, "opt-route-grid");
+                    optRouteGrid.renderArray(gridData);
+                    var routeId = directions.routeId;
+                    var routeName = directions.routeName;
+                    var totalDistance = directions.totalLength.toFixed(2);
+                    var totalDriveTime = directions.totalDriveTime.toFixed(2);
+                    var sumData = [{RouteId: routeId, RouteName: routeName, TotalDistance: totalDistance, TotalDriveTime: totalDriveTime}];
+                    $("#opt-route-sum-grid").empty();
+                    optRouteSumGrid = new Grid({
+                        columns: {
+                            RouteId: "Route Id",
+                            RouteName: "Route Name",
+                            TotalDistance: "Total Distance (miles)",
+                            TotalDriveTime: "Total Drive Time (mins)"
+                        }
+                    }, "opt-route-sum-grid");
                     optRouteSumGrid.renderArray(sumData);
                     $("#total-miles-3").val(totalDistance);
                     $("#total-drive-time-3").val((totalDriveTime/60).toFixed(2));
