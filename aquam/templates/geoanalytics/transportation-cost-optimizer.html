@@ -21,16 +21,16 @@
             border-radius: 5px;
         }
         #legend1{
-            height: 180px;
-            width: 110px;
+            height: 200px;
+            width: 130px;
         }
         #legend2 {
-            height: 460px;
-            width: 120px;
+            height: 270px;
+            width: 130px;
         }
         #legend3 {
             height: 200px;
-            width: 110px;
+            width: 130px;
         }
         #close-route-sum-grid, #opt-route-sum-grid{
             height: 90px;
@@ -88,8 +88,7 @@
         .field-DriveTime, .field-TotalDriveTime{
             width: 15%;
         }
-        #cost-calculation2, #cost-calculation3{
-            border: 1px solid #A4A4A4;
+        .cost-calculation{
             border-radius: 3px;
         }
         #toolbar1, #toolbar2, #toolbar3{
@@ -101,7 +100,7 @@
 {% block mainbody %}
     <div class="jumbotron">
         <div class="container">
-            <h2>Transportantion & Cost Optimizer</h2>
+            <h2>Transportantion Cost Optimizer</h2>
             <p style="text-align: justify">
                 This optimizer is an interactive tool designed to optimize the route for produced water transportation.
                 An optimized route will help to minimize the cost and save time.
@@ -154,33 +153,57 @@
                     <div id="close-route-sum-grid"></div>
                 </div>
                 <h4>Cost Calculation</h4>
-                <div id="cost-calculation2">
+                <div class="cost-calculation">
                     <div class="row">
                         <div class="col-sm-3">
-                            <p>Total Distance (or Total Drive time)</p>
+                            <p>Total Distance (miles)</p>
                         </div>
                         <div class="col-sm-3">
-                            <p>$/mile (or $/hour)</p>
+                            <p>dollars/mile</p>
                         </div>
                         <div class="col-sm-1">
                             
                         </div>
                         <div class="col-sm-5">
-                            <p>Total Cost</p>
+                            <p>Total Cost ($)</p>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-sm-3">
-                            <input type="text" class="form-control" id="total-input2">
+                            <input type="text" class="form-control" id="total-miles-2">
                         </div>
                         <div class="col-sm-3">
-                            <input type="text" class="form-control" id="per-cost2">
+                            <input type="text" class="form-control" id="cost-per-mile-2">
                         </div>
                         <div class="col-sm-1">
-                            <button class="btn btn-default" onclick="calculateCost2()">Multiply</button>
+                            <button class="btn btn-default" onclick="calculateCostByMiles2()">Multiply</button>
                         </div>
                         <div class="col-sm-5">
-                            <input type="text" class="form-control" id="total-cost2">
+                            <input type="text" class="form-control" id="total-cost-by-miles-2">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <p>Total Drive Time (Hours)</p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p>dollars/hour</p>
+                        </div>
+                        <div class="col-sm-1"></div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <input type="text" class="form-control" id="total-drive-time-2">
+                        </div>
+                        <div class="col-sm-3">
+                            <input type="text" class="form-control" id="cost-per-hour-2">
+                        </div>
+                        <div class="col-sm-1">
+                            <button class="btn btn-default" onclick="calculateCostByHours2()">Multiply</button>
+                        </div>
+                        <div class="col-sm-5">
+                            <input type="text" class="form-control" id="total-cost-by-hours-2">
                         </div>
                     </div>
                 </div>
@@ -204,33 +227,57 @@
                     <div id="opt-route-sum-grid"></div>
                 </div>
                 <h4>Cost Calculation</h4>
-                <div id="cost-calculation3">
+                <div class="cost-calculation">
                     <div class="row">
                         <div class="col-sm-3">
-                            <p>Total Distance (or Total Drive time)</p>
+                            <p>Total Distance (miles)</p>
                         </div>
                         <div class="col-sm-3">
-                            <p>$/mile (or $/hour)</p>
+                            <p>dollars/mile</p>
                         </div>
                         <div class="col-sm-1">
                             
                         </div>
                         <div class="col-sm-5">
-                            <p>Total Cost</p>
+                            <p>Total Cost ($)</p>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-sm-3">
-                            <input type="text" class="form-control" id="total-input3">
+                            <input type="text" class="form-control" id="total-miles-3">
                         </div>
                         <div class="col-sm-3">
-                            <input type="text" class="form-control" id="per-cost3">
+                            <input type="text" class="form-control" id="cost-per-mile-3">
                         </div>
                         <div class="col-sm-1">
-                            <button class="btn btn-default" onclick="calculateCost3()">Multiply</button>
+                            <button class="btn btn-default" onclick="calculateCostByMiles3()">Multiply</button>
                         </div>
                         <div class="col-sm-5">
-                            <input type="text" class="form-control" id="total-cost3">
+                            <input type="text" class="form-control" id="total-cost-by-miles-3">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <p>Total Drive Time (Hours)</p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p>dollars/hour</p>
+                        </div>
+                        <div class="col-sm-1"></div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <input type="text" class="form-control" id="total-drive-time-3">
+                        </div>
+                        <div class="col-sm-3">
+                            <input type="text" class="form-control" id="cost-per-hour-3">
+                        </div>
+                        <div class="col-sm-1">
+                            <button class="btn btn-default" onclick="calculateCostByHours3()">Multiply</button>
+                        </div>
+                        <div class="col-sm-5">
+                            <input type="text" class="form-control" id="total-cost-by-hours-3">
                         </div>
                     </div>
                 </div>
@@ -245,22 +292,42 @@
     $(document).ready(function(){
         load_map1();
     });
-    function calculateCost2(){
-        var total = parseFloat($("#total-input2").val());
-        var perCost = parseFloat($("#per-cost2").val());
+    function calculateCostByMiles2(){
+        var total = parseFloat($("#total-miles-2").val());
+        var perCost = parseFloat($("#cost-per-mile-2").val());
         if (total && perCost){
             var totalCost = total * perCost;
-            $("#total-cost2").val(totalCost);
+            $("#total-cost-by-miles-2").val(totalCost.toFixed(2));
         } else {
             alert("input number please!");
         }
     }
-    function calculateCost3(){
-        var total = parseFloat($("#total-input3").val());
-        var perCost = parseFloat($("#per-cost3").val());
+    function calculateCostByHours2(){
+        var total = parseFloat($("#total-drive-time-2").val());
+        var perCost = parseFloat($("#cost-per-hour-2").val());
         if (total && perCost){
             var totalCost = total * perCost;
-            $("#total-cost3").val(totalCost);
+            $("#total-cost-by-hours-2").val(totalCost.toFixed(2));
+        } else {
+            alert("input number please!");
+        }
+    }
+    function calculateCostByMiles3(){
+        var total = parseFloat($("#total-miles-3").val());
+        var perCost = parseFloat($("#cost-per-mile-3").val());
+        if (total && perCost){
+            var totalCost = total * perCost;
+            $("#total-cost-by-miles-3").val(totalCost.toFixed(2));
+        } else {
+            alert("input number please!");
+        }
+    }
+    function calculateCostByHours3(){
+        var total = parseFloat($("#total-drive-time-3").val());
+        var perCost = parseFloat($("#cost-per-hour-3").val());
+        if (total && perCost){
+            var totalCost = total * perCost;
+            $("#total-cost-by-hours-3").val(totalCost.toFixed(2));
         } else {
             alert("input number please!");
         }
@@ -365,13 +432,10 @@
             
             // legend
             var legend = new Legend({
-                map: map
+                map: map,
+                layerInfos: [{layer: wellsLayer, title: "Water Use (bbls)"}]
             }, "legend1");
             legend.startup();
-            legend.refresh([{
-                layer: wellsLayer,
-                title: " "
-            }]);
             
             //scalebar
             var scalebar = new Scalebar({
@@ -643,8 +707,8 @@
                 wellsLayer.setRenderer(wellsRenderer);
                 wellsLayer.setSelectionSymbol(selectionSymbol);
                 
-                // injection wells layer
-                var injectionWellRenderer = new SimpleRenderer({
+                // treatment Facility layer
+                var treatmentFacilityRenderer = new SimpleRenderer({
                     symbol: {
                         type: "esriSMS",
                         style: "esriSMSSquare",
@@ -652,23 +716,11 @@
                             width: 0.5,
                             color: [160, 160, 160, 70],
                         },
-                        size: 13,
-                        color: new Color([20,20,255])
-                    },
-                    colorInfo: {
-                        field: "id",
-                        minDataValue: 1,
-                        maxDataValue: 5,
-                        colors: [
-                            new Color([0, 0, 255]),
-                            new Color([255, 0, 255]),
-                            new Color([255, 255, 0]),
-                            new Color([255, 0, 0]),
-                            new Color([0, 255, 255])
-                        ]
+                        size: 11,
+                        color: new Color([180,30,130])
                     }
                 });
-                var injectionWellTemplate = new PopupTemplate({
+                var treatmentFacilityTemplate = new PopupTemplate({
                     fieldInfos: [
                         {
                             fieldName: "Name",
@@ -677,18 +729,19 @@
                         }
                     ]
                 });
-                var injectionWellServiceUrl = "http://services1.arcgis.com/KNdRU5cN6ENqCTjk/arcgis/rest/services/InjectionWells/FeatureServer/0";
-                var injectionWellsLayer = new FeatureLayer(injectionWellServiceUrl, {
+                var treatmentFacilityServiceUrl = "http://services1.arcgis.com/KNdRU5cN6ENqCTjk/arcgis/rest/services/TreatmentFacility/FeatureServer/0";
+                var treatmentFacilityLayer = new FeatureLayer(treatmentFacilityServiceUrl, {
                     mode: FeatureLayer.MODE_SNAPSHOT,
-                    infoTemplate: injectionWellTemplate,
-                    outFields: ["Id", "Name"]
+                    infoTemplate: treatmentFacilityTemplate,
+                    outFields: ["Name"]
                 });
-                injectionWellsLayer.setRenderer(injectionWellRenderer);
-                map.addLayers([wellsLayer, injectionWellsLayer]);
+                treatmentFacilityLayer.setRenderer(treatmentFacilityRenderer);
+                map.addLayers([wellsLayer, treatmentFacilityLayer]);
                 
                 // legend
                 var legend = new Legend({
-                    map: map
+                    map: map,
+                    layerInfos:[{layer: wellsLayer, title:"Water Use (bbls)"}, {layer: treatmentFacilityLayer, title:"Treatment Facility"}]
                 }, "legend2");
                 legend.startup();
                 
@@ -727,7 +780,7 @@
                 cfParams.returnDirections=true;
                 cfParams.returnFacilities=false;
                 var facilities = new FeatureSet();
-                facilities.features = injectionWellsLayer.graphics;
+                facilities.features = treatmentFacilityLayer.graphics;
                 cfParams.facilities = facilities;
                 cfParams.outSpatialReference = map.spatialReference;
                 cfParams.defaultTargetFacilityCount = 1;
@@ -763,6 +816,12 @@
                                 DriveTime: "Drive Time (mins)"
                             }
                         }, "close-route-grid");
+                        $("#total-miles-2").val("");
+                        $("#cost-per-mile-2").val("");
+                        $("#total-cost-by-miles-2").val("");
+                        $("#total-drive-time-2").val("");
+                        $("#cost-per-hour-2").val("");
+                        $("#total-cost-by-hours-2").val("");
                         return;
                     }
                     var tool = event.target.name.toLowerCase();
@@ -836,13 +895,33 @@
                                     DriveTime: feature.attributes.time.toFixed(2)
                                 };
                             });
+                            $("#close-route-grid").empty();
+                            closeRouteGrid = new Grid({
+                                columns: {
+                                    Index: "Index",
+                                    Details: "Details",
+                                    Distance: "Distance (miles)",
+                                    DriveTime: "Drive Time (mins)"
+                                }
+                            }, "close-route-grid");
                             closeRouteGrid.renderArray(gridDirection);
                             var routeId = closeDirections.routeId;
                             var toClosedFacility = closeDirections.routeName;
                             var totalDistance = closeDirections.totalLength.toFixed(2);
                             var totalDriveTime = closeDirections.totalDriveTime.toFixed(2);
                             var sumData = [{RouteId: routeId, ToClosedFacility: toClosedFacility, TotalDistance: totalDistance, TotalDriveTime: totalDriveTime}];
+                            $("#close-route-sum-grid").empty();
+                            closeRouteSumGrid = new Grid({
+                                columns: {
+                                    RouteId: "Route Id",
+                                    ToClosedFacility: "To Closed Facility",
+                                    TotalDistance: "Total Distance (miles)",
+                                    TotalDriveTime: "Total Drive Time (mins)"
+                                }
+                            }, "close-route-sum-grid");
                             closeRouteSumGrid.renderArray(sumData);
+                            $("#total-miles-2").val(totalDistance);
+                            $("#total-drive-time-2").val((totalDriveTime/60).toFixed(2));
                         });
                     });
                 });
@@ -960,7 +1039,6 @@
                      fieldInfos: [
                          {
                              fieldName: "water_use",
-                             label: "WaterUse",
                              visible: true
                          }
                      ]
@@ -975,13 +1053,10 @@
                 map.addLayer(tenWellsLayer);
                 // legend
                 var legend = new Legend({
-                    map: map
+                    map: map,
+                    layerInfos: [{layer: tenWellsLayer, title: "Water Use (bbls)"}]
                 }, "legend3");
                 legend.startup();
-                legend.refresh([{
-                    layer: tenWellsLayer,
-                    title: " "
-                }]);
                 // grid for route summary data
                 var optRouteSumGrid = new Grid({
                     columns: {
@@ -1037,6 +1112,12 @@
                                 DriveTime: "Drive Time (mins)"
                             }
                         }, "opt-route-grid");
+                        $("#total-miles-3").val("");
+                        $("#cost-per-mile-3").val("");
+                        $("#total-cost-by-miles-3").val("");
+                        $("#total-drive-time-3").val("");
+                        $("#cost-per-hour-3").val("");
+                        $("#total-cost-by-hours-3").val("");
                         return;
                     }
                     var tool = event.target.name.toLowerCase();
@@ -1126,7 +1207,6 @@
                         style: "STYLE_SOLID",
                         width: 2
                     });
-                    console.log(event.result.routeResults[0]);
                     map.graphics.add(event.result.routeResults[0].route.setSymbol(routeSymbol));
                     // display the route details
                     var directions = event.result.routeResults[0].directions;
@@ -1140,13 +1220,33 @@
                             DriveTime: feature.attributes.time.toFixed(2)
                         };
                     });
+                    $("opt-route-sum-grid").empty();
+                    optRouteSumGrid = new Grid({
+                        columns: {
+                            RouteId: "Route Id",
+                            RouteName: "Route Name",
+                            TotalDistance: "Total Distance (miles)",
+                            TotalDriveTime: "Total Drive Time (mins)"
+                        }
+                    }, "opt-route-sum-grid");
                     optRouteGrid.renderArray(gridData);
                     var routeId = directions.routeId;
                     var routeName = directions.routeName;
                     var totalDistance = directions.totalLength.toFixed(2);
                     var totalDriveTime = directions.totalDriveTime.toFixed(2);
                     var sumData = [{RouteId: routeId, RouteName: routeName, TotalDistance: totalDistance, TotalDriveTime: totalDriveTime}];
+                    $("opt-route-grid").empty();
+                    optRouteGrid = new Grid({
+                        columns: {
+                            Index: "Index",
+                            Details: "Details",
+                            Distance: "Distance (miles)",
+                            DriveTime: "Drive Time (mins)"
+                        }
+                    }, "opt-route-grid");
                     optRouteSumGrid.renderArray(sumData);
+                    $("#total-miles-3").val(totalDistance);
+                    $("#total-drive-time-3").val((totalDriveTime/60).toFixed(2));
                     optRouteGrid.on(".dgrid-row:click", zoomToSegment);
                 }
                 function zoomToSegment(event) {

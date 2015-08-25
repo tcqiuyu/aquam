@@ -24,18 +24,21 @@
         }
 
         #legend1 {
-            height: 200px;
-            width: 110px;
+            height: 220px;
+            width: 130px;
         }
 
         #legend2 {
-            height: 400px;
-            width: 150px;
+            height: 240px;
+            width: 170px;
         }
-
+        #legend3 {
+            height: 170px;
+            width: 100px;
+        }
         #legend4 {
             height: 200px;
-            width: 110px;
+            width: 130px;
         }
 
         #charts {
@@ -55,7 +58,7 @@
         }
 
         .stat {
-        {#            background-color: lightgray;#} padding: 10px 0 10px 0;
+            padding: 10px 0 10px 0;
             margin: 10px 20px 10px 20px;
         }
 
@@ -63,7 +66,7 @@
             background-color: lightgray;
             font-size: small;
             padding: 10px 10px 10px 10px;
-        {#            margin-left: 10px;#} font-weight: bold;
+            font-weight: bold;
             border: 1px solid #A4A4A4;
             border-radius: 3px;
             display: inline-block;
@@ -71,7 +74,7 @@
 
         .stat-data {
             margin: 5px 0 5px 0;
-        {#            margin-outside: 10px;#} display: inline-block;
+            display: inline-block;
         }
         #toolbar {
             margin-top: 10px;
@@ -127,6 +130,9 @@
             <div id="heatmap" role="tabpanel" class="tab-pane">
                 <div class="map">
                     <div id="map3"></div>
+                    <div class="map-legend">
+                        <div id="legend3"></div>
+                    </div>
                 </div>
             </div>
 
@@ -308,13 +314,10 @@
             featureLayer.setRenderer(renderer);
             map.addLayer(featureLayer);
             var legend = new Legend({
-                map: map
+                map: map,
+                layerInfos: [{layer: featureLayer, title: "Water Use (bbls)"}]
             }, "legend1");
             legend.startup();
-            legend.refresh([{
-                layer: featureLayer,
-                title: " "
-            }]);
             var scalebar = new Scalebar({
                 map: map,
                 // "dual" displays both miles and kilmometers
@@ -337,7 +340,7 @@
                              Legend,
                              Scalebar,
                              FeatureLayer) {
-                    var serviceID = "1e4a0319e4ff4284b4e7bad92551006b";
+                    var serviceID = "8a40f3cd068b418d851bad2d65bd0ace";
                     arcgisUtils.createMap(serviceID, "map2").then(function (response) {
                         // map
                         var map = response.map;
@@ -383,6 +386,13 @@
                             map: map,
                             scalebarUnit: "dual"
                         });
+                        //add the legend.
+                        var legendLayers = arcgisUtils.getLegendLayers(response);
+                        var legend = new Legend({
+                            map: map,
+                            layerInfos: legendLayers
+                        }, "legend3");
+                        legend.startup();
                     });
                 });
                 map3_clicked = true;
@@ -558,19 +568,13 @@
                     map.addLayer(featureLayer);
                     //legend
                     var legend = new Legend({
-                        map: map
+                        map: map,
+                        layerInfos: [{layer: featureLayer, title: "Water Use (bbls)"}]
                     }, "legend4");
                     legend.startup();
-                    legend.refresh([{
-                        layer: featureLayer,
-                        title: " "
-                    }]);
                     //scalebar
                     var scalebar = new Scalebar({
                         map: map,
-                        // "dual" displays both miles and kilmometers
-                        // "english" is the default, which displays miles
-                        // use "metric" for kilometers
                         scalebarUnit: "dual"
                     });
                     //draw graphic
