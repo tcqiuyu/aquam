@@ -31,8 +31,8 @@ def get_env_setting(setting):
 
 # HOST CONFIGURATION
 ALLOWED_HOSTS = [
-    "aquam.org",
-    "www.aquam.org"
+    "datawillis.com",
+    "www.datawillis.com"
 ]
 
 # EMAIL CONFIGURATION

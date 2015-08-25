@@ -443,6 +443,9 @@
                 scalebarUnit: "dual"
             });
             
+            var selectGraphicsLayer = new GraphicsLayer();
+            map.addLayer(selectGraphicsLayer);
+            
             //add two graphics layer for point & area
             var features = [];
             
@@ -483,6 +486,7 @@
                         }, "service-area-grid");
                         areaNumber = 0;
                     }
+                    selectGraphicsLayer.clear();
                     return;
                 }
                 var tool = event.target.name.toLowerCase();
@@ -577,8 +581,7 @@
                     new SimpleLineSymbol("solid", new Color([0,0,255]), 3),
                     new Color([232,104,80,0.25])
                 );
-                var selectGraphicsLayer = new GraphicsLayer();
-                map.addLayer(selectGraphicsLayer);
+                
                 function zoomToArea(event){
                     selectGraphicsLayer.clear();
                     areaID = serviceAreaGrid.row(event).data.AreaID;
@@ -1054,7 +1057,7 @@
                 // legend
                 var legend = new Legend({
                     map: map,
-                    layerInfos: [{layer: tenWellsLayer, title: "Water Use (bbls)"}]
+                    layerInfos: [{layer: tenWellsLayer, title: "Water Use ()"}]
                 }, "legend3");
                 legend.startup();
                 // grid for route summary data
