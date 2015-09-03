@@ -197,12 +197,12 @@ class ProducedWaterModeler():
 
     def __init__(self, model):
         self.model = model
-
+    
     def get_arp_model(self):
         # arp model
         def arp(x, D, b):
             return Q0 / (1 + D * x) ** (1 / b)
-
+        
         # fitting
         values_list = self.model.objects.values_list("days", "well_1", "well_2", "well_3", "well_4", "well_5", "well_6",
                                                      "well_7")
