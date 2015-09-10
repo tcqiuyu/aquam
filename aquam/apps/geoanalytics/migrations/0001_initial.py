@@ -12,6 +12,24 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
+            name='GeoProducedWater',
+            fields=[
+                ('id', models.AutoField(serialize=False, primary_key=True)),
+                ('geometry', django.contrib.gis.db.models.fields.PointField(srid=4326)),
+                ('api', models.CharField(max_length=20)),
+                ('well_name', models.CharField(max_length=100, null=True)),
+                ('latitude', models.DecimalField(max_digits=20, decimal_places=6)),
+                ('longitude', models.DecimalField(max_digits=20, decimal_places=6)),
+                ('volume_date', models.DateField()),
+                ('h2o_volume', models.DecimalField(max_digits=10, decimal_places=2)),
+                ('days_on', models.PositiveIntegerField()),
+                ('is_prediction', models.BooleanField()),
+            ],
+            options={
+                'ordering': ['api'],
+            },
+        ),
+        migrations.CreateModel(
             name='GeoWaterUse',
             fields=[
                 ('id', models.AutoField(serialize=False, primary_key=True)),
