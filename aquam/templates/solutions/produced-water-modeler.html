@@ -7,138 +7,159 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-datepicker.css' %}"/>
 {% endblock %}
 
-{% block jumbotron-header %}Produced Water Modeler{% endblock %}
-
-{% block jumbotron-body %}
-    This modeler is an interactive tool designed to model water production trends based on
-    historical data, giving the user a temporal edge of analyzing how much water was produced
-    over a specific amount of time, and how the user could imperatively plan the amount of
-    water to be handled on a particular day. It has been strategically designed to estimate
-    time based production of water based on trends fitted to the well known Arp's Equation for
-    modeling produced water. Not only does it calculate the water to be produced on a particular
-    day, it also seamless integrates the numbers to estimate average water production volumes for
-    a particular time frame, as specified by the user.
-{% endblock %}
+{#{% block jumbotron-header %}Produced Water Modeler{% endblock %}#}
+{##}
+{#{% block jumbotron-body %}#}
+{#    This modeler is an interactive tool designed to model water production trends based on#}
+{#    historical data, giving the user a temporal edge of analyzing how much water was produced#}
+{#    over a specific amount of time, and how the user could imperatively plan the amount of#}
+{#    water to be handled on a particular day. It has been strategically designed to estimate#}
+{#    time based production of water based on trends fitted to the well known Arp's Equation for#}
+{#    modeling produced water. Not only does it calculate the water to be produced on a particular#}
+{#    day, it also seamless integrates the numbers to estimate average water production volumes for#}
+{#    a particular time frame, as specified by the user.#}
+{#{% endblock %}#}
 
 {% block solutions-body %}
-    <h3>Produced Water By Wells</h3>
+    <section class="cd-section produced-water-modeler visible">
+    <header>
+        <div class="cd-title">
+            <h2>Produced Water Modeler</h2>
 
-    <div id="table-container">
-        {% include 'solutions/partial/produced-water-table.html' %}
-    </div>
+            <p>
+                This modeler is an interactive tool designed to model water production trends based on
+                historical data, giving the user a temporal edge of analyzing how much water was produced
+                over a specific amount of time, and how the user could imperatively plan the amount of
+                water to be handled on a particular day. It has been strategically designed to estimate
+                time based production of water based on trends fitted to the well known Arp's Equation for
+                modeling produced water. Not only does it calculate the water to be produced on a particular
+                day, it also seamless integrates the numbers to estimate average water production volumes for
+                a particular time frame, as specified by the user.
+            </p>
+        </div>
+        <a href="#produced-water-modeler-content" class="cd-scroll">Scroll Down</a>
+    </header>
 
-    <hr>
+    <div class="cd-content" id="produced-water-modeler-content">
+        <h3>Produced Water By Wells</h3>
 
-    <div class="panel panel-primary chart-panel" id="water-use-analytics">
-        <div class="panel-heading chart-heading">
-            Arp's Model
+        <div id="table-container">
+            {% include 'solutions/partial/produced-water-table.html' %}
         </div>
 
-        <div class="panel-body">
+        <hr>
 
-            <div class="panel panel-info">
-                <div class="panel-heading">Equation</div>
+        <div class="panel panel-primary chart-panel" id="water-use-analytics">
+            <div class="panel-heading chart-heading">
+                Arp's Model
+            </div>
 
-                <div class="panel-body">
-                    <div class="row">
-                        <div class="col-md-2">
-                            <div class="eq-c">
-                                <i>q</i>(t) =
-                                <div class="fraction">
-                                    <span class="fup">Q<sub>0</sub></span>
-                                    <span class="bar">/</span>
-                                    <span class="fdn">( 1 + D * t ) <i><sup>1/b</sup></i></span>
+            <div class="panel-body">
+
+                <div class="panel panel-info">
+                    <div class="panel-heading">Equation</div>
+
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-md-2">
+                                <div class="eq-c">
+                                    <i>q</i>(t) =
+                                    <div class="fraction">
+                                        <span class="fup">Q<sub>0</sub></span>
+                                        <span class="bar">/</span>
+                                        <span class="fdn">( 1 + D * t ) <i><sup>1/b</sup></i></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <button type="button" class="btn btn-success" id="produced-water-btn-cal">Build Model
+                                </button>
+                            </div>
+                        </div>
+
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="panel panel-info">
+                                    <div class="panel-heading">Parameters</div>
+                                    <table class="table table-bordered table-striped">
+                                        <tbody>
+                                        <tr>
+                                            <td class="col-head">Initial production rate: <i><b>Q0</b></i></td>
+                                            <td class="col-body" id="table-Q0"></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="col-head">Decline rate constant: <i><b>D</b></i></td>
+                                            <td class="col-body" id="table-D"></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="col-head">Degree of curvature: <i><b>b</b></i></td>
+                                            <td class="col-body" id="table-b"></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4 col-md-offset-1">
+                                <div class="panel panel-info">
+                                    <div class="panel-heading">Evaluation</div>
+                                    <table class="table table-bordered table-striped">
+                                        <tbody>
+                                        <tr>
+                                            <td class="col-head">Accuracy:</td>
+                                            <td class="col-body" id="table-accuracy"></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+
+                        </div>
+                        <div class="panel panel-info">
+                            <div class="panel-heading">Graph</div>
+                            <div class="panel-body">
+                                <div class="chart" id="chart1" style="width:100%; height:500px">
                                 </div>
                             </div>
                         </div>
 
-                        <div class="col-md-4">
-                            <button type="button" class="btn btn-success" id="produced-water-btn-cal">Build Model
-                            </button>
-                        </div>
-                    </div>
+                        <div class="panel panel-info hide">
+                            <div class="panel-heading">Estimation & Prediction</div>
 
-                    <hr>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="panel panel-info">
-                                <div class="panel-heading">Parameters</div>
-                                <table class="table table-bordered table-striped">
-                                    <tbody>
-                                    <tr>
-                                        <td class="col-head">Initial production rate: <i><b>Q0</b></i></td>
-                                        <td class="col-body" id="table-Q0"></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="col-head">Decline rate constant: <i><b>D</b></i></td>
-                                        <td class="col-body" id="table-D"></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="col-head">Degree of curvature: <i><b>b</b></i></td>
-                                        <td class="col-body" id="table-b"></td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <div class="col-md-4 col-md-offset-1">
-                            <div class="panel panel-info">
-                                <div class="panel-heading">Evaluation</div>
-                                <table class="table table-bordered table-striped">
-                                    <tbody>
-                                    <tr>
-                                        <td class="col-head">Accuracy:</td>
-                                        <td class="col-body" id="table-accuracy"></td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-
-                    </div>
-                    <div class="panel panel-info">
-                        <div class="panel-heading">Graph</div>
-                        <div class="panel-body">
-                            <div class="chart" id="chart1" style="width:100%; height:500px">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="panel panel-info hide">
-                        <div class="panel-heading">Estimation & Prediction</div>
-
-                        <div class="panel-body">
-                            <div class="row">
-                                <form class="form-inline">
-                                    <div class="col-md-4 col-md-offset-1">
-                                        <span class="label label-default produced-water-label">Number of Wells</span>
-                                        <input type="text" class="input-sm form-control" name="well_number"
-                                               id="well_number_input"/>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="input-daterange input-group" id="datepicker">
+                            <div class="panel-body">
+                                <div class="row">
+                                    <form class="form-inline">
+                                        <div class="col-md-4 col-md-offset-1">
+                                            <span class="label label-default produced-water-label">Number of Wells</span>
+                                            <input type="text" class="input-sm form-control" name="well_number"
+                                                   id="well_number_input"/>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="input-daterange input-group" id="datepicker">
                                                 <span class="input-group-addon"
                                                       style="border-right: 1px solid #ccc">Start date:</span>
-                                            <input type="text" class="input-sm form-control" name="start"
-                                                   id="start_date"/>
-                                            <span class="input-group-addon">End date:</span>
-                                            <input type="text" class="input-sm form-control" name="end"
-                                                   id="end_date"/>
+                                                <input type="text" class="input-sm form-control" name="start"
+                                                       id="start_date"/>
+                                                <span class="input-group-addon">End date:</span>
+                                                <input type="text" class="input-sm form-control" name="end"
+                                                       id="end_date"/>
+                                            </div>
                                         </div>
-                                    </div>
-                                </form>
-                            </div>
+                                    </form>
+                                </div>
 
-                            <hr>
-                            <form class="form-inline">
-                                <button type="button" class="btn btn-success" id="predict-cal">Calculate
-                                </button>
+                                <hr>
+                                <form class="form-inline">
+                                    <button type="button" class="btn btn-success" id="predict-cal">Calculate
+                                    </button>
                                     <span id="produced-water-est-output">
                                     </span>
 
-                            </form>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -152,8 +173,12 @@
 
         function draw_line(chart_data, chart, xRange, yRange, data_name) {
             var line1_func = d3.svg.line()
-                    .x(function (d) {return xRange(d.day); })
-                    .y(function (d) {return yRange(d[data_name]);})
+                    .x(function (d) {
+                        return xRange(d.day);
+                    })
+                    .y(function (d) {
+                        return yRange(d[data_name]);
+                    })
                     .interpolate("basis");
             var line1 = chart.append("path")
                     .style("stroke", color_picker(data_name))
@@ -236,10 +261,14 @@
                         .text("Produced Water (bbls)");
 
                 var xRange = d3.scale.linear()
-                        .domain([0, d3.max(chart_data, function (d) {return d.day * 1.1;})])
+                        .domain([0, d3.max(chart_data, function (d) {
+                            return d.day * 1.1;
+                        })])
                         .range([0, width]);
                 var yRange = d3.scale.linear()
-                        .domain([-100, d3.max(chart_data, function (d) {return d.produced_water * 1.1;})])
+                        .domain([-100, d3.max(chart_data, function (d) {
+                            return d.produced_water * 1.1;
+                        })])
                         .range([height, 0]);
                 xAxis = d3.svg.axis()
                         .scale(xRange)

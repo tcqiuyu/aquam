@@ -2,30 +2,48 @@
 {% load staticfiles %}
 
 {% block solutions-header %}
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
     <script src="{% static 'js/bootstrap-slider.min.js' %}"></script>
     <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-slider.css' %}"/>
     <link rel="stylesheet" type="text/css" href="{% static 'css/custom-slider.css' %}"/>
     <!-- Jquery tipsy -->
     <script src="{% static 'js/jquery.tipsy.js' %}"></script>
     <link rel="stylesheet" type="text/css" href="{% static 'css/tipsy.css' %}"/>
-
 {% endblock %}
 
-{% block jumbotron-header %}Water Quality Analyzer{% endblock %}
-
-{% block jumbotron-body %}
-    Water quality is a paramount part of estimating the pertinent treatment required to reuse
-    the produced water to a beneficial reuse condition. This modeler will estimate the quality
-    of the water being produced, simultaneously addressing the temporal aspects of the changing
-    water quality. In laymen terms, this tool helps estimate the incoming water quality of produced
-    water with respect to time, in order to plan effective treatment. It models the water quality
-    based on historical averages of water quality for any specific dataset.
-{% endblock %}
+{#{% block jumbotron-header %}Water Quality Analyzer{% endblock %}#}
+{##}
+{#{% block jumbotron-body %}#}
+{#    Water quality is a paramount part of estimating the pertinent treatment required to reuse#}
+{#    the produced water to a beneficial reuse condition. This modeler will estimate the quality#}
+{#    of the water being produced, simultaneously addressing the temporal aspects of the changing#}
+{#    water quality. In laymen terms, this tool helps estimate the incoming water quality of produced#}
+{#    water with respect to time, in order to plan effective treatment. It models the water quality#}
+{#    based on historical averages of water quality for any specific dataset.#}
+{#{% endblock %}#}
 
 {% block solutions-body %}
-    <div class="chart-container" style="width:100%">
-        <div class="panel panel-primary chart-panel" id="water-use-analytics">
-            <div class="panel-heading">
+
+    <section class="cd-section water-quality-analyzer visible">
+    <header>
+        <div class="cd-title">
+            <h2>Water Quality Analyzer</h2>
+
+            <p>
+                Water quality is a paramount part of estimating the pertinent treatment required to reuse
+                the produced water to a beneficial reuse condition. This modeler will estimate the quality
+                of the water being produced, simultaneously addressing the temporal aspects of the changing
+                water quality. In laymen terms, this tool helps estimate the incoming water quality of produced
+                water with respect to time, in order to plan effective treatment. It models the water quality
+                based on historical averages of water quality for any specific dataset.
+            </p>
+        </div>
+        <a href="#water-quality-analyzer-content" class="cd-scroll">Scroll Down</a>
+    </header>
+    <div class="cd-content" id="water-quality-analyzer-content">
+        <div class="chart-container" style="width:100%">
+            <div class="panel panel-primary chart-panel" id="water-use-analytics">
+                <div class="panel-heading">
                     <span class="text-left">
                         Select location here --->
                     </span>
@@ -37,150 +55,151 @@
                         <ul class="dropdown-menu" id="dp-content">
                         </ul>
                     </span>
-            </div>
-            <div class="panel-body">
-
-                <div class="row">
-                    <div class="col-md-3">
-                        <div class="panel panel-info">
-                            <!-- Default panel contents -->
-                            <div class="panel-heading">Fitting Equation</div>
-                            <div class="panel-body">
-                                <p>
-                                    <b><i>WQ = &alpha; * ln(t) + &beta;</i></b>
-                                </p>
-
-                                <hr>
-
-                                <table class="table table-bordered table-striped">
-                                    <thead>
-                                    <tr>
-                                        <th class="col-md-2"></th>
-                                        <th class="col-md-3 row-head"><i>&alpha;</i></th>
-                                        <th class="col-md-3 row-head"><i>&beta;</i></th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr>
-                                        <td class="col-head">TDS</td>
-                                        <td class="col-body" id="tds-k"></td>
-                                        <td class="col-body" id="tds-d"></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="col-head">Sodium</td>
-                                        <td class="col-body" id="sodium-k"></td>
-                                        <td class="col-body" id="sodium-d"></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="col-head">Chloride</td>
-                                        <td class="col-body" id="chloride-k"></td>
-                                        <td class="col-body" id="chloride-d"></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="col-head">Calcium</td>
-                                        <td class="col-body" id="calcium-k"></td>
-                                        <td class="col-body" id="calcium-d"></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="col-head">Iron</td>
-                                        <td class="col-body" id="iron-k"></td>
-                                        <td class="col-body" id="iron-d"></td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-9">
-                        <div class="panel panel-info">
-                            <!-- Default panel contents -->
-                            <div class="panel-heading">Arp's Model</div>
-                            <div class="panel-body">
-                                <div class="eq-c">
-                                    <i>q</i>(t) =
-                                    <div class="fraction">
-                                        <span class="fup">Q<sub>0</sub></span>
-                                        <span class="bar">/</span>
-                                        <span class="fdn">( 1 + D * t ) <i><sup>1/b</sup></i></span>
-                                    </div>
-                                </div>
-
-                                <hr>
-
-                                <table class="table table-bordered table-striped">
-                                    <thead>
-                                    <tr>
-                                        <th></th>
-                                        <th class="row-head">Fracturing Flowback (1 month)</th>
-                                        <th class="row-head">Transition (4 months)</th>
-                                        <th class="row-head">Produced Water (after 5 months)</th>
-
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr>
-                                        <td class="col-head">Q<sub>0</sub></td>
-                                        <td class="col-body" id="q0-1"></td>
-                                        <td class="col-body" id="q0-2"></td>
-                                        <td class="col-body" id="q0-3"></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="col-head">D</td>
-                                        <td class="col-body" id="d-1"></td>
-                                        <td class="col-body" id="d-2"></td>
-                                        <td class="col-body" id="d-3"></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="col-head">b</td>
-                                        <td class="col-body" id="b-1"></td>
-                                        <td class="col-body" id="b-2"></td>
-                                        <td class="col-body" id="b-3"></td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
+                <div class="panel-body">
 
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="panel panel-info">
+                                <!-- Default panel contents -->
+                                <div class="panel-heading">Fitting Equation</div>
+                                <div class="panel-body">
+                                    <p>
+                                        <b><i>WQ = &alpha; * ln(t) + &beta;</i></b>
+                                    </p>
 
-                <div class="panel panel-info chart-panel hide" id="water-quality-chart">
-                    <div class="panel-heading chart-heading">
-                        <form class="radio-group row">
-                            <label class="radio-inline water-quality-radio">
-                                <input type="radio" name="inlineRadioOptions" id="water-quality-radio1"
-                                       value="TDS">
-                                TDS
-                            </label>
-                            <label class="radio-inline water-quality-radio">
-                                <input type="radio" name="inlineRadioOptions" id="water-quality-radio2"
-                                       value="Chloride">
-                                Chloride
-                            </label>
-                            <label class="radio-inline water-quality-radio">
-                                <input type="radio" name="inlineRadioOptions" id="water-quality-radio3"
-                                       value="Sodium">
-                                Sodium
-                            </label>
-                            <label class="radio-inline water-quality-radio">
-                                <input type="radio" name="inlineRadioOptions" id="water-quality-radio4"
-                                       value="Calcium">
-                                Calcium
-                            </label>
-                            <label class="radio-inline water-quality-radio">
-                                <input type="radio" name="inlineRadioOptions" id="water-quality-radio5"
-                                       value="Iron">
-                                Iron
-                            </label>
-                        </form>
-                    </div>
-                    <div class="panel-body">
+                                    <hr>
 
-                        <div id="chart1" class="chart" style="width:100%; height:500px">
+                                    <table class="table table-bordered table-striped">
+                                        <thead>
+                                        <tr>
+                                            <th class="col-md-2"></th>
+                                            <th class="col-md-3 row-head"><i>&alpha;</i></th>
+                                            <th class="col-md-3 row-head"><i>&beta;</i></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+                                            <td class="col-head">TDS</td>
+                                            <td class="col-body" id="tds-k"></td>
+                                            <td class="col-body" id="tds-d"></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="col-head">Sodium</td>
+                                            <td class="col-body" id="sodium-k"></td>
+                                            <td class="col-body" id="sodium-d"></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="col-head">Chloride</td>
+                                            <td class="col-body" id="chloride-k"></td>
+                                            <td class="col-body" id="chloride-d"></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="col-head">Calcium</td>
+                                            <td class="col-body" id="calcium-k"></td>
+                                            <td class="col-body" id="calcium-d"></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="col-head">Iron</td>
+                                            <td class="col-body" id="iron-k"></td>
+                                            <td class="col-body" id="iron-d"></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
 
+                        <div class="col-md-9">
+                            <div class="panel panel-info">
+                                <!-- Default panel contents -->
+                                <div class="panel-heading">Arp's Model</div>
+                                <div class="panel-body">
+                                    <div class="eq-c">
+                                        <i>q</i>(t) =
+                                        <div class="fraction">
+                                            <span class="fup">Q<sub>0</sub></span>
+                                            <span class="bar">/</span>
+                                            <span class="fdn">( 1 + D * t ) <i><sup>1/b</sup></i></span>
+                                        </div>
+                                    </div>
+
+                                    <hr>
+
+                                    <table class="table table-bordered table-striped">
+                                        <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th class="row-head">Fracturing Flowback (1 month)</th>
+                                            <th class="row-head">Transition (4 months)</th>
+                                            <th class="row-head">Produced Water (after 5 months)</th>
+
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+                                            <td class="col-head">Q<sub>0</sub></td>
+                                            <td class="col-body" id="q0-1"></td>
+                                            <td class="col-body" id="q0-2"></td>
+                                            <td class="col-body" id="q0-3"></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="col-head">D</td>
+                                            <td class="col-body" id="d-1"></td>
+                                            <td class="col-body" id="d-2"></td>
+                                            <td class="col-body" id="d-3"></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="col-head">b</td>
+                                            <td class="col-body" id="b-1"></td>
+                                            <td class="col-body" id="b-2"></td>
+                                            <td class="col-body" id="b-3"></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                    <div class="panel panel-info chart-panel hide" id="water-quality-chart">
+                        <div class="panel-heading chart-heading">
+                            <form class="radio-group row">
+                                <label class="radio-inline water-quality-radio">
+                                    <input type="radio" name="inlineRadioOptions" id="water-quality-radio1"
+                                           value="TDS">
+                                    TDS
+                                </label>
+                                <label class="radio-inline water-quality-radio">
+                                    <input type="radio" name="inlineRadioOptions" id="water-quality-radio2"
+                                           value="Chloride">
+                                    Chloride
+                                </label>
+                                <label class="radio-inline water-quality-radio">
+                                    <input type="radio" name="inlineRadioOptions" id="water-quality-radio3"
+                                           value="Sodium">
+                                    Sodium
+                                </label>
+                                <label class="radio-inline water-quality-radio">
+                                    <input type="radio" name="inlineRadioOptions" id="water-quality-radio4"
+                                           value="Calcium">
+                                    Calcium
+                                </label>
+                                <label class="radio-inline water-quality-radio">
+                                    <input type="radio" name="inlineRadioOptions" id="water-quality-radio5"
+                                           value="Iron">
+                                    Iron
+                                </label>
+                            </form>
+                        </div>
+                        <div class="panel-body">
+
+                            <div id="chart1" class="chart" style="width:100%; height:500px">
+                            </div>
+
+                        </div>
                     </div>
                 </div>
             </div>
@@ -344,8 +363,12 @@
             var current_Location = $("#dp-title").html();
             var quality_request = 'get-water-quality-result/'.concat(current_Location);
             d3.json(quality_request, function (error, data) {
-                var endday = parseDate(d3.max(data, function (d) {return d.date;}));
-                var startday = parseDate(d3.min(data, function (d) {return d.date;}));
+                var endday = parseDate(d3.max(data, function (d) {
+                    return d.date;
+                }));
+                var startday = parseDate(d3.min(data, function (d) {
+                    return d.date;
+                }));
                 var interval_day = (endday - startday) / (24 * 3600 * 1000);
                 $("#water-quality-slider").attr("data-slider-min", "1")
                         .attr("data-slider-max", interval_day + 1)
@@ -368,16 +391,22 @@
                     .domain([0, (interval_day + 1) * 1.1])
                     .range([0, width]);
             var y1Range = d3.scale.linear()
-                    .domain([0, d3.max(data, function (d) { return d.Volume;})])
+                    .domain([0, d3.max(data, function (d) {
+                        return d.Volume;
+                    })])
                     .range([height, 0]);
             var y2Range;
             if (y2 == "Iron") {
                 y2Range = d3.scale.linear()
-                        .domain([0, 2 * d3.max(data, function (d) { return d[y2];})])
+                        .domain([0, 2 * d3.max(data, function (d) {
+                            return d[y2];
+                        })])
                         .range([height, 0]);
             } else {
                 y2Range = d3.scale.linear()
-                        .domain([0, d3.max(data, function (d) { return d[y2];})])
+                        .domain([0, d3.max(data, function (d) {
+                            return d[y2];
+                        })])
                         .range([height, 0]);
             }
             var xAxis = d3.svg.axis()
@@ -412,8 +441,12 @@
 
             if (d3.select("#line1").empty()) {
                 var line1_func = d3.svg.line()
-                        .x(function (d) {return xRange((parseDate(d.date) - startday) / (24 * 3600 * 1000) + 1); })
-                        .y(function (d) {return y1Range(d.Volume);})
+                        .x(function (d) {
+                            return xRange((parseDate(d.date) - startday) / (24 * 3600 * 1000) + 1);
+                        })
+                        .y(function (d) {
+                            return y1Range(d.Volume);
+                        })
                         .interpolate("basis");
                 var line1 = chart.append("path")
                         .style("stroke", "blue")
@@ -428,7 +461,9 @@
 
             if (chart.select(".bar").empty()) {
                 var bar_y_range = d3.scale.linear()
-                        .domain([0, d3.max(data, function (d) {return d.Wells_number})])
+                        .domain([0, d3.max(data, function (d) {
+                            return d.Wells_number
+                        })])
                         .range([height, 0]);
 
                 var bar = chart.selectAll(".bar")
@@ -444,15 +479,21 @@
                         .attr("x", 1)
                         .attr("y", height)
                         .attr("fill", "#B6B14E")
-                        .attr("well_number", function (d) {return d.Wells_number;})
+                        .attr("well_number", function (d) {
+                            return d.Wells_number;
+                        })
                         .style("opacity", "0.4")
                         .attr("width", xRange(2) - xRange(1))
                         .attr("height", 0);
                 bar.selectAll("rect")
                         .transition()
                         .duration(500)
-                        .attr("y", function (d) {return bar_y_range(d.Wells_number);})
-                        .attr("height", function (d) { return height - bar_y_range(d.Wells_number); });
+                        .attr("y", function (d) {
+                            return bar_y_range(d.Wells_number);
+                        })
+                        .attr("height", function (d) {
+                            return height - bar_y_range(d.Wells_number);
+                        });
                 bar.selectAll("rect")
                         .on("mouseover", function () {
                             var rect = d3.select(this);
@@ -471,8 +512,12 @@
             }
 
             var line2_func = d3.svg.line()
-                    .x(function (d) {return xRange((parseDate(d.date) - startday) / (24 * 3600 * 1000) + 1); })
-                    .y(function (d) {return y2Range(d[y2]);})
+                    .x(function (d) {
+                        return xRange((parseDate(d.date) - startday) / (24 * 3600 * 1000) + 1);
+                    })
+                    .y(function (d) {
+                        return y2Range(d[y2]);
+                    })
                     .interpolate("basis");
             var line2 = chart.append("path")
                     .style("stroke", "red")

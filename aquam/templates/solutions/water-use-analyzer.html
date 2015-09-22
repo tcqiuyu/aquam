@@ -7,183 +7,318 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/tipsy.css' %}"/>
 {% endblock %}
 
-{% block jumbotron-header %}<h2>Water Use Analyzer</h2>{% endblock %}
-
-{% block jumbotron-body %}
-    This analyzer is an interactive tool designed to fit the user, in this case,
-    an operator or a water management company to anlayze their statistics of water,
-    current and historical to establish a baseline and a trend to improve their water
-    use scenarios significantly. This tool also provides the user to look at
-    Key Performance Indicators (KPIs) such as average horizontal length drilled,
-    average water used per well and bbls water used per horizontal foot,
-    on an annual comparison basis.
-{% endblock %}
-
 {% block solutions-body %}
-    <h3>Horizontal Wells</h3>
+    <section class="cd-section water-use-analyzer visible">
+        <header>
+            <div class="cd-title">
+                <h2>Water Use Analyzer</h2>
 
-    <div id="table-container">
-        {% include 'solutions/partial/water-use-table.html' %}
-    </div>
-
-    <hr>
-
-    <div>
-        {{ data }}
-    </div>
-
-    <div class="chart-container" style="width:100%">
-        <div class="panel panel-primary chart-panel" id="water-use-analytics">
-            <div class="panel-heading chart-heading">
-                Analytics
+                <p>
+                    This analyzer is an interactive tool designed to fit the user, in this case,
+                    an operator or a water management company to anlayze their statistics of water,
+                    current and historical to establish a baseline and a trend to improve their water
+                    use scenarios significantly. This tool also provides the user to look at
+                    Key Performance Indicators (KPIs) such as average horizontal length drilled,
+                    average water used per well and bbls water used per horizontal foot,
+                    on an annual comparison basis.
+                </p>
             </div>
-            <div class="panel-body">
-                <form class="radio-group">
-                    <div class="col-md-3">
-                        <label class="radio-inline solution-radio additional-info-button">
-                            <input type="radio" name="inlineRadioOptions" id="water-use-analytics-radio-1"
-                                   value="Water used per well">
-                            Water used per well
-                        </label>
-                    </div>
-                    <div class="col-md-5">
-                        <label class="radio-inline solution-radio">
-                            <input type="radio" name="inlineRadioOptions" id="water-use-analytics-radio-2"
-                                   value="Horizontal Length per Well">
-                            Horizontal Length per Well
-                        </label>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="radio-inline solution-radio">
-                            <input type="radio" name="inlineRadioOptions" id="water-use-analytics-radio-3"
-                                   value="Water Used per horizontal Foot">
-                            Water Used per horizontal Foot
-                        </label>
-                    </div>
-                </form>
+            <a href="#water-use-analyzer-content" class="cd-scroll">Scroll Down</a>
+        </header>
 
+        <div class="cd-content" id="water-use-analyzer-content">
+            <h3>Horizontal Wells</h3>
 
-                <div id="chart1" class="chart" style="width:100%; height:500px">
+            <div id="table-container">
+                {% include 'solutions/partial/water-use-table.html' %}
+            </div>
+
+            <hr>
+
+            <div>
+                {{ data }}
+            </div>
+
+            <div class="chart-container" style="width:100%">
+                <div class="chart-section">
+                    <div class="chart-heading">
+                        Analytics
+                    </div>
+                    <hr class="solution-hr">
+                    <div class="chart-body">
+                        <div class="col-md-4">
+                            <ul class="wrapper">
+                                <li>
+                                    <div class="info-box-green additional-info-button" id="water-use-analytics-radio-1">
+                                        <h4> Water used
+                                            per well</h4>
+
+                                        <div class="info-content">
+                                            <div class="text">
+                                                <p>Brewpub conditioning tank cask conditioned ale original gravity. ipa
+                                                    specific
+                                                    gravity grainy; amber berliner weisse. squares keg; lauter. krausen
+                                                    wheat
+                                                    beer glass barley? barleywine cask conditioning, hard cider
+                                                    hydrometer.</p>
+                                            </div>
+                                            <span class="entypo-plus" id="expand-green"></span>
+                                        </div>
+                                    </div>
+                                </li>
+
+                                <li>
+                                    <div class="info-box-red" id="water-use-analytics-radio-2">
+                                        <h4> Horizontal Length per Well</h4>
+
+                                        <div class="info-content">
+                                            <div class="text">
+                                                <p>Brewpub conditioning tank cask conditioned ale original gravity. ipa
+                                                    specific
+                                                    gravity grainy; amber berliner weisse. squares keg; lauter. krausen
+                                                    wheat
+                                                    beer glass barley? barleywine cask conditioning, hard cider
+                                                    hydrometer.</p>
+                                            </div>
+                                            <span class="entypo-plus" id="expand-red"></span>
+                                        </div>
+                                    </div>
+                                </li>
+
+                                <li>
+                                    <div class="info-box-sky" id="water-use-analytics-radio-3">
+                                        <h4> Support Services</h4>
+
+                                        <div class="info-content">
+                                            <div class="text">
+                                                <p>Brewpub conditioning tank cask conditioned ale original gravity. ipa
+                                                    specific
+                                                    gravity grainy; amber berliner weisse. squares keg; lauter. krausen
+                                                    wheat
+                                                    beer glass barley? barleywine cask conditioning, hard cider
+                                                    hydrometer.
+                                                </p>
+
+                                            </div>
+                                            <span class="entypo-plus" id="expand-sky"></span>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+
+                        </div>
+
+                        <div class="col-md-8">
+                            <div id="chart1" class="chart" style="width:100%; height:500px">
+
+                            </div>
+
+                            <div class="panel panel-primary">
+                                <!-- Default panel contents -->
+                                <div class="panel-heading"> Statistics & Estimation:</div>
+                                <div class="panel-body">
+
+                                </div>
+                            </div>
+
+                            {#                            <div class="panel-footer chart-footer">#}
+                            {#                                Statistics & Estimation:#}
+                            {#                                <div class="row">#}
+                            {#                                    <div class="col-md-2 label label-primary ">#}
+                            {#                                        Mean (bbls):#}
+                            {#                                    </div>#}
+                            {#                                    <div class="col-md-1 output output-mean">#}
+                            {#                                    </div>#}
+                            {#                                    <div class="col-md-3"></div>#}
+                            {#                                    <div class="col-md-2 label label-primary">#}
+                            {#                                        Standard Deviation:#}
+                            {#                                    </div>#}
+                            {#                                    <div class="col-md-4 output output-std">#}
+                            {#                                    </div>#}
+                            {#                                </div>#}
+                            {#                                <br>#}
+                            {##}
+                            {#                                <form class="form-inline additional-info hide" id="chart1-form">#}
+                            {#                            <span class="label label-primary label-form">#}
+                            {#                                Water Used per Well Mean (bbls):#}
+                            {#                            </span>#}
+                            {#                            <span class="output output-mean">#}
+                            {#                            </span>#}
+                            {#                                    &nbsp;X&nbsp;#}
+                            {#                                    <input type="text" id="Well_number" name="Well_number"#}
+                            {#                                           placeholder="Well Number"#}
+                            {#                                           class="form-control">#}
+                            {#                                    <button type="button" class="btn cal-button btn-sm" id="chart1-cal-button">#}
+                            {#                                        <span class="glyphicon glyphicon-arrow-right" aria-hidden="false"></span>#}
+                            {#                                    </button>#}
+                            {#                        <span class="output output-result">#}
+                            {#                        </span>#}
+                            {#                                </form>#}
+                            {#                            </div>#}
+                        </div>
+                    </div>
                 </div>
 
 
-            </div>
-            <div class="panel-footer chart-footer">
-                Statistics & Estimation:
-                <div>
-                    <div class="col-md-2 label label-primary ">
-                        Mean (bbls):
+                <div class="chart-section">
+                    <div class="chart-heading">
+                        KPIs
                     </div>
-                    <div class="col-md-1 output output-mean">
-                    </div>
-                    <div class="col-md-3"></div>
-                    <div class="col-md-2 label label-primary">
-                        Standard Deviation:
-                    </div>
-                    <div class="col-md-4 output output-std">
+                    <hr class="solution-hr">
+                    <div class="chart-body">
+                        <div class="col-md-4">
+
+                            <ul class="wrapper">
+                                <li>
+                                    <div class="info-box-green" id="water-use-kpis-radio1">
+                                        <h4> Annual Average Water Use per Well</h4>
+
+                                        <div class="info-content">
+                                            <div class="text">
+                                                <p>Brewpub conditioning tank cask conditioned ale original gravity. ipa
+                                                    specific
+                                                    gravity grainy; amber berliner weisse. squares keg; lauter. krausen
+                                                    wheat
+                                                    beer glass barley? barleywine cask conditioning, hard cider
+                                                    hydrometer.</p>
+                                            </div>
+                                            <span class="entypo-plus" id="expand-green"></span>
+                                        </div>
+                                    </div>
+                                </li>
+
+                                <li>
+                                    <div class="info-box-red" id="water-use-kpis-radio2">
+                                        <h4> Annual Average Horizontal Feet Drilled</h4>
+
+                                        <div class="info-content">
+                                            <div class="text">
+                                                <p>Brewpub conditioning tank cask conditioned ale original gravity. ipa
+                                                    specific
+                                                    gravity grainy; amber berliner weisse. squares keg; lauter. krausen
+                                                    wheat
+                                                    beer glass barley? barleywine cask conditioning, hard cider
+                                                    hydrometer.</p>
+                                            </div>
+                                            <span class="entypo-plus" id="expand-red"></span>
+                                        </div>
+                                    </div>
+                                </li>
+
+                                <li>
+                                    <div class="info-box-sky" id="water-use-kpis-radio3">
+                                        <h4> Annual bbls/ft Metric</h4>
+
+                                        <div class="info-content">
+                                            <div class="text">
+                                                <p>Brewpub conditioning tank cask conditioned ale original gravity. ipa
+                                                    specific
+                                                    gravity grainy; amber berliner weisse. squares keg; lauter. krausen
+                                                    wheat
+                                                    beer glass barley? barleywine cask conditioning, hard cider
+                                                    hydrometer.
+                                                </p>
+
+                                            </div>
+                                            <span class="entypo-plus" id="expand-sky"></span>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+
+                        </div>
+
+                        <div class="col-md-8">
+                            <div id="chart2" class="chart" style="width:100%; height:500px">
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <br>
 
-                <form class="form-inline additional-info hide" id="chart1-form">
-                            <span class="label label-primary label-form">
-                                Water Used per Well Mean (bbls):
-                            </span>
-                        <span class="output output-mean">
-                        </span>
-                    &nbsp;X&nbsp;
-                    <input type="text" id="Well_number" name="Well_number"
-                           placeholder="Well Number"
-                           class="form-control">
-                    <button type="button" class="btn cal-button btn-sm" id="chart1-cal-button">
-                        <span class="glyphicon glyphicon-arrow-right" aria-hidden="false"></span>
-                    </button>
-                        <span class="output output-result">
-                        </span>
-                </form>
+
+                <div class="chart-section">
+                    <div class="chart-heading">
+                        Relationships
+                    </div>
+                    <hr class="solution-hr"/>
+                    <div class="chart-body">
+                        <div class="col-md-4">
+                            <ul class="wrapper">
+                                <li>
+                                    <div class="info-box-green" id="water-use-relationships-radio1">
+                                        <h4>
+                                            Linear</h4>
+
+                                        <div class="info-content">
+                                            <div class="text">
+                                                <p>Brewpub conditioning tank cask conditioned ale original gravity. ipa
+                                                    specific
+                                                    gravity grainy; amber berliner weisse. squares keg; lauter. krausen
+                                                    wheat
+                                                    beer glass barley? barleywine cask conditioning, hard cider
+                                                    hydrometer.</p>
+                                            </div>
+                                            <span class="entypo-plus" id="expand-green"></span>
+                                        </div>
+                                    </div>
+                                </li>
+
+                                <li>
+                                    <div class="info-box-red" id="water-use-relationships-radio2">
+                                        <h4> Quadratic</h4>
+
+                                        <div class="info-content">
+                                            <div class="text">
+                                                <p>Brewpub conditioning tank cask conditioned ale original gravity. ipa
+                                                    specific
+                                                    gravity grainy; amber berliner weisse. squares keg; lauter. krausen
+                                                    wheat
+                                                    beer glass barley? barleywine cask conditioning, hard cider
+                                                    hydrometer.</p>
+                                            </div>
+                                            <span class="entypo-plus" id="expand-red"></span>
+                                        </div>
+                                    </div>
+                                </li>
+
+                                <li>
+                                    <div class="info-box-sky" id="water-use-relationships-radio3">
+                                        <h4> Qubic</h4>
+
+                                        <div class="info-content">
+                                            <div class="text">
+                                                <p>Brewpub conditioning tank cask conditioned ale original gravity. ipa
+                                                    specific
+                                                    gravity grainy; amber berliner weisse. squares keg; lauter. krausen
+                                                    wheat
+                                                    beer glass barley? barleywine cask conditioning, hard cider
+                                                    hydrometer.
+                                                </p>
+
+                                            </div>
+                                            <span class="entypo-plus" id="expand-sky"></span>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+
+                        </div>
+                        <div class="col-md-8">
+                            <div id="chart3" class="chart" style="width:100%; height:500px">
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-        
         </div>
-        
-        <div class="panel panel-primary chart-panel" id="water-use-kpis">
-            <div class="panel-heading chart-heading">
-                KPIs
-            </div>
-            <div class="panel-body">
-                <form class="radio-group">
-                    <div class="col-md-4">
-                        <label class="radio-inline solution-radio additional-info-button">
-                            <input type="radio" name="inlineRadioOptions" id="water-use-kpis-radio1"
-                                   value="Water used per well">
-                            Annual Average Water Use per Well
-                        </label>
-                    </div>
-                    <div class="col-md-5">
-                        <label class="radio-inline solution-radio">
-                            <input type="radio" name="inlineRadioOptions" id="water-use-kpis-radio2"
-                                   value="Horizontal Length per Well">
-                            Annual Average Horizontal Feet Drilled
-                        </label>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="radio-inline solution-radio">
-                            <input type="radio" name="inlineRadioOptions" id="water-use-kpis-radio3"
-                                   value="Water Used per horizontal Foot">
-                            Annual bbls/ft Metric
-                        </label>
-                    </div>
-                </form>
+    </section>
 
-                <div id="chart2" class="chart" style="width:100%; height:500px">
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="panel panel-primary chart-panel" id="water-use-relationships">
-            <div class="panel-heading chart-heading">
-                Relationships
-            </div>
-            <div class="panel-body">
-                <form class="radio-group">
-                    <div class="col-md-4">
-                        <label class="radio-inline solution-radio additional-info-button">
-                            <input type="radio" name="inlineRadioOptions" id="water-use-relationships-radio1"
-                                   value="Water used per well">
-                            Linear
-                        </label>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="radio-inline solution-radio">
-                            <input type="radio" name="inlineRadioOptions" id="water-use-relationships-radio2"
-                                   value="Horizontal Length per Well">
-                            Quadratic
-                        </label>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="radio-inline solution-radio">
-                            <input type="radio" name="inlineRadioOptions" id="water-use-relationships-radio3"
-                                   value="Water Used per horizontal Foot">
-                            Qubic
-                        </label>
-                    </div>
-                </form>
-
-                <div id="chart3" class="chart" style="width:100%; height:500px">
-                </div>
-
-            </div>
-        </div>
-
-        <hr/>
-    </div>
 {% endblock %}
 
 {% block footer %}
     <script type="text/javascript">
         var margin = {top: 20, right: 30, bottom: 40, left: 70};
-        
+
         // draw the base graph first, then load data when needed
         $(document).ready(function () {
             var width = $(".chart").width() - margin.left - margin.right,
@@ -200,11 +335,15 @@
             var yAxis = d3.svg.axis()
                     .scale(init_yRange)
                     .orient("left");
+            console.log($("#chart1").width());
+            console.log(width);
+            console.log(width + margin.left + margin.right);
             var svg = d3.selectAll(".chart").append("svg")
                     .attr("width", width + margin.left + margin.right)
                     .attr("height", height + margin.top + margin.bottom)
                     .append("g")
                     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+            $(".chart>svg").css("width", "inherit");
             svg.append("g")
                     .attr("class", "x axis")
                     .attr("transform", "translate(0," + height + ")")
@@ -282,12 +421,16 @@
             var values = data[data_name];
             //chart
             var xRange = d3.scale.linear()
-                    .domain(d3.extent(values, function (d) { return d; }))
+                    .domain(d3.extent(values, function (d) {
+                        return d;
+                    }))
                     .range([0, width]);
             var data = d3.layout.histogram()
                     .bins(xRange.ticks(15))(values);
             var yRange = d3.scale.linear()
-                    .domain([0, d3.max(data, function (d) { return d.y; })])
+                    .domain([0, d3.max(data, function (d) {
+                        return d.y;
+                    })])
                     .range([height, 0]);
             var xAxis = d3.svg.axis()
                     .scale(xRange)
@@ -310,7 +453,9 @@
                     .enter()
                     .append("g")
                     .attr("class", "bar")
-                    .attr("transform", function (d) { return "translate(" + xRange(d.x) + "," + 0 + ")";});
+                    .attr("transform", function (d) {
+                        return "translate(" + xRange(d.x) + "," + 0 + ")";
+                    });
             bar.append("rect")
                     .attr("x", 1)
                     .attr("y", height)
@@ -321,22 +466,34 @@
             bar.selectAll("rect")
                     .transition()
                     .duration(500)
-                    .attr("y", function (d) {return yRange(d.y);})
-                    .attr("height", function (d) { return height - yRange(d.y); });
+                    .attr("y", function (d) {
+                        return yRange(d.y);
+                    })
+                    .attr("height", function (d) {
+                        return height - yRange(d.y);
+                    });
             bar.selectAll("rect")
-                    .on("mouseover", function () { d3.select(this).attr("fill", "#AA9F39"); })
-                    .on("mouseout", function () { d3.select(this).attr("fill", color_picker(scheme)); });
+                    .on("mouseover", function () {
+                        d3.select(this).attr("fill", "#AA9F39");
+                    })
+                    .on("mouseout", function () {
+                        d3.select(this).attr("fill", color_picker(scheme));
+                    });
             bar.append("text")
                     .attr("dy", "0.75em")
                     .attr("y", height - 10)
                     .attr("x", xRange(data[1].x) / 2 - xRange(data[0].x) / 2 - 1)
                     .style("fill", "black")
                     .attr("text-anchor", "middle")
-                    .text(function (d) { return d.y; });
+                    .text(function (d) {
+                        return d.y;
+                    });
             bar.selectAll("text")
                     .transition()
                     .duration(500)
-                    .attr("y", function (d) {return yRange(d.y) - 10;})
+                    .attr("y", function (d) {
+                        return yRange(d.y) - 10;
+                    })
         }
 
         function update_chart1_footer(data, mean_str, std_str) {
@@ -411,10 +568,14 @@
             var width = $("#chart2").width() - margin.left - margin.right,
                     height = $("#chart2").height() - margin.top - margin.bottom;
             var xRange = d3.scale.ordinal()
-                    .domain(data.map(function (d) {return d.year;}))
+                    .domain(data.map(function (d) {
+                        return d.year;
+                    }))
                     .rangeRoundBands([0, width], .6);
             var yRange = d3.scale.linear()
-                    .domain([0, 1.4 * d3.max(data, function (d) {return d.mean;})])
+                    .domain([0, 1.4 * d3.max(data, function (d) {
+                        return d.mean;
+                    })])
                     .range([height, 0]);
             var xAxis = d3.svg.axis()
                     .scale(xRange)
@@ -440,7 +601,9 @@
                     .append("g")
                     .attr("class", "bar");
             bar.append("rect")
-                    .attr("x", function (d) {return xRange(d.year)})
+                    .attr("x", function (d) {
+                        return xRange(d.year)
+                    })
                     .attr("width", xRange.rangeBand())
                     .attr("y", height)
                     .attr("height", 0)
@@ -448,22 +611,36 @@
             bar.selectAll("rect")
                     .transition()
                     .duration(500)
-                    .attr("y", function (d) {return yRange(d.mean)})
-                    .attr("height", function (d) {return height - yRange(d.mean)});
+                    .attr("y", function (d) {
+                        return yRange(d.mean)
+                    })
+                    .attr("height", function (d) {
+                        return height - yRange(d.mean)
+                    });
             bar.selectAll("rect")
-                    .on("mouseover", function () { d3.select(this).attr("fill", "#AA9F39"); })
-                    .on("mouseout", function () { d3.select(this).attr("fill", color_picker(scheme)); });
+                    .on("mouseover", function () {
+                        d3.select(this).attr("fill", "#AA9F39");
+                    })
+                    .on("mouseout", function () {
+                        d3.select(this).attr("fill", color_picker(scheme));
+                    });
             bar.append("text")
                     .attr("dy", "0.75em")
                     .attr("y", height - 10)
-                    .attr("x", function (d) {return xRange(d.year) + xRange.rangeBand() / 2;})
+                    .attr("x", function (d) {
+                        return xRange(d.year) + xRange.rangeBand() / 2;
+                    })
                     .attr("text-anchor", "middle")
                     .style("fill", "black")
-                    .text(function (d) { return d.mean; });
+                    .text(function (d) {
+                        return d.mean;
+                    });
             bar.selectAll("text")
                     .transition()
                     .duration(500)
-                    .attr("y", function (d) {return yRange(d.mean) - 10});
+                    .attr("y", function (d) {
+                        return yRange(d.mean) - 10
+                    });
 
             for (i = 0; i < data.length; i++) {
 
@@ -501,7 +678,7 @@
         });
 
         $("#water-use-kpis-radio2").click(function () {
-            if ($(this).parent().hasClass("checked")) {
+            if ($(this).is("[class^='open-']")) {
                 return;
             }
             d3.json("{% url 'get-annual-horizontal-feet-drilled' %}", function (error, data) {
@@ -523,10 +700,14 @@
             var width = $("#chart3").width() - margin.left - margin.right,
                     height = $("#chart3").height() - margin.top - margin.bottom;
             var xRange = d3.scale.linear()
-                    .domain([0, d3.max(vals, function (d) { return d.horizontal_length;})])
+                    .domain([0, d3.max(vals, function (d) {
+                        return d.horizontal_length;
+                    })])
                     .range([0, width]);
             var yRange = d3.scale.linear()
-                    .domain([0, d3.max(vals, function (d) { return d.water_use;})])
+                    .domain([0, d3.max(vals, function (d) {
+                        return d.water_use;
+                    })])
                     .range([height, 0]);
             var xAxis = d3.svg.axis()
                     .scale(xRange)
@@ -552,8 +733,12 @@
                         .enter().append("circle")
                         .attr("class", "dot")
                         .attr("r", 2)
-                        .attr("cx", function (d) {return xRange(d.horizontal_length);})
-                        .attr("cy", function (d) {return yRange(d.water_use);})
+                        .attr("cx", function (d) {
+                            return xRange(d.horizontal_length);
+                        })
+                        .attr("cy", function (d) {
+                            return yRange(d.water_use);
+                        })
                         .style("fill", "white");
                 dot.transition().duration(500).style("fill", "steelblue");
             }
@@ -563,15 +748,27 @@
                         .style("stroke", color_picker(1))
                         .style("stroke-width", "2.5")
                         .style("opacity", "0")
-                        .attr("x1", xRange(d3.min(vals, function (d) {return d.horizontal_length;})))
-                        .attr("y1", yRange(d3.min(vals, function (d) {return d.fitted_water_use;})))
-                        .attr("x2", xRange(d3.max(vals, function (d) {return d.horizontal_length;})))
-                        .attr("y2", yRange(d3.max(vals, function (d) {return d.fitted_water_use;})));
+                        .attr("x1", xRange(d3.min(vals, function (d) {
+                            return d.horizontal_length;
+                        })))
+                        .attr("y1", yRange(d3.min(vals, function (d) {
+                            return d.fitted_water_use;
+                        })))
+                        .attr("x2", xRange(d3.max(vals, function (d) {
+                            return d.horizontal_length;
+                        })))
+                        .attr("y2", yRange(d3.max(vals, function (d) {
+                            return d.fitted_water_use;
+                        })));
                 line.transition().duration(500).style("opacity", "1");
             } else {
                 var line_func = d3.svg.line()
-                        .x(function (d) {return xRange(d.horizontal_length);})
-                        .y(function (d) {return yRange(d.fitted_water_use);})
+                        .x(function (d) {
+                            return xRange(d.horizontal_length);
+                        })
+                        .y(function (d) {
+                            return yRange(d.fitted_water_use);
+                        })
                         .interpolate("linear");
                 var color;
                 if (option == "quadratic") {
@@ -604,6 +801,45 @@
         });
         $(".chart-footer.info").addClass('hide');
     </script>
+
+    <script>
+        {#        $('.info-box-green').on('click', function () {#}
+        {#            $(this).toggleClass('close-green');#}
+        {#            $('.text').toggleClass('open-green').end();#}
+        {##}
+        {#        });#}
+        {#        $('.info-box-red').on('click', function () {#}
+        {#            $(this).toggleClass('close-red');#}
+        {#            $('.text').toggleClass('open-red');#}
+        {#        });#}
+        {#        $('.info-box-sky').on('click', function () {#}
+        {#            $(this).toggleClass('close-sky');#}
+        {#            $('.text').toggleClass('open-sky');#}
+        {#        });#}
+
+        $("[class^='info-box-']").on('click', function () {
+            var color = $(this).attr("class").split("info-box-")[1];
+
+            var opened_box = $(this).closest('.wrapper').find("[class*='close-']");
+
+            if ((opened_box.length > 0)) {
+
+                var last_color = opened_box.attr("class").split("close-")[1];
+                console.log(last_color);
+                opened_box.removeClass('close-' + last_color);
+                opened_box.find('.text').removeClass('open-' + last_color);
+            }
+
+            $(this).addClass('close-' + color);
+            $(this).find('.text').addClass('open-' + color);
+
+            $(this).closest('.chart-body').find('.additional-info').addClass('hide');
+            if ($(this).find('.additional-info-button').length > 0) {
+                $(this).closest('.chart-body').find('.additional-info').removeClass('hide');
+            }
+        });
+    </script>
+
     <script src="{% static 'js/radio_button.js' %}"></script>
 
 {% endblock %}

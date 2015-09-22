@@ -22,7 +22,12 @@ label.solution-radio {
 .radio-group {
     text-align: center;
     overflow: auto;
+}
 
+.chart-container hr{
+    background-color: #002a80;
+    filter:alpha(opacity=100,finishopacity=0,style=1);
+    height: 2px;
 }
 
 .chart-footer {

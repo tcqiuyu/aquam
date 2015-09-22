@@ -4,37 +4,41 @@
 
 <html>
 <head lang="en">
-    <meta charset="UTF-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta class="new_added" charset="UTF-8">
+    <meta class="new_added" http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta class="new_added" name="viewport"
+          content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title>{{ page_title }}</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
-{#    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}"/>#}
-{#    <link rel="stylesheet" type="text/css" href="{% static 'css/font-awesome.min.css' %}"/>#}
-    <link rel="shortcut icon" type="{% static 'img/logo.png' %}" href="{% static 'img/favicon.png' %}"/>
-    <link rel="stylesheet" type="text/css" href="{% static 'css/general-style.css' %}"/>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-{#    <script src="{% static 'js/jquery-2.1.0.min.js' %}"></script>#}
-{#    <script src="{% static 'js/bootstrap.js' %}"></script>#}
+    <link class="new_added" rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link class="new_added" rel="stylesheet"
+          href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    {#    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}"/>#}
+    {#    <link rel="stylesheet" type="text/css" href="{% static 'css/font-awesome.min.css' %}"/>#}
+    <link class="new_added" rel="shortcut icon" type="{% static 'img/logo.png' %}"
+          href="{% static 'img/favicon.png' %}"/>
+    <link class="new_added" rel="stylesheet" type="text/css" href="{% static 'css/reset.css' %}"/>
+    <link class="new_added" rel="stylesheet" type="text/css" href="{% static 'css/joint.css' %}"/>
+    <link class="new_added" rel="stylesheet" type="text/css" href="{% static 'css/general-style.css' %}"/>
+{#    <script class="new_added" src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>#}
+    <script class="new_added" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script class="new_added" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    {#    <script src="{% static 'js/jquery-2.1.0.min.js' %}"></script>#}
+    {#    <script src="{% static 'js/bootstrap.js' %}"></script>#}
     {% block header %}{% endblock %}
+    <script class="new_added" src="https://cdnjs.cloudflare.com/ajax/libs/velocity/1.2.2/velocity.min.js"></script>
+    <script class="new_added" src="{% static 'js/navbar.js' %}"></script>
 </head>
 
 <body>
-<div class="page-container">
-    {% include "layout/navbar.html" %}
-    {% block mainbody %} {% endblock %}
-</div>
+{% include "layout/navbar.html" %}
+{% block mainbody %} {% endblock %}
+<div id="cd-loading-bar" data-scale="1" class="index"></div>
 
-{% include "layout/footer.html" %}
+<footer>
+    {% block footer %} {% endblock %}
+</footer>
 
-{% block footer %} {% endblock %}
-<script type="text/javascript">
-{#    $(".nav li").click(function() {#}
-{#        $(".nav li").removeClass('active');#}
-{#        $(this).addClass('active');    #}
-{#    });#}
-</script>
 </body>
+
 </html>

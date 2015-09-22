@@ -3,66 +3,79 @@
 
 
 {% block mainbody %}
-    <div class="header-bloc" class="row">
-        <div class="jumbotron">
-            <div class="container">
-                <h2>Geoanalytics</h2>
-                <p>
-                    VODA provides users with a unique set of tools to optimize different segments of fluids
-                    management in the shale oil and gas industry. These tools were developed in accordance
-                    with current industry operations as part of a project jointly funded by the U.S Department
-                    of Energy and Noble Energy as part of the Research Partnership to Secure Energy for America.
-                </p>
-            </div>
-        </div>
-    </div>
-    
-    <div class="bloc  l-bloc" id="bloc-2">
-        <div class="container bloc-lg">
-            <hr class="featurette-divider">
-            <div class="row">
-                <div class="col-sm-6">
-                    <img src="{% static 'img/geo_analyzer_screenshot.png' %}" class="img-responsive" alt=''/>
-                </div>
-            	<div class="col-sm-6">
-                	<h3 class="mg-md">
-                        <a href="{% url 'water-use-geoanalyzer' %}" target="_self">Water Use Geoanalyzer</a>
-                    </h3>
-                    <p style="text-align: justify">
-	                    This analyzer is an tool based on GIS techniques, which provides a new way to see the traditional data.
-                        Right now, it helps to visualize the water use data of different fractured wells, as well as create a 
-                        heatmap based on the well density. People can look into the the well distribution and the attribute of the
-                        wells directly on map.
-                    </p>
-                    <p>
-                    	<a class="btn btn-default" href="{% url 'water-use-geoanalyzer' %}" role="button" target="_self">Try the demo &raquo;</a>
-         			</p>
-                </div>
-            </div>
-            
-            <hr class="featurette-divider">
-            
-            <div class="row">
-                <div class="col-sm-6">
-                    <img src="{% static 'img/slide-1.png' %}" class="img-responsive" alt=''/>
-                </div>
-                <div class="col-sm-6">
-                	<h3 class="mg-md">
-                        <a href="{% url 'transportation-cost-optimizer' %}" target="_self">Transportation Cost Optimizer</a>
-                    </h3>
-                    <p style="text-align: justify">
-	                    This optimizer is an interactive tool designed to optimize the route for produced water transportation.
-                        An optimized route will help to minimize the cost and save time.
-                    </p>
-                    <p>
-                    	<a class="btn btn-default" href="{% url 'transportation-cost-optimizer' %}" role="button" target="_self">Try the demo &raquo;</a>
-         			</p>
-                </div>
-            </div>
-            
-            <hr class="featurette-divider">
-            
-        </div>
-    </div>
+    <main class="cd-main">
+        <section class="cd-section geoanalytics visible">
+            <header>
+                <div class="cd-title">
+                    <h2>Geoanalytics</h2>
 
+                    <p>
+                        VODA provides users with a unique set of tools to optimize different segments of fluids
+                        management in the shale oil and gas industry. These tools were developed in accordance
+                        with current industry operations as part of a project jointly funded by the U.S Department
+                        of Energy and Noble Energy as part of the Research Partnership to Secure Energy for America.
+                    </p>
+                </div>
+
+                <a href="#geoanalytics-content" class="cd-scroll">Scroll Down</a>
+            </header>
+
+            <div class="cd-content" id="geoanalytics-content">
+                <hr class="featurette-divider">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <img src="{% static 'img/geo_analyzer_screenshot.png' %}" class="img-responsive" alt=''/>
+                    </div>
+                    <div class="col-sm-6">
+                        <h3 class="mg-md">
+                            <a href="{% url 'water-use-geoanalyzer' %}" target="_self">Water Use Geoanalyzer</a>
+                        </h3>
+
+                        <p style="text-align: justify">
+                            This analyzer is an tool based on GIS techniques, which provides a new way to see the
+                            traditional data.
+                            Right now, it helps to visualize the water use data of different fractured wells, as well as
+                            create a
+                            heatmap based on the well density. People can look into the the well distribution and the
+                            attribute of the
+                            wells directly on map.
+                        </p>
+
+                        <p>
+                            <a class="btn btn-default" href="{% url 'water-use-geoanalyzer' %}" role="button"
+                               target="_self">Try the demo &raquo;</a>
+                        </p>
+                    </div>
+                </div>
+
+                <hr class="featurette-divider">
+
+                <div class="row">
+                    <div class="col-sm-6">
+                        <img src="{% static 'img/slide-1.png' %}" class="img-responsive" alt=''/>
+                    </div>
+                    <div class="col-sm-6">
+                        <h3 class="mg-md">
+                            <a href="{% url 'transportation-cost-optimizer' %}" target="_self">Transportation Cost
+                                Optimizer</a>
+                        </h3>
+
+                        <p style="text-align: justify">
+                            This optimizer is an interactive tool designed to optimize the route for produced water
+                            transportation.
+                            An optimized route will help to minimize the cost and save time.
+                        </p>
+
+                        <p>
+                            <a class="btn btn-default" href="{% url 'transportation-cost-optimizer' %}" role="button"
+                               target="_self">Try the demo &raquo;</a>
+                        </p>
+                    </div>
+                </div>
+
+                <hr class="featurette-divider">
+            </div>
+            {% include "layout/footer.html" %}
+        </section>
+    </main>
 {% endblock %}
