@@ -21,15 +21,15 @@
             border-radius: 5px;
         }
         #legend1{
-            height: 200px;
+            height: 220px;
             width: 130px;
         }
         #legend2 {
-            height: 270px;
+            height: 290px;
             width: 130px;
         }
         #legend3 {
-            height: 200px;
+            height: 220px;
             width: 130px;
         }
         #close-route-sum-grid, #opt-route-sum-grid{
@@ -418,8 +418,8 @@
             //map
             var map = new Map("map1", {
                 basemap: "streets",
-                center: [-98.58, 28.8],
-                zoom: 9
+                center: [-104.45, 40.53],
+                zoom: 10
             });
             map.on("load", function(){
                 map.disableScrollWheelZoom();
@@ -437,9 +437,9 @@
                     size: 5
                 },
                 colorInfo: {
-                    field: "water_use",
-                    minDataValue: 20000,
-                    maxDataValue: 260000,
+                    field: "H2OVolume",
+                    minDataValue: 10,
+                    maxDataValue: 100,
                     colors: [
                         new Color([0, 0, 255]),
                         new Color([0, 255, 0]),
@@ -448,10 +448,10 @@
                     ]
                 }
             });
-            var wellServiceUrl = "http://services1.arcgis.com/KNdRU5cN6ENqCTjk/arcgis/rest/services/WaterUsePoint/FeatureServer/0";
+            var wellServiceUrl = "http://services1.arcgis.com/KNdRU5cN6ENqCTjk/arcgis/rest/services/ProducedWater/FeatureServer/0";
             var wellsLayer = new FeatureLayer(wellServiceUrl, {
                 mode: FeatureLayer.MODE_SNAPSHOT,
-                outFields: ["water_use", "horizontal"]
+                outFields: ["API", "WellName", "VolumeDate", "H2OVolume", "DaysOn", "Predicted"]
             });
             wellsLayer.setRenderer(wellsRenderer);
             map.addLayer(wellsLayer);
@@ -459,7 +459,7 @@
             // legend
             var legend = new Legend({
                 map: map,
-                layerInfos: [{layer: wellsLayer, title: "Water Use (bbls)"}]
+                layerInfos: [{layer: wellsLayer, title: "Produced Water (bbls)"}]
             }, "legend1");
             legend.startup();
             
@@ -481,9 +481,8 @@
                     AreaID: "Area ID",
                     DriveTime: "Drive Time (mins)",
                     WellsNumber: "Wells Number",
-                    TotalWaterUse: "Total Water Use (bbls)",
-                    AverageWaterUse: "Average Water Use (bbls)",
-                    AverageHorizontalLength: "Average Horizontal Length (feet)"
+                    TotalProducedWater: "Total Produced Water (bbls)",
+                    AverageProducedWater: "Average Produced Water (bbls)",
                 }
             }, "service-area-grid");
             var areaNumber = 0;
@@ -505,9 +504,8 @@
                                 AreaID: "Area ID",
                                 DriveTime: "Drive Time (mins)",
                                 WellsNumber: "Wells Number",
-                                TotalWaterUse: "Total Water Use (bbls)",
-                                AverageWaterUse: "Average Water Use (bbls)",
-                                AverageHorizontalLength: "Average Horizontal Length (feet)"
+                                TotalProducedWater: "Total Produced Water (bbls)",
+                                AverageProducedWater: "Average Produced Water (bbls)",
                             }
                         }, "service-area-grid");
                         areaNumber = 0;
@@ -571,15 +569,12 @@
                         var query = new Query();
                         query.geometry = areaGraphic.geometry;
                         wellsLayer.selectFeatures(query, FeatureLayer.SELECTION_NEW, function(features){
-                            var totalWaterUse = 0.0;
-                            var totalLength = 0.0;
+                            var totalProducedWater = 0.0;
                             var featuresNumber = features.length;
                             arrayUtils.forEach(features, function (feature) {
-                                totalWaterUse += feature.attributes.water_use;
-                                totalLength += feature.attributes.horizontal;
+                                totalProducedWater += feature.attributes.H2OVolume;
                             });
-                            var meanWaterUse = totalWaterUse / featuresNumber;
-                            var meanLength = totalLength / featuresNumber;
+                            var meanProducedWater = totalProducedWater / featuresNumber;
                             
                             // add to grid
                             areaNumber += 1;
@@ -595,7 +590,7 @@
                                 ],
                             });
                             areaGraphic.setInfoTemplate(template);
-                            var rowData = {AreaID: areaNumber, DriveTime: dom.byId("minutes").value, WellsNumber: featuresNumber, TotalWaterUse: Math.round(totalWaterUse), AverageWaterUse: Math.round(meanWaterUse), AverageHorizontalLength: Math.round(meanLength)};
+                            var rowData = {AreaID: areaNumber, DriveTime: dom.byId("minutes").value, WellsNumber: featuresNumber, TotalProducedWater: Math.round(totalProducedWater), AverageProducedWater: Math.round(meanProducedWater)};
                             serviceAreaGrid.renderArray([rowData]);
                         });
                     });
@@ -691,8 +686,8 @@
                 //map
                 var map = new Map("map2", {
                  basemap: "streets",
-                 center: [-98.58, 28.8],
-                 zoom: 9
+                 center: [-104.45, 40.53],
+                 zoom: 10
                 });
                 map.on("load", function(){
                     map.disableScrollWheelZoom();
@@ -710,9 +705,9 @@
                         size: 5
                     },
                     colorInfo: {
-                        field: "water_use",
-                        minDataValue: 20000,
-                        maxDataValue: 260000,
+                        field: "H2OVolume",
+                        minDataValue: 10,
+                        maxDataValue: 100,
                         colors: [
                             new Color([0, 0, 255]),
                             new Color([0, 255, 0]),
@@ -728,10 +723,10 @@
                     size: 7,
                     color: new Color([207, 34, 171, 0.5])
                 });
-                var wellServiceUrl = "http://services1.arcgis.com/KNdRU5cN6ENqCTjk/arcgis/rest/services/WaterUsePoint/FeatureServer/0";
+                var wellServiceUrl = "http://services1.arcgis.com/KNdRU5cN6ENqCTjk/arcgis/rest/services/ProducedWater/FeatureServer/0";
                 var wellsLayer = new FeatureLayer(wellServiceUrl, {
                     mode: FeatureLayer.MODE_SNAPSHOT,
-                    outFields: ["water_use"]
+                    outFields: ["H2OVolume"]
                 });
                 wellsLayer.setRenderer(wellsRenderer);
                 wellsLayer.setSelectionSymbol(selectionSymbol);
@@ -758,7 +753,7 @@
                         }
                     ]
                 });
-                var treatmentFacilityServiceUrl = "http://services1.arcgis.com/KNdRU5cN6ENqCTjk/arcgis/rest/services/TreatmentFacility/FeatureServer/0";
+                var treatmentFacilityServiceUrl = "http://services1.arcgis.com/KNdRU5cN6ENqCTjk/arcgis/rest/services/Facilities/FeatureServer/0";
                 var treatmentFacilityLayer = new FeatureLayer(treatmentFacilityServiceUrl, {
                     mode: FeatureLayer.MODE_SNAPSHOT,
                     infoTemplate: treatmentFacilityTemplate,
@@ -770,7 +765,7 @@
                 // legend
                 var legend = new Legend({
                     map: map,
-                    layerInfos:[{layer: wellsLayer, title:"Water Use (bbls)"}, {layer: treatmentFacilityLayer, title:"Treatment Facility"}]
+                    layerInfos:[{layer: wellsLayer, title:"Produced Water (bbls)"}, {layer: treatmentFacilityLayer, title:"Treatment Facility"}]
                 }, "legend2");
                 legend.startup();
                 
@@ -1028,8 +1023,8 @@
                 //map
                 var map = new Map("map3", {
                     basemap: "streets",
-                    center: [-99.68, 28.35],
-                    zoom: 12
+                    center: [-104.50, 40.47],
+                    zoom: 11
                 });
                 map.on("load", function() {
                     map.disableScrollWheelZoom();
@@ -1053,9 +1048,9 @@
                         size: 10
                     },
                     colorInfo: {
-                        field: "water_use",
-                        minDataValue: 72000,
-                        maxDataValue: 260000,
+                        field: "H2OVolume",
+                        minDataValue: 10,
+                        maxDataValue: 100,
                         colors: [
                             new Color([0, 0, 255]),
                             new Color([0, 255, 0]),
@@ -1067,23 +1062,39 @@
                 var tenWellsTemplate = new PopupTemplate({
                      fieldInfos: [
                          {
-                             fieldName: "water_use",
+                             fieldName: "API",
+                             visible: true
+                         },
+                         {
+                             fieldName: "WellName",
+                             visible: true
+                         },
+                         {
+                             fieldName: "VolumeDate",
+                             visible: true
+                         },
+                         {
+                             fieldName: "H2OVolume",
+                             visible: true
+                         },
+                         {
+                             fieldName: "DaysOn",
                              visible: true
                          }
                      ]
-                 });
-                tenWellsServiceUrl = "http://services1.arcgis.com/KNdRU5cN6ENqCTjk/arcgis/rest/services/TenWaterUsePoints/FeatureServer/0";
+                });
+                tenWellsServiceUrl = "http://services1.arcgis.com/KNdRU5cN6ENqCTjk/arcgis/rest/services/ProducedWater10Points/FeatureServer/0";
                 var tenWellsLayer = new FeatureLayer(tenWellsServiceUrl, {
                     mode: FeatureLayer.MODE_SNAPSHOT,
                     infoTemplate: tenWellsTemplate,
-                    outFields: ["water_use"]
+                    outFields: ["API", "WellName", "VolumeDate", "H2OVolume", "DaysOn", "Predicted"]
                 });
                 tenWellsLayer.setRenderer(tenWellsRenderer);
                 map.addLayer(tenWellsLayer);
                 // legend
                 var legend = new Legend({
                     map: map,
-                    layerInfos: [{layer: tenWellsLayer, title: "Water Use (bbls)"}]
+                    layerInfos: [{layer: tenWellsLayer, title: "Produced Water (bbls)"}]
                 }, "legend3");
                 legend.startup();
                 // grid for route summary data
