@@ -49,12 +49,13 @@
                         <div class="col-md-4">
                             <ul class="wrapper">
                                 <li>
-                                    <div class="info-box-green additional-info-button" id="water-use-analytics-radio-1">
+                                    <div class="info-box-green additional-info-button close-green"
+                                         id="water-use-analytics-radio-1">
                                         <h4> Water used
                                             per well</h4>
 
                                         <div class="info-content">
-                                            <div class="text">
+                                            <div class="text open-green">
                                                 <p>Brewpub conditioning tank cask conditioned ale original gravity. ipa
                                                     specific
                                                     gravity grainy; amber berliner weisse. squares keg; lauter. krausen
@@ -170,11 +171,11 @@
 
                             <ul class="wrapper">
                                 <li>
-                                    <div class="info-box-green" id="water-use-kpis-radio1">
+                                    <div class="info-box-green close-green" id="water-use-kpis-radio1">
                                         <h4> Annual Average Water Use per Well</h4>
 
                                         <div class="info-content">
-                                            <div class="text">
+                                            <div class="text open-green">
                                                 <p>Brewpub conditioning tank cask conditioned ale original gravity. ipa
                                                     specific
                                                     gravity grainy; amber berliner weisse. squares keg; lauter. krausen
@@ -245,12 +246,12 @@
                         <div class="col-md-4">
                             <ul class="wrapper">
                                 <li>
-                                    <div class="info-box-green" id="water-use-relationships-radio1">
+                                    <div class="info-box-green close-green" id="water-use-relationships-radio1">
                                         <h4>
                                             Linear</h4>
 
                                         <div class="info-content">
-                                            <div class="text">
+                                            <div class="text open-green">
                                                 <p>Brewpub conditioning tank cask conditioned ale original gravity. ipa
                                                     specific
                                                     gravity grainy; amber berliner weisse. squares keg; lauter. krausen
@@ -503,10 +504,15 @@
             $(".output-std").text(std);
         }
 
+        d3.json("{% url 'get-water-use'%}", function (error, data) {
+            draw_chart1(data, "water_use", "Water Used per Well(bbls)", 1);
+            update_chart1_footer(data, "water_use_mean", "water_use_std");
+        });
+
         // histogram-1
         $("#water-use-analytics-radio-1").click(function () {
             // if the button is already in clicked status, do nothing
-            if ($(this).parent().hasClass("checked")) {
+            if ($(this).is("[class*='close-']")) {
                 return;
             }
             // else redraw the diagram
@@ -518,7 +524,7 @@
         // histogram-2
         $("#water-use-analytics-radio-2").click(function () {
             // if the button is already in clicked status, do nothing
-            if ($(this).parent().hasClass("checked")) {
+            if ($(this).is("[class*='close-']")) {
                 return;
             }
             // else redraw the diagram
@@ -530,7 +536,7 @@
         // histogram-3
         $("#water-use-analytics-radio-3").click(function () {
             // if the button is already in clicked status, do nothing
-            if ($(this).parent().hasClass("checked")) {
+            if ($(this).is("[class*='close-']")) {
                 return;
             }
             // else redraw the diagram
@@ -668,8 +674,12 @@
             });
         }
 
+        d3.json("{% url 'get-annual-water' %}", function (error, data) {
+            draw_chart2(data, "Annual Average Water Used per Well(bbls)", 1);
+        });
+
         $("#water-use-kpis-radio1").click(function () {
-            if ($(this).parent().hasClass("checked")) {
+            if ($(this).is("[class*='close-']")) {
                 return;
             }
             d3.json("{% url 'get-annual-water' %}", function (error, data) {
@@ -678,7 +688,7 @@
         });
 
         $("#water-use-kpis-radio2").click(function () {
-            if ($(this).is("[class^='open-']")) {
+            if ($(this).is("[class*='close-']")) {
                 return;
             }
             d3.json("{% url 'get-annual-horizontal-feet-drilled' %}", function (error, data) {
@@ -687,7 +697,7 @@
         });
 
         $("#water-use-kpis-radio3").click(function () {
-            if ($(this).parent().hasClass("checked")) {
+            if ($(this).is("[class*='close-']")) {
                 return;
             }
             d3.json("{% url 'get-annual-bbls-ft-metric' %}", function (error, data) {
@@ -784,6 +794,11 @@
                 line2.transition().duration(500).style("opacity", 1);
             }
         }
+
+        d3.json("{% url 'get-linear-fitting' %}", function (error, data) {
+            draw_chart3(data, "linear")
+        });
+        
         $("#water-use-relationships-radio1").click(function () {
             d3.json("{% url 'get-linear-fitting' %}", function (error, data) {
                 draw_chart3(data, "linear")
